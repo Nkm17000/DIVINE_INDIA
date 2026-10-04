@@ -1,49 +1,123 @@
-import json
+#!/usr/bin/env python3
+"""
+Create a devotional reel from ONE image + ONE MP3.
+
+The image is deliberately reused 5 times, but every segment has a different
+motion effect. This makes a single still image feel like a moving video.
+
+Effects:
+1. Slow zoom in + slight upward drift
+2. Slow zoom out + slight left drift
+3. Pan left -> right
+4. Pan right -> left
+5. Diagonal drift + gentle zoom
+
+The effect order is shuffled per video, while never repeating an effect inside
+the same video.
+"""
+from __future__ import annotations
+
+import argparse
+import random
 import subprocess
+import tempfile
 from pathlib import Path
-from .config import VIDEO_WIDTH, VIDEO_HEIGHT, FPS, MAX_DURATION
 
+W, H = 1080, 1920
+SEGMENT_SECONDS = 3
+FPS = 30
+EFFECTS = ["zoom_in", "zoom_out", "pan_lr", "pan_rl", "diagonal"]
 
-def duration_seconds(audio):
-    cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "json", audio]
-    data = json.loads(subprocess.check_output(cmd, text=True))
-    return max(3.0, min(float(data["format"]["duration"]), MAX_DURATION))
-
-
-def make_video(image, audio, output):
-    """Create a vertical reel where the still image behaves like moving video."""
-    Path(output).parent.mkdir(parents=True, exist_ok=True)
-    duration = duration_seconds(audio)
-    frames = max(1, int(duration * FPS))
-
-    # Ken Burns effect: slowly zoom from 1.00x to 1.08x and gently pan.
-    # zoompan produces a real frame sequence, so the still image is encoded
-    # as motion video rather than a static slideshow frame.
-    zoom_expr = "min(max(zoom,1.0)+0.0013,1.08)"
-    x_expr = "iw/2-(iw/zoom/2)+0.04*iw*sin(2*PI*on/" + str(frames) + ")"
-    y_expr = "ih/2-(ih/zoom/2)+0.03*ih*cos(2*PI*on/" + str(frames) + ")"
-
-    vf = (
-        f"[0:v]scale={VIDEO_WIDTH}:{VIDEO_HEIGHT}:force_original_aspect_ratio=increase,"
-        f"crop={VIDEO_WIDTH}:{VIDEO_HEIGHT},boxblur=28:12,eq=brightness=-0.04:saturation=1.05[bg];"
-        f"[0:v]scale={VIDEO_WIDTH}:{VIDEO_HEIGHT}:force_original_aspect_ratio=decrease,"
-        f"pad={VIDEO_WIDTH}:{VIDEO_HEIGHT}:(ow-iw)/2:(oh-ih)/2:color=black@0,"
-        f"zoompan=z='{zoom_expr}':x='{x_expr}':y='{y_expr}':d=1:s={VIDEO_WIDTH}x{VIDEO_HEIGHT}:fps={FPS},"
-        f"format=rgba[fg];"
-        f"[bg][fg]overlay=0:0,format=yuv420p,"
-        f"fade=t=in:st=0:d=0.6,fade=t=out:st={max(0,duration-0.8):.3f}:d=0.8[v]"
-    )
-
-    cmd = [
-        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-        "-loop", "1", "-i", image,
-        "-stream_loop", "-1", "-i", audio,
-        "-filter_complex", vf,
-        "-map", "[v]", "-map", "1:a:0", "-r", str(FPS),
-        "-t", f"{duration:.3f}",
-        "-c:v", "libx264", "-preset", "medium", "-crf", "23",
-        "-c:a", "aac", "-b:a", "128k", "-ar", "44100",
-        "-movflags", "+faststart", "-shortest", output,
-    ]
+def run(cmd: list[str]) -> None:
+    print(">", " ".join(map(str, cmd)))
     subprocess.run(cmd, check=True)
-    return output
+
+def make_segment(image: Path, out: Path, effect: str, seed: int) -> None:
+    # Large canvas first gives zoom/pan room without exposing edges.
+    # zoompan works from the same source image and outputs real video frames.
+    # z: zoom level; x/y: crop origin.
+    if effect == "zoom_in":
+        z = "min(zoom+0.0018,1.18)"
+        x = "(iw-iw/zoom)/2"
+        y = "(ih-ih/zoom)/2-18"
+    elif effect == "zoom_out":
+        z = "max(zoom-0.0018,1.0)"
+        x = "(iw-iw/zoom)/2"
+        y = "(ih-ih/zoom)/2"
+    elif effect == "pan_lr":
+        z = "1.10"
+        x = "(iw-iw/zoom)*(on/(180-1))"
+        y = "(ih-ih/zoom)/2"
+    elif effect == "pan_rl":
+        z = "1.10"
+        x = "(iw-iw/zoom)*(1-on/(180-1))"
+        y = "(ih-ih/zoom)/2"
+    else:  # diagonal
+        z = "min(1.02+on*0.0009,1.16)"
+        x = "(iw-iw/zoom)*(on/(180-1))"
+        y = "(ih-ih/zoom)*(1-on/(180-1))"
+
+    # Start zoompan at 1.0; 90 frames = 3 seconds at 30fps.
+    vf = (
+        f"scale=2160:3840:force_original_aspect_ratio=increase,"
+        f"crop=2160:3840,"
+        f"zoompan=z='{z}':x='{x}':y='{y}':"
+        f"d=1:s={W}x{H}:fps={FPS},"
+        f"setsar=1,format=yuv420p"
+    )
+    run([
+        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+        "-loop", "1", "-i", str(image),
+        "-vf", vf,
+        "-t", str(SEGMENT_SECONDS),
+        "-an", "-c:v", "libx264", "-preset", "medium",
+        "-crf", "20", "-movflags", "+faststart", str(out)
+    ])
+
+def create_video(image: Path, audio: Path, output: Path, seed: int | None = None) -> list[str]:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    rng = random.Random(seed if seed is not None else random.randrange(1_000_000_000))
+    effects = EFFECTS[:]
+    rng.shuffle(effects)
+
+    with tempfile.TemporaryDirectory() as td:
+        td = Path(td)
+        segments=[]
+        for i, effect in enumerate(effects):
+            seg=td/f"segment_{i+1}.mp4"
+            make_segment(image, seg, effect, rng.randrange(1_000_000_000))
+            segments.append(seg)
+
+        concat_file=td/"concat.txt"
+        concat_file.write_text(
+            "".join(f"file '{p.as_posix()}'\n" for p in segments),
+            encoding="utf-8"
+        )
+        joined=td/"joined.mp4"
+        run([
+            "ffmpeg","-y","-hide_banner","-loglevel","error",
+            "-f","concat","-safe","0","-i",str(concat_file),
+            "-c","copy",str(joined)
+        ])
+
+        # Match video length to the selected ringtone. The audio is trimmed to
+        # the video duration; if the ringtone is shorter it loops automatically.
+        run([
+            "ffmpeg","-y","-hide_banner","-loglevel","error",
+            "-i",str(joined),"-stream_loop","-1","-i",str(audio),
+            "-map","0:v:0","-map","1:a:0",
+            "-t",str(SEGMENT_SECONDS*len(effects)),
+            "-c:v","copy","-c:a","aac","-b:a","192k",
+            "-shortest","-movflags","+faststart",str(output)
+        ])
+    return effects
+
+if __name__ == "__main__":
+    ap=argparse.ArgumentParser()
+    ap.add_argument("--image",required=True,type=Path)
+    ap.add_argument("--audio",required=True,type=Path)
+    ap.add_argument("--output",required=True,type=Path)
+    ap.add_argument("--seed",type=int)
+    args=ap.parse_args()
+    effects=create_video(args.image,args.audio,args.output,args.seed)
+    print("EFFECTS:", ",".join(effects))
