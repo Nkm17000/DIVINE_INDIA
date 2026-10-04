@@ -45,6 +45,19 @@ jobs:
       - name: Create today's moving video
         run: python main.py
 
+      - name: Upload generated video as GitHub Actions artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-shyam-krishna-reel-${{ github.run_number }}
+          path: |
+            output/daily_reel.mp4
+            output/caption.txt
+            output/selection.json
+            output/publish_result.json
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Check publishing configuration
         id: publish_config
         env:
