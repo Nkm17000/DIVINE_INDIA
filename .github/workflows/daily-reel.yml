@@ -37,6 +37,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
       - name: Generate moving reel
         run: |
           python src/main.py
@@ -52,35 +57,20 @@ jobs:
             output/selection.json
           retention-days: 7
 
-      - name: Publish to Facebook
-        if: ${{ env.FB_PAGE_ID != '' && env.FB_PAGE_ACCESS_TOKEN != '' }}
+      - name: Publish to Facebook (optional)
         env:
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
-        run: |
-          python src/publish.py facebook
+          META_GRAPH_VERSION: ${{ secrets.META_GRAPH_VERSION }}
+        run: python src/publish.py facebook
 
-      - name: Skip Facebook when credentials are missing
-        if: ${{ env.FB_PAGE_ID == '' || env.FB_PAGE_ACCESS_TOKEN == '' }}
-        env:
-          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
-          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
-        run: echo "Facebook credentials missing; video remains available as artifact."
-
-      - name: Publish to Instagram
-        if: ${{ env.IG_USER_ID != '' && env.IG_ACCESS_TOKEN != '' }}
+      - name: Publish to Instagram (optional)
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-        run: |
-          python src/publish.py instagram
-
-      - name: Skip Instagram when credentials are missing
-        if: ${{ env.IG_USER_ID == '' || env.IG_ACCESS_TOKEN == '' }}
-        env:
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-        run: echo "Instagram credentials missing; video remains available as artifact."
+          INSTAGRAM_VIDEO_URL: ${{ secrets.INSTAGRAM_VIDEO_URL }}
+          META_GRAPH_VERSION: ${{ secrets.META_GRAPH_VERSION }}
+        run: python src/publish.py instagram
 
       - name: Commit rotation state
         run: |
