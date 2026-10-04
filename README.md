@@ -76,3 +76,7 @@ permissions:
 ```
 
 so its built-in GitHub token can create/delete the temporary release asset.
+
+
+### 30-second animation
+The same image is continuously animated through 8 subtle motion phases of about 3.75 seconds each. Effects are shuffled per reel. No fade-to-black or blank transition frames.
