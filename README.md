@@ -48,3 +48,9 @@ The workflow automatically detects either:
 - `assets/images/` and `assets/ringtones/`
 
 It searches recursively inside those folders.
+
+## Important: existing rotation-state compatibility
+
+This version safely migrates older `state/rotation_state.json` files. Older releases sometimes stored `used_pairs` as strings; this release accepts those values and converts supported legacy formats to `{image, audio}` objects instead of crashing with `AttributeError: 'str' object has no attribute 'get'`.
+
+The renderer was also tested with 34 images and 20 audio files. A full 680-selection simulation produced 680 unique image/audio pairs; the first 20 selections used 20 different images and 20 different audio files. A real 15-second render was checked with ffprobe at 1080x1920, 30 fps, 450 video frames, and ffmpeg `blackdetect` found no black segments.

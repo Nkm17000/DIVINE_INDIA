@@ -32,9 +32,44 @@ def media_files(folder, exts):
     )
 
 def load_state():
-    if STATE_FILE.exists():
-        return json.loads(STATE_FILE.read_text(encoding="utf-8"))
-    return {"used_images":[],"used_audio":[],"used_pairs":[],"cycle":0,"last_selection":None}
+    default={"used_images":[],"used_audio":[],"used_pairs":[],"cycle":0,"last_selection":None}
+    if not STATE_FILE.exists():
+        return default
+    try:
+        raw=json.loads(STATE_FILE.read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"WARNING: Could not read rotation state; starting fresh: {exc}")
+        return default
+    if not isinstance(raw, dict):
+        return default
+    # Backward-compatible migration: older versions may have stored pair names
+    # as strings such as "image.jpg|ringtone.mp3" instead of dictionaries.
+    pairs=[]
+    for item in raw.get("used_pairs", []):
+        if isinstance(item, dict):
+            image=item.get("image")
+            audio=item.get("audio")
+            if image and audio:
+                pairs.append({"image":str(image),"audio":str(audio)})
+        elif isinstance(item, str):
+            # Accept common legacy formats.
+            if "|" in item:
+                image,audio=item.split("|",1)
+                if image and audio:
+                    pairs.append({"image":image,"audio":audio})
+            elif "," in item:
+                image,audio=item.split(",",1)
+                if image and audio:
+                    pairs.append({"image":image.strip(),"audio":audio.strip()})
+    images=[str(x) for x in raw.get("used_images",[]) if isinstance(x,(str,int))]
+    audio=[str(x) for x in raw.get("used_audio",[]) if isinstance(x,(str,int))]
+    return {
+        "used_images":images,
+        "used_audio":audio,
+        "used_pairs":pairs,
+        "cycle":int(raw.get("cycle",0) or 0),
+        "last_selection":raw.get("last_selection") if isinstance(raw.get("last_selection"),dict) else None
+    }
 
 def save_state(s):
     STATE_FILE.parent.mkdir(exist_ok=True)
