@@ -1,9 +1,11 @@
 {
   "used_images": [
-    "Radha Krishna by the Lotus Temple.png"
+    "Radha Krishna by the Lotus Temple.png",
+    "Ornate Shyam Devotional Temple Garden.png"
   ],
   "used_audio": [
-    "hai-jiske-saath-sawra.mp3"
+    "hai-jiske-saath-sawra.mp3",
+    "sanwariyo-hai-seth-mari-radha-ji.mp3"
   ],
   "used_pairs": [
     {
@@ -13,11 +15,15 @@
     {
       "image": "Radha Krishna by the Lotus Temple.png",
       "audio": "hai-jiske-saath-sawra.mp3"
+    },
+    {
+      "image": "Ornate Shyam Devotional Temple Garden.png",
+      "audio": "sanwariyo-hai-seth-mari-radha-ji.mp3"
     }
   ],
   "cycle": 0,
   "last_selection": {
-    "image": "Radha Krishna by the Lotus Temple.png",
-    "audio": "hai-jiske-saath-sawra.mp3"
+    "image": "Ornate Shyam Devotional Temple Garden.png",
+    "audio": "sanwariyo-hai-seth-mari-radha-ji.mp3"
   }
 }
