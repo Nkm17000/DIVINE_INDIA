@@ -91,19 +91,34 @@ jobs:
             --title "Daily Reel ${GITHUB_RUN_NUMBER}" \
             --notes "Automatically generated devotional reel for Instagram publishing."
 
-          VIDEO_URL="$(gh release view "$TAG" \
-            --repo "$GITHUB_REPOSITORY" \
-            --json assets \
-            --jq '.assets[] | select(.name=="daily_reel.mp4") | .browser_download_url')"
+          # gh release view --json assets does not reliably expose
+          # browser_download_url across GitHub CLI versions. The public
+          # download URL is deterministic for a GitHub release asset.
+          VIDEO_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/daily_reel.mp4"
 
-          if [ -z "$VIDEO_URL" ]; then
-            echo "::error::Could not obtain the public GitHub release asset URL."
+          # Make the release tag available to the cleanup step immediately.
+          echo "INSTAGRAM_RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
+
+          # Confirm GitHub can see the asset before handing the URL to Meta.
+          echo "Waiting for the public release asset to become available..."
+          AVAILABLE=0
+          for attempt in $(seq 1 12); do
+            HTTP_CODE="$(curl -L -s -o /dev/null -w '%{http_code}' "$VIDEO_URL" || true)"
+            echo "Release asset check ${attempt}/12: HTTP ${HTTP_CODE}"
+            if [ "$HTTP_CODE" = "200" ]; then
+              AVAILABLE=1
+              break
+            fi
+            sleep 5
+          done
+
+          if [ "$AVAILABLE" -ne 1 ]; then
+            echo "::error::GitHub release asset is not publicly downloadable after waiting."
             exit 1
           fi
 
-          echo "Instagram video URL created automatically."
+          echo "Instagram video URL created automatically: $VIDEO_URL"
           echo "INSTAGRAM_VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
-          echo "INSTAGRAM_RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Publish to Facebook
         run: python src/publish.py facebook
