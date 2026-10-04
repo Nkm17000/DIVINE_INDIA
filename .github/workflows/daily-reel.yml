@@ -21,7 +21,7 @@ concurrency:
 jobs:
   generate-and-publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -43,10 +43,9 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Generate moving reel
-        run: |
-          python src/main.py
+        run: python src/main.py
 
-      # ALWAYS upload the generated video, regardless of Meta publishing.
+      # Always keep the MP4 in Actions artifacts.
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
@@ -57,20 +56,69 @@ jobs:
             output/selection.json
           retention-days: 7
 
-      - name: Publish to Facebook (optional)
-        env:
-          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
-          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
-          META_GRAPH_VERSION: ${{ secrets.META_GRAPH_VERSION }}
-        run: python src/publish.py facebook
-
-      - name: Publish to Instagram (optional)
+      # Instagram's Graph API needs a publicly reachable HTTPS video URL.
+      # This creates one automatically from a GitHub Release asset.
+      # No INSTAGRAM_VIDEO_URL secret is required.
+      - name: Create temporary public Instagram video URL
+        if: ${{ env.IG_USER_ID != '' && env.IG_ACCESS_TOKEN != '' }}
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          INSTAGRAM_VIDEO_URL: ${{ secrets.INSTAGRAM_VIDEO_URL }}
-          META_GRAPH_VERSION: ${{ secrets.META_GRAPH_VERSION }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          VISIBILITY="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.visibility')"
+          if [ "$VISIBILITY" != "public" ]; then
+            echo "::error::Instagram automatic publishing requires this GitHub repository to be public because the release MP4 must be publicly downloadable."
+            exit 1
+          fi
+
+          TAG="daily-reel-${GITHUB_RUN_ID}"
+          echo "Creating public release: ${TAG}"
+
+          gh release create "$TAG" \
+            output/daily_reel.mp4 \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Daily Reel ${GITHUB_RUN_NUMBER}" \
+            --notes "Automatically generated devotional reel for Instagram publishing."
+
+          VIDEO_URL="$(gh release view "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json assets \
+            --jq '.assets[] | select(.name=="daily_reel.mp4") | .url')"
+
+          if [ -z "$VIDEO_URL" ]; then
+            echo "::error::Could not obtain the public GitHub release asset URL."
+            exit 1
+          fi
+
+          echo "Instagram video URL created automatically."
+          echo "INSTAGRAM_VIDEO_URL=$VIDEO_URL" >> "$GITHUB_ENV"
+          echo "INSTAGRAM_RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Publish to Facebook
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+        run: python src/publish.py facebook
+
+      - name: Publish to Instagram
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
         run: python src/publish.py instagram
+
+      - name: Cleanup temporary Instagram release
+        if: ${{ always() && env.INSTAGRAM_RELEASE_TAG != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete "$INSTAGRAM_RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --yes \
+            --cleanup-tag || true
 
       - name: Commit rotation state
         run: |

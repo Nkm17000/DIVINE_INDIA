@@ -1,59 +1,78 @@
-# Shyam / Krishna Daily Moving Reel
+# Divine India Daily Devotional Reel
 
-One source image becomes a real animated 15-second vertical reel.
+The workflow automatically creates a moving 9:16 devotional reel from one image and one ringtone.
 
 ## Animation
 
-The same image is reused across 5 x 3-second segments:
-1. slow zoom in + upward drift
+The same image is reused across five animated segments:
+1. slow zoom in + drift
 2. slow zoom out
 3. left-to-right pan
 4. right-to-left pan
-5. diagonal drift + gentle zoom
+5. diagonal drift + zoom
 
-The five effects are shuffled for every generated reel, so the effect order changes.
+The effect order changes on each run.
 
-## Assets
+## Media folders
 
-Put images in `assets/images/` and MP3 files in `assets/ringtones/`.
+The code supports the existing repository layout:
 
-## GitHub
+- `images/`
+- `audio/`
 
-The workflow runs on:
-- manual `workflow_dispatch`
-- push to `main`
-- daily at 5:00 AM IST (`30 23 * * *` UTC)
+It also supports:
 
-The generated MP4 is ALWAYS uploaded as a GitHub Actions artifact, even when Meta posting is skipped or fails.
+- `assets/images/`
+- `assets/ringtones/`
 
-## Meta
+## Schedule
 
-FB/Instagram secrets are optional. Missing credentials never prevent video generation.
+- Manual `workflow_dispatch`
+- Push to `main`
+- Daily at 5:00 AM IST (`30 23 * * *` UTC)
 
-Instagram additionally needs a public MP4 URL for the Graph API. Set `INSTAGRAM_VIDEO_URL` if your workflow hosts the generated MP4 publicly before publishing.
+## Video artifact
 
+Every generated MP4 is uploaded to GitHub Actions Artifacts for 7 days, regardless of publishing results.
 
-## Black-screen fix
+## Facebook
 
-The animation renderer uses `zoompan` with `d=90` for each 3-second segment,
-so each segment is rendered as a complete 90-frame sequence from the image.
-There are no fade-to-black transitions. The five segments are concatenated
-with continuous timestamps and re-encoded to avoid timestamp/keyframe gaps.
+Set these GitHub Secrets if Facebook publishing is wanted:
 
+- `FB_PAGE_ID`
+- `FB_PAGE_ACCESS_TOKEN`
 
-## Supported asset folders
+If missing, Facebook is skipped and video generation continues.
 
-The workflow automatically detects either:
-- `images/` and `audio/`
-- `assets/images/` and `assets/ringtones/`
+## Instagram — fully automatic URL
 
-It searches recursively inside those folders.
+Set only:
 
-## Important: existing rotation-state compatibility
+- `IG_USER_ID`
+- `IG_ACCESS_TOKEN`
 
-This version safely migrates older `state/rotation_state.json` files. Older releases sometimes stored `used_pairs` as strings; this release accepts those values and converts supported legacy formats to `{image, audio}` objects instead of crashing with `AttributeError: 'str' object has no attribute 'get'`.
+You do **not** need to set `INSTAGRAM_VIDEO_URL`.
 
-The renderer was also tested with 34 images and 20 audio files. A full 680-selection simulation produced 680 unique image/audio pairs; the first 20 selections used 20 different images and 20 different audio files. A real 15-second render was checked with ffprobe at 1080x1920, 30 fps, 450 video frames, and ffmpeg `blackdetect` found no black segments.
+When Instagram credentials exist, the workflow automatically:
+1. creates the MP4;
+2. uploads it to a temporary public GitHub Release asset;
+3. obtains its public HTTPS download URL;
+4. sends that URL to the Instagram Graph API;
+5. waits for Instagram processing;
+6. publishes the Reel;
+7. deletes the temporary GitHub Release and tag.
 
-## Python dependency
-The GitHub workflow installs `requirements.txt` before generation/publishing. Facebook and Instagram publishing also safely skips when its required secrets are absent.
+The repository must be **public** for Instagram to fetch the GitHub release asset without authentication.
+
+No R2 setup is required.
+
+## Required permissions
+
+The workflow uses:
+
+```yaml
+permissions:
+  contents: write
+```
+
+so its built-in GitHub token can create/delete the temporary release asset.
