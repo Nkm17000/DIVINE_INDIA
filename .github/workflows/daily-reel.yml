@@ -1,0 +1,75 @@
+name: Daily Shyam Krishna Reel
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * *" # 09:00 IST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-shyam-krishna-reel
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Create today's moving video
+        run: python main.py
+      - name: Check publishing configuration
+        id: publish_config
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: |
+          if [ -n "$IG_USER_ID" ] && [ -n "$IG_ACCESS_TOKEN" ]; then echo "instagram=true" >> "$GITHUB_OUTPUT"; else echo "instagram=false" >> "$GITHUB_OUTPUT"; fi
+          if [ -n "$FB_PAGE_ID" ] && [ -n "$FB_PAGE_ACCESS_TOKEN" ]; then echo "facebook=true" >> "$GITHUB_OUTPUT"; else echo "facebook=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Replace temporary public video
+        if: steps.publish_config.outputs.instagram == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete daily-video --yes || true
+          gh release create daily-video output/daily_reel.mp4 --title "Daily Video" --notes "Temporary public asset used for Instagram publishing."
+      - name: Publish the same video to Facebook and Instagram
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION || 'v24.0' }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RELEASE_TAG: daily-video
+          GITHUB_RELEASE_ASSET: daily_reel.mp4
+          POST_TO_FACEBOOK: "true"
+          POST_TO_INSTAGRAM: "true"
+        run: python publish.py
+      - name: Show generated files
+        run: |
+          ls -lh output/
+          cat output/selection.json
+          cat output/publish_result.json
+      - name: Commit rotation state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/rotation_state.json
+          git commit -m "chore: update daily reel rotation state" || exit 0
+          git push

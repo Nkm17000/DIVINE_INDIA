@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "image_cycle": {
+    "order": [
+      "Krishna and Radha Beneath the Moonlit Garden.png",
+      "Krishna’s Enchanted Vrindavan Sunset (1).png",
+      "Moonlit Radha and Krishna Garden Swing.png",
+      "Devotional Shri Shyam in a Temple Garden.png",
+      "Krishna and Radha by the Lotus Pond.png",
+      "Ornate Khatu Shyam Shrine Portrait.png",
+      "Krishna’s Golden Sunset Garden (1).png",
+      "Krishna’s Golden Temple Garden.png",
+      "Devotional Krishna Shyam Collage.png",
+      "Krishna’s Flute by the Lotus Pond.png",
+      "Krishna’s Sunset Flute Serenade.png",
+      "Krishna’s Golden Riverside Melody.png",
+      "Radha and Krishna Beneath the Moonlight.png",
+      "Vibrant Shyam Devotional Collage.png",
+      "Krishna by the Sacred River at Sunset.png",
+      "Krishna and Radha Beneath Blossoms.png",
+      "Devotional Shyam Krishna Temple Collage.png",
+      "Krishna and Radha in Moonlit Vrindavan.png",
+      "Krishna’s Golden Flute by the Lotus Lake (1).png",
+      "Krishna Devotional Art Collage.png",
+      "Krishna and Radha at Sunset.png",
+      "Krishna’s Golden Flute by the Lotus Lake.png",
+      "Moonlit Krishna and Radha Garden Tableau.png",
+      "Krishna and Radha Beneath Moonlit Blossoms.png",
+      "Ornate Shyam Devotional Temple Garden.png",
+      "Radha Krishna by the Lotus Temple.png",
+      "Krishna’s Golden Sunset Garden.png",
+      "Krishna’s Enchanted Vrindavan Sunset.png",
+      "Radha Krishna by the Sunset Lake.png",
+      "Krishna’s Flute by the Lotus Pond (1).png",
+      "Krishna Devotional Fantasy Collage.png",
+      "Devotional Portrait of Shyam Baba.png",
+      "Moonlit Krishna and Radha Garden Devotion.png",
+      "Lord Shyam in a Floral Temple Glow.png"
+    ],
+    "pos": 0,
+    "used": [
+      "Krishna Devotional Fantasy Collage.png"
+    ]
+  },
+  "audio_cycle": {
+    "order": [
+      "mere-khatu-wale-shyam-mere-sanware.mp3",
+      "teen-baan-ke-dhari-download.mp3",
+      "khatu-wale-shyam-ji-kamal-ho-gya.mp3",
+      "hum-to-teri-yaad-mein---chotu-singh-rawna.mp3",
+      "yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3",
+      "sanwariyo-hai-seth-mari-radha-ji.mp3",
+      "jai-shree-shyam-song-message.mp3",
+      "ucho-rakh-nishan-shyam-ko.mp3",
+      "door-se-aaya-baba-dham-tere-khatu.mp3",
+      "hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
+      "waha-shyam-ka-pehra-rehta-hai.mp3",
+      "kitna-pyara-hai-singar.mp3",
+      "kabhi-ruthana-na-mujhse-shyam.mp3",
+      "shyama-preet-main-tose-laga-baitha-hoon.mp3",
+      "jis-ghar-me-khatu-wale-ki.mp3",
+      "hai-jiske-saath-sawra.mp3",
+      "hare-ka-sahara-khatu-shyam-hamara.mp3",
+      "tere-hote-hue-sarkar-nahin-ho-sakti-meri-har.mp3",
+      "mera-shyam-aa-jata-mere-samne.mp3",
+      "mere-khatu-wale-shyam.mp3"
+    ],
+    "pos": 0,
+    "used": [
+      "kabhi-ruthana-na-mujhse-shyam.mp3"
+    ]
+  },
+  "used_pairs": [
+    "Krishna Devotional Fantasy Collage.png|||kabhi-ruthana-na-mujhse-shyam.mp3"
+  ],
+  "total_pairs_completed": 0,
+  "last_selection": {
+    "image": "Krishna Devotional Fantasy Collage.png",
+    "audio": "kabhi-ruthana-na-mujhse-shyam.mp3",
+    "utc": "2026-10-04T13:51:34.688874+00:00"
+  },
+  "history": [
+    {
+      "image": "Krishna Devotional Fantasy Collage.png",
+      "audio": "kabhi-ruthana-na-mujhse-shyam.mp3",
+      "utc": "2026-10-04T13:51:34.688874+00:00"
+    }
+  ]
+}
