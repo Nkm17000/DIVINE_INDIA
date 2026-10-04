@@ -5,10 +5,8 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - "state/rotation_state.json"
   schedule:
-    # 5:00 AM IST = 23:30 UTC
+    # 05:00 IST = 23:30 UTC (previous calendar day)
     - cron: "30 23 * * *"
 
 permissions:
@@ -19,30 +17,36 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  generate-and-publish:
+  publish:
+    # The workflow commits rotation state back to main. Do not run a second
+    # copy of the workflow for that automatic state-update commit.
+    if: >-
+      ${{ github.event_name != 'push' ||
+          !startsWith(github.event.head_commit.message, 'chore: update daily reel rotation state') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install FFmpeg
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
 
-      - name: Generate moving reel
-        run: |
-          python src/main.py
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      # ALWAYS upload the generated video, regardless of Meta publishing.
-      - name: Upload video artifact
+      - name: Create today's moving video
+        run: python main.py
+
+      - name: Upload generated video as GitHub Actions artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: daily-shyam-krishna-reel-${{ github.run_number }}
@@ -50,42 +54,68 @@ jobs:
             output/daily_reel.mp4
             output/caption.txt
             output/selection.json
+            output/publish_result.json
+          if-no-files-found: warn
           retention-days: 7
 
-      - name: Publish to Facebook
-        if: ${{ env.FB_PAGE_ID != '' && env.FB_PAGE_ACCESS_TOKEN != '' }}
+      - name: Check publishing configuration
+        id: publish_config
         env:
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
         run: |
-          python src/publish.py facebook
+          if [ -n "$IG_USER_ID" ] && [ -n "$IG_ACCESS_TOKEN" ]; then
+            echo "instagram=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "instagram=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Skip Facebook when credentials are missing
-        if: ${{ env.FB_PAGE_ID == '' || env.FB_PAGE_ACCESS_TOKEN == '' }}
+          if [ -n "$FB_PAGE_ID" ] && [ -n "$FB_PAGE_ACCESS_TOKEN" ]; then
+            echo "facebook=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "facebook=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload video for Instagram
+        if: steps.publish_config.outputs.instagram == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete daily-video --yes || true
+          gh release create daily-video output/daily_reel.mp4 \
+            --title "Daily Video" \
+            --notes "Temporary public asset used for Instagram publishing."
+
+      - name: Publish the same video to Facebook and Instagram
         env:
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
-        run: echo "Facebook credentials missing; video remains available as artifact."
-
-      - name: Publish to Instagram
-        if: ${{ env.IG_USER_ID != '' && env.IG_ACCESS_TOKEN != '' }}
-        env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION || 'v24.0' }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RELEASE_TAG: daily-video
+          GITHUB_RELEASE_ASSET: daily_reel.mp4
+          POST_TO_FACEBOOK: "true"
+          POST_TO_INSTAGRAM: "true"
+        run: python publish.py
+
+      - name: Show generated files
         run: |
-          python src/publish.py instagram
-
-      - name: Skip Instagram when credentials are missing
-        if: ${{ env.IG_USER_ID == '' || env.IG_ACCESS_TOKEN == '' }}
-        env:
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-        run: echo "Instagram credentials missing; video remains available as artifact."
+          ls -lh output/
+          cat output/selection.json
+          cat output/publish_result.json
 
       - name: Commit rotation state
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add state/rotation_state.json
-          git diff --cached --quiet || git commit -m "chore: update reel rotation state"
-          git push
+          if git diff --cached --quiet; then
+            echo "No rotation-state changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update daily reel rotation state"
+          git push origin HEAD:main
