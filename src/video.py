@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, random, subprocess, tempfile
+import argparse, math, random, subprocess, tempfile
 from pathlib import Path
 
 W,H,FPS=1080,1920,30
 TOTAL_SECONDS=30
 SEGMENTS=8
 SEGMENT_SECONDS=TOTAL_SECONDS/SEGMENTS
-FRAMES=round(SEGMENT_SECONDS*FPS)
+FRAMES=math.ceil(SEGMENT_SECONDS*FPS)
 
 EFFECTS=["zoom_in_up","pan_up","zoom_out","pan_lr","pan_rl","diagonal","zoom_in_left","zoom_out_up"]
 
@@ -16,22 +16,25 @@ def run(cmd):
     subprocess.run(cmd,check=True)
 
 def vf(effect):
+    # zoompan exposes the output-frame counter as `on`. Use the known
+    # segment length instead of N/d, which are not valid expression variables here.
+    den=max(FRAMES-1, 1)
     if effect=="zoom_in_up":
-        z="min(1.02+on*0.00095,1.135)"; x="(iw-iw/zoom)/2"; y="(ih-ih/zoom)*(0.58-0.10*on/(N-1))"
+        z=f"min(1.02+on*0.00095,1.135)"; x=f"(iw-iw/zoom)/2"; y=f"(ih-ih/zoom)*(0.58-0.10*on/{den})"
     elif effect=="pan_up":
-        z="1.08"; x="(iw-iw/zoom)/2"; y="(ih-ih/zoom)*(0.72-0.44*on/(N-1))"
+        z=f"1.08"; x=f"(iw-iw/zoom)/2"; y=f"(ih-ih/zoom)*(0.72-0.44*on/{den})"
     elif effect=="zoom_out":
         z="max(1.14-on*0.00095,1.02)"; x="(iw-iw/zoom)/2"; y="(ih-ih/zoom)/2"
     elif effect=="pan_lr":
-        z="1.08"; x="(iw-iw/zoom)*(0.08+0.84*on/(N-1))"; y="(ih-ih/zoom)/2"
+        z=f"1.08"; x=f"(iw-iw/zoom)*(0.08+0.84*on/{den})"; y=f"(ih-ih/zoom)/2"
     elif effect=="pan_rl":
-        z="1.08"; x="(iw-iw/zoom)*(0.92-0.84*on/(N-1))"; y="(ih-ih/zoom)/2"
+        z=f"1.08"; x=f"(iw-iw/zoom)*(0.92-0.84*on/{den})"; y=f"(ih-ih/zoom)/2"
     elif effect=="diagonal":
-        z="1.06+on*0.00045"; x="(iw-iw/zoom)*(0.10+0.65*on/(N-1))"; y="(ih-ih/zoom)*(0.65-0.50*on/(N-1))"
+        z=f"1.06+on*0.00045"; x=f"(iw-iw/zoom)*(0.10+0.65*on/{den})"; y=f"(ih-ih/zoom)*(0.65-0.50*on/{den})"
     elif effect=="zoom_in_left":
-        z="min(1.02+on*0.00090,1.13)"; x="(iw-iw/zoom)*(0.78-0.50*on/(N-1))"; y="(ih-ih/zoom)/2"
+        z=f"min(1.02+on*0.00090,1.13)"; x=f"(iw-iw/zoom)*(0.78-0.50*on/{den})"; y=f"(ih-ih/zoom)/2"
     else:
-        z="max(1.13-on*0.00090,1.02)"; x="(iw-iw/zoom)/2"; y="(ih-ih/zoom)*(0.65-0.30*on/(N-1))"
+        z=f"max(1.13-on*0.00090,1.02)"; x=f"(iw-iw/zoom)/2"; y=f"(ih-ih/zoom)*(0.65-0.30*on/{den})"
     return (f"scale=2160:3840:force_original_aspect_ratio=increase,"
             f"crop=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':"
             f"d={FRAMES}:s={W}x{H}:fps={FPS},setsar=1,format=yuv420p")

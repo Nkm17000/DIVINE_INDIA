@@ -8,9 +8,11 @@ on:
     paths-ignore:
       - "state/rotation_state.json"
   schedule:
-    # 5:00 AM IST = 23:30 UTC
-    - cron: "30 23 * * *"
-
+    # GitHub cron uses UTC. India Standard Time is UTC+05:30.
+    # 6:00 AM IST = 00:30 UTC
+    # 6:00 PM IST = 12:30 UTC
+    - cron: "30 0 * * *"
+    - cron: "30 12 * * *"
 permissions:
   contents: write
 
@@ -22,6 +24,13 @@ jobs:
   generate-and-publish:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Expose optional secrets to job-level env so GitHub can safely use
+      # them in step conditions. Missing secrets become empty strings.
+      FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+      FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
 
     steps:
       - name: Checkout
@@ -62,8 +71,6 @@ jobs:
       - name: Create temporary public Instagram video URL
         if: ${{ env.IG_USER_ID != '' && env.IG_ACCESS_TOKEN != '' }}
         env:
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
@@ -87,7 +94,7 @@ jobs:
           VIDEO_URL="$(gh release view "$TAG" \
             --repo "$GITHUB_REPOSITORY" \
             --json assets \
-            --jq '.assets[] | select(.name=="daily_reel.mp4") | .url')"
+            --jq '.assets[] | select(.name=="daily_reel.mp4") | .browser_download_url')"
 
           if [ -z "$VIDEO_URL" ]; then
             echo "::error::Could not obtain the public GitHub release asset URL."
@@ -99,15 +106,9 @@ jobs:
           echo "INSTAGRAM_RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Publish to Facebook
-        env:
-          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
-          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
         run: python src/publish.py facebook
 
       - name: Publish to Instagram
-        env:
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
         run: python src/publish.py instagram
 
       - name: Cleanup temporary Instagram release
