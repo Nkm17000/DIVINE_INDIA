@@ -1,12 +1,13 @@
-import random
 from .config import CAPTION_PREFIX
 
 CAPTIONS = [
-    "🙏 जय श्री श्याम 🙏\n🦚 जय श्री कृष्ण 🦚\n🌸 Have a great day! 🌸\n\n#JaiShreeShyam #JaiShreeKrishna #KhatuShyam #Krishna #Bhakti",
-    "🙏 जय श्री श्याम\n🦚 जय श्री कृष्ण\n✨ May your day be blessed and beautiful! ✨\n\n#JaiShreeShyam #JaiShreeKrishna #Bhakti #Devotional",
-    "🌺 जय श्री श्याम 🌺\n🦚 जय श्री कृष्ण 🦚\n☀️ Have a great day filled with peace and blessings!\n\n#KhatuShyam #Krishna #RadhaKrishna #JaiShreeShyam"
+    "🙏 राधे राधे 🙏\n🦚 जय श्री कृष्ण 🦚\n🌸 जय श्री श्याम 🌸\n\n#RadheRadhe #JaiShreeKrishna #JaiShreeShyam #KhatuShyam #Bhakti",
+    "🌺 राधे राधे 🌺\n🙏 जय श्री कृष्ण 🙏\n🪷 जय श्री श्याम 🪷\n\n#RadheRadhe #JaiShreeKrishna #JaiShreeShyam #Krishna #Bhakti",
+    "🦚 जय श्री कृष्ण 🦚\n🌸 राधे राधे 🌸\n🙏 जय श्री श्याम 🙏\n\n#JaiShreeKrishna #RadheRadhe #JaiShreeShyam #Devotional #Bhakti",
+    "🙏 जय श्री श्याम 🙏\n🌺 राधे राधे 🌺\n🦚 जय श्री कृष्ण 🦚\n\n#JaiShreeShyam #RadheRadhe #JaiShreeKrishna #KhatuShyam #Bhakti",
 ]
 
 def make_caption():
-    base = random.choice(CAPTIONS)
+    # No Good Morning / Good Evening text. Keep every caption devotional.
+    base = CAPTIONS[0] if len(CAPTIONS) == 1 else __import__('random').choice(CAPTIONS)
     return f"{CAPTION_PREFIX.strip()}\n\n{base}".strip() if CAPTION_PREFIX.strip() else base

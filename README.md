@@ -13,7 +13,7 @@ Every run:
 5. With 34 images and 20 audio files, there are **680 unique pairs**.
 6. After all 680 pairs are used, pairing starts a new cycle and tries to create different pairings again.
 7. Generates a 1080×1920 vertical MP4 with slow zoom + pan, fade in/out, and background fill.
-8. Generates a devotional caption such as `जय श्री श्याम 🙏 | जय श्री कृष्ण 🙏 | Have a great day!`.
+8. Generates a devotional caption using `राधे राधे`, `जय श्री कृष्ण`, and `जय श्री श्याम` only; Good Morning/Good Evening text is not used.
 9. Publishes the same generated MP4 to Facebook and/or Instagram when the required credentials are configured.
 10. If credentials are missing, **publishing is skipped and the video is still generated successfully**.
 
@@ -53,7 +53,7 @@ Instagram also needs a public HTTPS URL for the MP4. In GitHub Actions, when Ins
 
 ## GitHub Actions
 
-The workflow runs every day at **09:00 IST** and can also be started manually with `workflow_dispatch`.
+The workflow runs automatically every day at **05:00 IST** (23:30 UTC) and can also be started manually with `workflow_dispatch`. It also runs when code is pushed to the `main` branch.
 
 The workflow always performs:
 
