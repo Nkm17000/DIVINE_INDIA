@@ -11,8 +11,8 @@ on:
     # GitHub cron uses UTC. India Standard Time is UTC+05:30.
     # 6:00 AM IST = 00:30 UTC
     # 6:00 PM IST = 12:30 UTC
-    - cron: "30 0 * * *"
-    - cron: "30 12 * * *"
+    - cron: "0 1,14 * * *"
+
 permissions:
   contents: write
 
