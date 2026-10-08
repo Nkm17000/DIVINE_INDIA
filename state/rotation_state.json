@@ -7,7 +7,8 @@
     "Devotional Shyam Krishna Temple Collage.png",
     "Krishna and Radha Beneath Blossoms.png",
     "Devotional Portrait of Shyam Baba.png",
-    "KrishnaΓÇÖs Golden Flute by the Lotus Lake (1).png"
+    "KrishnaΓÇÖs Golden Flute by the Lotus Lake (1).png",
+    "KrishnaΓÇÖs Golden Flute by the Lotus Lake.png"
   ],
   "used_audio": [
     "hai-jiske-saath-sawra.mp3",
@@ -17,7 +18,8 @@
     "jis-ghar-me-khatu-wale-ki.mp3",
     "khatu-wale-shyam-ji-kamal-ho-gya.mp3",
     "hum-to-teri-yaad-mein---chotu-singh-rawna.mp3",
-    "yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3"
+    "yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3",
+    "mere-khatu-wale-shyam.mp3"
   ],
   "used_pairs": [
     {
@@ -55,11 +57,15 @@
     {
       "image": "KrishnaΓÇÖs Golden Flute by the Lotus Lake (1).png",
       "audio": "yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3"
+    },
+    {
+      "image": "KrishnaΓÇÖs Golden Flute by the Lotus Lake.png",
+      "audio": "mere-khatu-wale-shyam.mp3"
     }
   ],
   "cycle": 0,
   "last_selection": {
-    "image": "KrishnaΓÇÖs Golden Flute by the Lotus Lake (1).png",
-    "audio": "yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3"
+    "image": "KrishnaΓÇÖs Golden Flute by the Lotus Lake.png",
+    "audio": "mere-khatu-wale-shyam.mp3"
   }
 }
