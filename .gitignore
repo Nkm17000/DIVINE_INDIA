@@ -8,3 +8,6 @@ output/*.json
 state/*.json
 !state/.gitkeep
 .DS_Store
+
+# Keep the persistent image/audio combination history in Git.
+!state/rotation_state.json

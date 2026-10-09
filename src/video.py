@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Create a single continuous, smooth diagonal devotional reel.
 
-All source images: left -> top-center -> right -> bottom-center -> left.
+Vertical source image: top -> center-left -> bottom -> center-right -> top.
+Landscape source image: left -> center-top -> right -> center-bottom -> left.
 The motion uses a smooth sinusoidal path with no segment cuts or pauses.
 """
 from __future__ import annotations
@@ -56,13 +57,18 @@ def vf_for(image: Path, duration: float, width: int, height: int, fps: int) -> s
     """Build a continuous looped path; `on` is the output-frame counter."""
     iw, ih = image_dimensions(image)
     frames = max(2, math.ceil(duration * fps))
-    # Fill the output frame with the source image; no artificial/blurred background.
-    # Edge cropping is used only as needed to fill the frame without bars.
-    base = f"scale={width*2}:{height*2}:force_original_aspect_ratio=increase,crop={width*2}:{height*2}"
-    phase = f"(2*PI*on/{frames})"
-    # Shared smooth path for every source orientation: left -> top -> right -> bottom.
-    x = f"(iw-iw/zoom)*(0.50-0.50*cos({phase}))"
-    y = f"(ih-ih/zoom)*(0.50-0.50*sin({phase}))"
+    # Scale up without cropping: zoompan needs spare source area to pan over.
+    # `increase` guarantees enough pixels to cover the portrait output.
+    base = f"scale={width*2}:{height*2}:force_original_aspect_ratio=increase"
+    # Slow the existing motion by 20%: one full motion cycle now takes 1.25x as long.
+    phase = f"(2*PI*on/{frames * 1.25:.6f})"
+    # Coordinates are normalized over the zoompan source's available travel.
+    if ih >= iw:  # portrait / vertical image: top-bottom with a gentle diagonal drift
+        x = f"(iw-iw/zoom)*(0.50+0.22*sin({phase}))"
+        y = f"(ih-ih/zoom)*(0.50-0.50*cos({phase}))"
+    else:  # landscape / horizontal image: left-right with a gentle diagonal drift
+        x = f"(iw-iw/zoom)*(0.50-0.50*cos({phase}))"
+        y = f"(ih-ih/zoom)*(0.50-0.22*sin({phase}))"
     return (
         f"{base},zoompan=z='{ZOOM}':x='{x}':y='{y}':d=1:"
         f"s={width}x{height}:fps={fps},setsar=1,format=yuv420p"
@@ -109,7 +115,7 @@ def create_video(
         "image": str(image), "audio": str(audio), "output": str(output),
         "duration_seconds": round(duration, 3),
         "width": width, "height": height, "fps": fps,
-        "movement": "continuous smooth loop: left -> top-center -> right -> bottom-center",
+        "movement": "continuous smooth diagonal sinusoidal loop",
         "orientation": "vertical" if image_dimensions(image)[1] >= image_dimensions(image)[0] else "horizontal",
     }
 

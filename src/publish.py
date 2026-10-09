@@ -1,136 +1,165 @@
 #!/usr/bin/env python3
-from __future__ import annotations
+"""Publish each folder's reel to accounts mapped in config/social_accounts.json.
 
+JSON maps secret *key names* to folder names. Credentials are read from environment
+variables populated by GitHub Actions secrets; no tokens belong in the JSON file.
+"""
+from __future__ import annotations
+import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
-
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
-VIDEO = ROOT / "output" / "daily_reel.mp4"
-CAPTION_FILE = ROOT / "output" / "caption.txt"
+OUT_ROOT = ROOT / "output"
 GRAPH = os.getenv("META_GRAPH_VERSION", "v24.0")
 
-def facebook():
-    page = os.getenv("FB_PAGE_ID", "").strip()
-    token = os.getenv("FB_PAGE_ACCESS_TOKEN", "").strip()
 
-    if not page or not token:
-        print("Facebook skipped: FB_PAGE_ID or FB_PAGE_ACCESS_TOKEN is missing.")
+def _paired_token_name(key_name: str, platform: str) -> str:
+    """FB_PAGE_KEY[_N] -> FB_PAGE_TOKEN[_N], INSTA_PAGE_KEY[_N] -> INSTA_PAGE_TOKEN[_N]."""
+    prefix = "FB_PAGE" if platform == "facebook" else "INSTA_PAGE"
+    match = re.fullmatch(re.escape(prefix) + r"_KEY(_\d+)?", key_name)
+    if not match:
+        raise ValueError(f"Invalid {platform} account key '{key_name}'. Expected {prefix}_KEY or {prefix}_KEY_2, etc.")
+    return f"{prefix}_TOKEN{match.group(1) or ''}"
+
+
+def load_accounts() -> dict:
+    """Resolve shared account credentials and assign each account only to configured folders."""
+    config_path = ROOT / "config" / "social_accounts.json"
+    try:
+        data = json.loads(config_path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise RuntimeError(f"Missing account config: {config_path}") from exc
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Invalid JSON in {config_path}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise RuntimeError("config/social_accounts.json must be an object with facebook and instagram mappings.")
+
+    resolved: dict[str, dict[str, list[dict]]] = {}
+    for platform in ("facebook", "instagram"):
+        mappings = data.get(platform, {})
+        if not isinstance(mappings, dict):
+            raise RuntimeError(f"The '{platform}' value in config/social_accounts.json must be an object mapping secret key names to folder arrays.")
+        for key_env, folders in mappings.items():
+            if not isinstance(key_env, str):
+                raise RuntimeError(f"Invalid account key name in {platform} mapping: {key_env!r}")
+            if not isinstance(folders, list) or not all(isinstance(folder, str) and folder.strip() for folder in folders):
+                raise RuntimeError(f"{platform}.{key_env} must contain a JSON array of non-empty folder names.")
+            token_env = _paired_token_name(key_env, platform)
+            account_id = os.getenv(key_env, "").strip()
+            token = os.getenv(token_env, "").strip()
+            if not account_id and not token:
+                print(f"INFO: {platform} account '{key_env}' skipped (GitHub secrets not configured).")
+                continue
+            if not account_id or not token:
+                print(f"WARNING: incomplete {platform} credentials: configure both {key_env} and {token_env} in GitHub Secrets.")
+                continue
+            for folder in dict.fromkeys(folder.strip() for folder in folders):
+                resolved.setdefault(folder, {"facebook": [], "instagram": []})
+                if platform == "facebook":
+                    resolved[folder][platform].append({"page_id": account_id, "access_token": token, "account_key": key_env})
+                else:
+                    resolved[folder][platform].append({"user_id": account_id, "access_token": token, "account_key": key_env})
+    return resolved
+
+
+def instagram_urls() -> dict:
+    raw = os.getenv("INSTAGRAM_VIDEO_URLS_JSON", "{}").strip()
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"INSTAGRAM_VIDEO_URLS_JSON is invalid JSON: {exc}") from exc
+    return value if isinstance(value, dict) else {}
+
+
+def post_facebook(video: Path, caption: str, account: dict, folder: str) -> None:
+    page_id, token = str(account.get("page_id", "")).strip(), str(account.get("access_token", "")).strip()
+    if not page_id or not token:
+        print(f"Facebook account skipped for {folder}: missing page_id/access_token")
         return
-
-    with VIDEO.open("rb") as f:
-        r = requests.post(
-            f"https://graph.facebook.com/{GRAPH}/{page}/videos",
-            params={
-                "access_token": token,
-                "description": CAPTION_FILE.read_text(encoding="utf-8"),
-            },
-            files={"source": ("daily_reel.mp4", f, "video/mp4")},
-            timeout=300,
-        )
-
+    with video.open("rb") as f:
+        r = requests.post(f"https://graph.facebook.com/{GRAPH}/{page_id}/videos",
+                          params={"access_token": token, "description": caption},
+                          files={"source": (video.name, f, "video/mp4")}, timeout=300)
     if not r.ok:
-        raise RuntimeError(f"Facebook publish failed: HTTP {r.status_code}: {r.text}")
+        raise RuntimeError(f"Facebook publish failed for {folder}/Page {page_id}: HTTP {r.status_code}: {r.text}")
+    print(f"Facebook published [{folder}] account key {account.get('account_key', '')}, Page {page_id}: {r.json()}")
 
-    print("Facebook published:", r.json())
 
-def instagram():
-    user_id = os.getenv("IG_USER_ID", "").strip()
-    token = os.getenv("IG_ACCESS_TOKEN", "").strip()
-    video_url = os.getenv("INSTAGRAM_VIDEO_URL", "").strip()
-
+def post_instagram(video_url: str, caption: str, account: dict, folder: str) -> None:
+    user_id, token = str(account.get("user_id", "")).strip(), str(account.get("access_token", "")).strip()
     if not user_id or not token:
-        print("Instagram skipped: IG_USER_ID or IG_ACCESS_TOKEN is missing.")
+        print(f"Instagram account skipped for {folder}: missing user_id/access_token")
         return
-
     if not video_url:
-        raise RuntimeError(
-            "Instagram video URL was not created automatically. "
-            "The workflow must create the public GitHub Release asset first."
-        )
-
-    caption = CAPTION_FILE.read_text(encoding="utf-8")
-
-    print("Creating Instagram Reel container...")
-    r = requests.post(
-        f"https://graph.facebook.com/{GRAPH}/{user_id}/media",
-        data={
-            "media_type": "REELS",
-            "video_url": video_url,
-            "caption": caption,
-            "access_token": token,
-        },
-        timeout=120,
-    )
-
+        raise RuntimeError(f"No public video URL for Instagram folder '{folder}'. Check workflow release setup.")
+    r = requests.post(f"https://graph.facebook.com/{GRAPH}/{user_id}/media",
+                      data={"media_type": "REELS", "video_url": video_url,
+                            "caption": caption, "access_token": token}, timeout=120)
     if not r.ok:
-        raise RuntimeError(
-            f"Instagram container creation failed: HTTP {r.status_code}: {r.text}"
-        )
-
+        raise RuntimeError(f"Instagram container failed for {folder}/{user_id}: HTTP {r.status_code}: {r.text}")
     creation_id = r.json().get("id")
     if not creation_id:
-        raise RuntimeError(f"Instagram did not return a creation ID: {r.text}")
-
-    print("Waiting for Instagram to finish processing...")
+        raise RuntimeError(f"Instagram returned no creation ID for {folder}/{user_id}: {r.text}")
     for attempt in range(36):
         time.sleep(5)
-
-        s = requests.get(
-            f"https://graph.facebook.com/{GRAPH}/{creation_id}",
-            params={
-                "fields": "status_code,status",
-                "access_token": token,
-            },
-            timeout=60,
-        )
-
-        if not s.ok:
-            raise RuntimeError(
-                f"Instagram status check failed: HTTP {s.status_code}: {s.text}"
-            )
-
-        data = s.json()
-        status = data.get("status_code")
-
-        print(f"Instagram processing attempt {attempt + 1}/36: {status}")
-
+        status_response = requests.get(f"https://graph.facebook.com/{GRAPH}/{creation_id}",
+                                       params={"fields": "status_code,status", "access_token": token}, timeout=60)
+        if not status_response.ok:
+            raise RuntimeError(f"Instagram status check failed: HTTP {status_response.status_code}: {status_response.text}")
+        status = status_response.json().get("status_code")
+        print(f"Instagram processing [{folder}/{user_id}] {attempt + 1}/36: {status}")
         if status == "FINISHED":
             break
-
         if status in {"ERROR", "EXPIRED"}:
-            raise RuntimeError(f"Instagram processing failed: {data}")
+            raise RuntimeError(f"Instagram processing failed for {folder}/{user_id}: {status_response.text}")
     else:
-        raise RuntimeError("Instagram video processing timed out.")
+        raise RuntimeError(f"Instagram processing timed out for {folder}/{user_id}")
+    publish = requests.post(f"https://graph.facebook.com/{GRAPH}/{user_id}/media_publish",
+                            data={"creation_id": creation_id, "access_token": token}, timeout=120)
+    if not publish.ok:
+        raise RuntimeError(f"Instagram publish failed for {folder}/{user_id}: HTTP {publish.status_code}: {publish.text}")
+    print(f"Instagram published [{folder}] account key {account.get('account_key', '')}, account {user_id}: {publish.json()}")
 
-    print("Publishing Instagram Reel...")
-    p = requests.post(
-        f"https://graph.facebook.com/{GRAPH}/{user_id}/media_publish",
-        data={
-            "creation_id": creation_id,
-            "access_token": token,
-        },
-        timeout=120,
-    )
 
-    if not p.ok:
-        raise RuntimeError(
-            f"Instagram publish failed: HTTP {p.status_code}: {p.text}"
-        )
+def main() -> None:
+    if len(sys.argv) != 2 or sys.argv[1].lower() not in {"facebook", "instagram", "all", "has-instagram"}:
+        raise SystemExit("Usage: python src/publish.py facebook|instagram|all|has-instagram")
+    target = sys.argv[1].lower()
+    accounts = load_accounts()
+    if target == "has-instagram":
+        print("has_instagram=" + str(any(v.get("instagram") for v in accounts.values())).lower())
+        return
+    urls = instagram_urls()
+    errors = []
+    for folder_dir in sorted(p for p in OUT_ROOT.iterdir() if p.is_dir()):
+        folder = folder_dir.name
+        video = folder_dir / "daily_reel.mp4"
+        caption_file = folder_dir / "caption.txt"
+        if not video.is_file() or not caption_file.is_file():
+            continue
+        caption = caption_file.read_text(encoding="utf-8").strip()
+        configured = accounts.get(folder, {"facebook": [], "instagram": []})
+        platforms = ("facebook", "instagram") if target == "all" else (target,)
+        for platform in platforms:
+            if platform == "has-instagram":
+                continue
+            for account in configured.get(platform, []):
+                try:
+                    if platform == "facebook":
+                        post_facebook(video, caption, account, folder)
+                    else:
+                        post_instagram(str(urls.get(folder, "")), caption, account, folder)
+                except Exception as exc:
+                    errors.append(f"{platform} [{folder}] [{account.get('account_key', 'unknown')}]: {exc}")
+                    print(f"ERROR: {errors[-1]}")
+    if errors:
+        raise RuntimeError("One or more publishing targets failed:\n" + "\n".join(errors))
 
-    print("Instagram published:", p.json())
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        raise SystemExit("Usage: python src/publish.py facebook|instagram")
-
-    action = sys.argv[1].lower()
-    if action == "facebook":
-        facebook()
-    elif action == "instagram":
-        instagram()
-    else:
-        raise SystemExit("Usage: python src/publish.py facebook|instagram")
+    main()
