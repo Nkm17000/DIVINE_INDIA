@@ -7,15 +7,25 @@
           "image": "hanumanji/2822855.jpg",
           "ring": "hanumanji/Om-Dakshin-Mukhay-Mantra.mp3",
           "selected_utc": "2026-10-09T14:01:00.821934+00:00"
+        },
+        {
+          "image": "hanumanji/hanuman-3840x2160.jpg",
+          "ring": "hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3",
+          "selected_utc": "2026-10-09T14:48:31.496536+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/2822855.jpg",
-        "ring": "rings/hanumanji/Om-Dakshin-Mukhay-Mantra.mp3",
-        "selected_utc": "2026-10-09T14:01:00.821934+00:00"
+        "image": "images/hanumanji/hanuman-3840x2160.jpg",
+        "ring": "rings/hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3",
+        "selected_utc": "2026-10-09T14:48:31.496536+00:00",
+        "cycle": 0
       },
-      "cycle": 0
+      "cycle": 0,
+      "used_pairs": [
+        "hanumanji/2822855.jpg|||hanumanji/Om-Dakshin-Mukhay-Mantra.mp3",
+        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3"
+      ]
     },
     "maadurga": {
       "history": [
@@ -23,15 +33,25 @@
           "image": "maadurga/wp5235332.jpg",
           "ring": "maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
           "selected_utc": "2026-10-09T14:01:26.905443+00:00"
+        },
+        {
+          "image": "maadurga/wp5478376.jpg",
+          "ring": "maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3",
+          "selected_utc": "2026-10-09T14:49:41.948232+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/wp5235332.jpg",
-        "ring": "rings/maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
-        "selected_utc": "2026-10-09T14:01:26.905443+00:00"
+        "image": "images/maadurga/wp5478376.jpg",
+        "ring": "rings/maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3",
+        "selected_utc": "2026-10-09T14:49:41.948232+00:00",
+        "cycle": 0
       },
-      "cycle": 0
+      "cycle": 0,
+      "used_pairs": [
+        "maadurga/wp5235332.jpg|||maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
+        "maadurga/wp5478376.jpg|||maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3"
+      ]
     },
     "shreekrishna": {
       "history": [
@@ -39,15 +59,25 @@
           "image": "shreekrishna/Krishna by the Sunset River.png",
           "ring": "shreekrishna/Kan-kya-gotu-krishana.mp3",
           "selected_utc": "2026-10-09T14:01:47.303041+00:00"
+        },
+        {
+          "image": "shreekrishna/Krishna by the Sacred River at Sunset.png",
+          "ring": "shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
+          "selected_utc": "2026-10-09T14:50:15.952733+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Krishna by the Sunset River.png",
-        "ring": "rings/shreekrishna/Kan-kya-gotu-krishana.mp3",
-        "selected_utc": "2026-10-09T14:01:47.303041+00:00"
+        "image": "images/shreekrishna/Krishna by the Sacred River at Sunset.png",
+        "ring": "rings/shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
+        "selected_utc": "2026-10-09T14:50:15.952733+00:00",
+        "cycle": 0
       },
-      "cycle": 0
+      "cycle": 0,
+      "used_pairs": [
+        "shreekrishna/Krishna by the Sunset River.png|||shreekrishna/Kan-kya-gotu-krishana.mp3",
+        "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/Naam-Hai-Tera-Taranhara.mp3"
+      ]
     },
     "shyambaba": {
       "history": [
@@ -55,15 +85,25 @@
           "image": "shyambaba/shree_shyam_image_4.jpg",
           "ring": "shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
           "selected_utc": "2026-10-09T14:02:11.252712+00:00"
+        },
+        {
+          "image": "shyambaba/Ornate Khatu Shyam Temple Shrine-10.png",
+          "ring": "shyambaba/mere-khatu-wale-shyam.mp3",
+          "selected_utc": "2026-10-09T14:50:38.758066+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/shree_shyam_image_4.jpg",
-        "ring": "rings/shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
-        "selected_utc": "2026-10-09T14:02:11.252712+00:00"
+        "image": "images/shyambaba/Ornate Khatu Shyam Temple Shrine-10.png",
+        "ring": "rings/shyambaba/mere-khatu-wale-shyam.mp3",
+        "selected_utc": "2026-10-09T14:50:38.758066+00:00",
+        "cycle": 0
       },
-      "cycle": 0
+      "cycle": 0,
+      "used_pairs": [
+        "shyambaba/shree_shyam_image_4.jpg|||shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
+        "shyambaba/Ornate Khatu Shyam Temple Shrine-10.png|||shyambaba/mere-khatu-wale-shyam.mp3"
+      ]
     }
   }
 }
