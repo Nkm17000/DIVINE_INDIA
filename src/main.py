@@ -155,7 +155,8 @@ def assert_same_deity_folder(image: Path, ring: Path) -> str:
     return image_rel.parts[0]
 
 
-def verify_video(path: Path) -> None:
+def verify_video(path: Path, expected_width: int, expected_height: int) -> None:
+    """Verify the rendered video against the orientation chosen by create_video()."""
     probe = subprocess.run(
         ["ffprobe", "-v", "error", "-select_streams", "v:0",
          "-show_entries", "stream=width,height,nb_frames", "-of", "json", str(path)],
@@ -165,8 +166,13 @@ def verify_video(path: Path) -> None:
     if not streams:
         raise RuntimeError(f"ffprobe found no video stream in {path}")
     stream = streams[0]
-    if int(stream.get("width", 0)) != 1080 or int(stream.get("height", 0)) != 1920:
-        raise RuntimeError(f"Unexpected dimensions for {path}: {stream}")
+    actual_width = int(stream.get("width", 0))
+    actual_height = int(stream.get("height", 0))
+    if actual_width != expected_width or actual_height != expected_height:
+        raise RuntimeError(
+            f"Unexpected dimensions for {path}: got {actual_width}x{actual_height}; "
+            f"expected {expected_width}x{expected_height}."
+        )
     # Audio length determines the final video length, so short ringtone clips are valid.
     if int(stream.get("nb_frames", 0)) < 2:
         raise RuntimeError(f"Video has too few frames: {path}: {stream}")
@@ -220,7 +226,9 @@ def main() -> None:
         seed_text = f"{selection['folder']}|{selection['image']}|{selection['ring']}|{selection['selected_utc']}"
         seed = int(hashlib.sha256(seed_text.encode()).hexdigest()[:8], 16)
         effects = create_video(image, ring, output, seed)
-        verify_video(output)
+        # Validate the dimensions selected by create_video for this source image.
+        # Portrait sources render 1080x1920; landscape sources render 1920x1080.
+        verify_video(output, int(effects["width"]), int(effects["height"]))
 
         caption = {
             "hanumanji": "🙏 जय बजरंगबली 🙏",
