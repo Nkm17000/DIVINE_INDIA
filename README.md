@@ -1,87 +1,118 @@
 # DIVINE INDIA — Folder-Matched Devotional Reels
 
-## Critical media-matching guarantee
+## What it does
 
-**The image and ringtone are always selected from folders with the exact same name.**
-The generator reads only these pairs:
+- Generates one MP4 per eligible folder present under both `images/` and `rings/`.
+- Selects images and audio only from the same exact folder name.
+- Uses continuous diagonal movement for vertical and horizontal images.
+- Matches video duration to the selected audio duration.
+- Saves used image/audio combinations in `state/rotation_state.json` and avoids repeating a pair until all eligible combinations for that folder have been used.
+- Does not require Cloudflare.
+- Publishes each generated folder's video only to the Facebook and Instagram accounts mapped to that folder in `config/social_accounts.json`.
+- Runs a daily cleanup workflow for old generated Actions artifacts and temporary releases; source media and rotation history are preserved.
 
-- `images/hanumanji/` + `rings/hanumanji/`
-- `images/maadurga/` + `rings/maadurga/`
-- `images/shreekrishna/` + `rings/shreekrishna/`
-- `images/shyambaba/` + `rings/shyambaba/`
+## Folder layout
 
-For every run, it generates one separate MP4 for each matching deity folder.
-It never picks an image from one deity and a ringtone from another. Folder matching is
-case-sensitive on GitHub's Linux runner. If a folder is missing on either side, it is
-skipped with a warning rather than falling back to a different folder.
+```text
+images/hanumanji/       rings/hanumanji/
+images/shreekrishna/    rings/shreekrishna/
+images/shyambaba/       rings/shyambaba/
+images/maadurga/        rings/maadurga/
+```
 
-## Rotation
+The folder names under `images/` and `rings/` must match exactly.
 
-Each deity folder has its own rotation history in `state/rotation_state.json`.
-The most recent 10 image/ringtone combinations for that folder are excluded from the next
-selection whenever other combinations are available. If a folder has no alternative
-combination outside its last 10, a repeat is mathematically unavoidable and the generator
-logs the start of a new cycle. Different folders never share rotation history.
+## Configure accounts in one JSON file
 
-## Output
+Edit `config/social_accounts.json`. You only configure which folder names each account should publish to. Credentials are stored once as GitHub Secrets and can be shared by multiple folders.
 
-- `output/hanumanji/daily_reel.mp4`
-- `output/maadurga/daily_reel.mp4`
-- `output/shreekrishna/daily_reel.mp4`
-- `output/shyambaba/daily_reel.mp4`
+Example:
 
-Each generated folder also has its own `caption.txt` and `selection.json`. For compatibility
-with the existing single-destination publishing step, `output/daily_reel.mp4` is a copy of
-the first generated folder's video. The GitHub Actions artifact includes all folder-specific
-videos. Review/update the publishing workflow before assuming every folder-specific video is
-being published to every social account.
+```json
+{
+  "facebook": {
+    "FB_PAGE_KEY": ["hanumanji", "shreekrishna"],
+    "FB_PAGE_KEY_2": ["hanumanji"]
+  },
+  "instagram": {
+    "INSTA_PAGE_KEY": ["hanumanji", "shreekrishna"],
+    "INSTA_PAGE_KEY_2": ["shreekrishna"]
+  }
+}
+```
+
+This means:
+
+- Facebook account 1 publishes to `hanumanji` and `shreekrishna`.
+- Facebook account 2 publishes only to `hanumanji`.
+- Instagram account 1 publishes to `hanumanji` and `shreekrishna`.
+- Instagram account 2 publishes only to `shreekrishna`.
+
+Folder names must match the actual folder names exactly. To stop an account from publishing to a folder, remove that folder name from its array. To add another account, add another key such as `FB_PAGE_KEY_3` or `INSTA_PAGE_KEY_3` and its folder array.
+
+## Add credentials to GitHub Secrets
+
+Open **GitHub repository → Settings → Secrets and variables → Actions → New repository secret**.
+
+For each Facebook account, add:
+
+| GitHub Secret | Value |
+|---|---|
+| `FB_PAGE_KEY` | Facebook Page ID |
+| `FB_PAGE_TOKEN` | Access token for that Page |
+| `FB_PAGE_KEY_2` | Second Facebook Page ID |
+| `FB_PAGE_TOKEN_2` | Second Page access token |
+| `FB_PAGE_KEY_3` | Third Facebook Page ID, if used |
+| `FB_PAGE_TOKEN_3` | Third Page access token, if used |
+
+For each Instagram account, add:
+
+| GitHub Secret | Value |
+|---|---|
+| `INSTA_PAGE_KEY` | Instagram professional account ID |
+| `INSTA_PAGE_TOKEN` | Access token for that Instagram account |
+| `INSTA_PAGE_KEY_2` | Second Instagram professional account ID |
+| `INSTA_PAGE_TOKEN_2` | Second Instagram access token |
+| `INSTA_PAGE_KEY_3` | Third Instagram account ID, if used |
+| `INSTA_PAGE_TOKEN_3` | Third Instagram access token, if used |
+
+**Important pairing rule:** `FB_PAGE_KEY` pairs with `FB_PAGE_TOKEN`; `FB_PAGE_KEY_2` pairs with `FB_PAGE_TOKEN_2`. Likewise, `INSTA_PAGE_KEY` pairs with `INSTA_PAGE_TOKEN`, and `_2` pairs with `_2`. Do not put actual IDs or tokens in the JSON file. The workflow explicitly maps up to 10 account slots per platform to environment variables; add secrets only for account slots you use.
+
+If only one Facebook account and one Instagram account are used, you only need these four secrets: `FB_PAGE_KEY`, `FB_PAGE_TOKEN`, `INSTA_PAGE_KEY`, and `INSTA_PAGE_TOKEN`. A single account can be assigned to as many folders as you want in the JSON without duplicating credentials.
+
+## Media selection and fallback
+
+Files are sorted by filename. If a folder contains **more than 20** images or audio files, the first 10 and last 10 are excluded from selection. If it contains **20 or fewer**, all files are eligible so a video can still be generated. The combination history is tracked per folder and persists between workflow runs. Keep `state/rotation_state.json` committed; it must not be removed during cleanup.
+
+## GitHub Actions
+
+The `Daily Divine India Reels` workflow supports manual execution, push to `main`, and scheduled runs at 6:00 AM and 6:00 PM India Standard Time. It installs FFmpeg and Python dependencies, generates videos, publishes them to configured accounts, and commits rotation history.
+
+The `Daily Generated Artifact Cleanup` workflow runs daily and can be triggered manually. It removes generated GitHub Actions artifacts and temporary `daily-reel-*` releases older than 24 hours. It does **not** delete images, ringtone files, source code, configuration, or rotation history.
+
+### Instagram URL requirement
+
+Instagram Reels publishing needs a publicly downloadable HTTPS video URL. The current workflow temporarily uses GitHub Release assets for that purpose; with this approach, the GitHub repository must be public. Temporary releases are deleted after publishing and stale releases are removed by cleanup.
 
 ## Run locally
 
-Requires Python 3.12 and FFmpeg/ffprobe installed.
+Requires Python 3.12 and FFmpeg/ffprobe.
 
 ```bash
 python -m pip install -r requirements.txt
 python src/main.py
 ```
 
-## GitHub Actions
-
-The existing workflow supports manual run, push to `main`, and two scheduled runs per day
-(6:00 AM and 6:00 PM India Standard Time). Python dependencies are installed from
-`requirements.txt`; the workflow uploads generated MP4s and selection metadata as artifacts.
-
-## Account configuration and credentials
-
-Set publishing IDs/tokens as GitHub Actions secrets. Never commit access tokens to this
-repository. Instagram's Graph API needs a publicly downloadable video URL and the relevant
-Instagram professional-account permissions. Facebook publishing requires a Page ID and a
-Page access token with video publishing permissions.
-
-## Troubleshooting the folder match
-
-If a folder is not processed, check that the exact same folder name exists under both
-`images/` and `rings/`, and that each contains at least one supported image/audio file.
-Supported images: JPG, JPEG, PNG, WEBP. Supported audio: MP3, M4A, WAV, AAC, OGG, FLAC.
-
-
-## Continuous diagonal animation (updated)
-
-The renderer now creates each reel in one FFmpeg pass instead of joining eight separate motion segments.
-This removes segment cuts and direction-change freezes. Motion follows a continuous sinusoidal path:
-
-- **Portrait/vertical image:** top → center-left → bottom → center-right → top.
-- **Landscape/horizontal image:** left → center-top → right → center-bottom → left.
-
-The direction changes are gradual and loop smoothly until the audio ends. The output duration is matched to the selected audio duration; audio is not silently looped or cut to a fixed 30-second duration. Image and audio are still selected only from the same deity folder.
-
-Run a short local preview:
+To run tests:
 
 ```bash
-python src/video.py \
-  --image "images/shreekrishna/Krishna and Arjuna at Dawn.png" \
-  --audio "rings/shreekrishna/Krishna-Flute-Background-Music-Bansuri.mp3" \
-  --output output/test-preview.mp4 --width 540 --height 960 --fps 24 --max-seconds 8
+python -m unittest discover -s tests -v
 ```
 
-Omit `--max-seconds` for the full audio duration. Production defaults are 1080×1920 at 30 FPS.
+## Troubleshooting
+
+- If an account is skipped, verify both its ID/key and token secrets exist and that the JSON key names match the secret names.
+- If a folder does not publish, confirm its exact name appears in the appropriate `facebook` or `instagram` array.
+- If a folder is skipped during generation, check for matching folders under both `images/` and `rings/` and at least one supported image/audio file.
+- Supported images: JPG, JPEG, PNG, WEBP. Supported audio: MP3, M4A, WAV, AAC, OGG, FLAC.
+- Never print or commit access tokens.
