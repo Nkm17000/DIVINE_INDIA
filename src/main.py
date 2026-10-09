@@ -19,7 +19,7 @@ OUT_ROOT = ROOT / "output"
 STATE_FILE = ROOT / "state" / "rotation_state.json"
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
 AUDIO_EXTS = {".mp3", ".m4a", ".wav", ".aac", ".ogg", ".flac"}
-EXCLUDE_EDGE_FILES = 10
+RECENT_LIMIT = 10
 
 
 def media_in(folder: Path, extensions: set[str]) -> list[Path]:
@@ -48,69 +48,48 @@ def save_state(state: dict) -> None:
     tmp.replace(STATE_FILE)
 
 
-def eligible_media(files: list[Path], edge_count: int = EXCLUDE_EDGE_FILES) -> list[Path]:
-    """Prefer excluding first/last N files; fall back to all files when too few remain."""
-    ordered = sorted(files, key=lambda p: p.as_posix().casefold())
-    if not ordered:
-        return []
-    if len(ordered) > edge_count * 2:
-        return ordered[edge_count:-edge_count]
-    # User-approved fallback: when strict edge exclusion would leave no media,
-    # use the full collection. Combination history still prevents pair reuse
-    # until every possible image/ringtone pair has been used.
-    print(f"WARNING: only {len(ordered)} files; using all media instead of edge exclusion.")
-    return ordered
-
-
 def choose_pair(folder_name: str, images: list[Path], rings: list[Path],
                 state: dict) -> tuple[Path, Path, dict]:
-    """Choose an eligible pair never used before, until all eligible pairs are exhausted."""
+    """Select image+ring from matching deity folders; avoid last 10 pairs per folder."""
+    # Include folder-relative names in the identity, not only basenames.
     folder_state = state["folders"].setdefault(
-        folder_name, {"history": [], "used_pairs": [], "last_selection": None, "cycle": 0}
+        folder_name, {"history": [], "last_selection": None, "cycle": 0}
     )
-    folder_state.setdefault("history", [])
-    folder_state.setdefault("used_pairs", [])
-    # Migrate the prior rotation format so its recorded combinations stay excluded.
-    for old_entry in folder_state["history"]:
-        if isinstance(old_entry, dict) and old_entry.get("image") and old_entry.get("ring"):
-            old_key = f"{old_entry['image']}|||{old_entry['ring']}"
-            if old_key not in folder_state["used_pairs"]:
-                folder_state["used_pairs"].append(old_key)
-    eligible_images = eligible_media(images)
-    eligible_rings = eligible_media(rings)
-    if not eligible_images or not eligible_rings:
-        raise RuntimeError(
-            f"Folder '{folder_name}' has no usable images or ringtones. "
-            f"Found {len(images)} images and {len(rings)} ringtones."
-        )
+    history = folder_state.setdefault("history", [])
+    available_pairs = [(im, ring) for im in images for ring in rings]
+    if not available_pairs:
+        raise RuntimeError(f"No valid image/ringtone pairs found for folder '{folder_name}'.")
 
-    # Persist relative paths so combinations are remembered across workflow runs.
-    all_pairs = [(im, ring) for im in eligible_images for ring in eligible_rings]
-    used = set(folder_state["used_pairs"])
+    recent = {
+        (entry.get("image"), entry.get("ring"))
+        for entry in history[-RECENT_LIMIT:]
+        if isinstance(entry, dict)
+    }
     candidates = [
-        (im, ring) for im, ring in all_pairs
-        if f"{im.relative_to(IMAGE_ROOT).as_posix()}|||{ring.relative_to(RING_ROOT).as_posix()}" not in used
+        (im, ring) for im, ring in available_pairs
+        if (im.relative_to(IMAGE_ROOT).as_posix(),
+            ring.relative_to(RING_ROOT).as_posix()) not in recent
     ]
+
+    # If there are 10 or fewer total pairs, a repeated pair may become mathematically
+    # unavoidable after the recent-history window covers every possible combination.
     if not candidates:
+        candidates = available_pairs
         folder_state["cycle"] = int(folder_state.get("cycle", 0)) + 1
-        folder_state["used_pairs"] = []
-        candidates = all_pairs
-        print(f"PAIR CYCLE RESET [{folder_name}]: all eligible combinations have been used.")
 
     image, ring = random.choice(candidates)
-    image_key = image.relative_to(IMAGE_ROOT).as_posix()
-    ring_key = ring.relative_to(RING_ROOT).as_posix()
-    pair_key = f"{image_key}|||{ring_key}"
     selection = {
         "folder": folder_name,
         "image": image.relative_to(ROOT).as_posix(),
         "ring": ring.relative_to(ROOT).as_posix(),
         "selected_utc": datetime.now(timezone.utc).isoformat(),
-        "cycle": folder_state["cycle"],
     }
-    folder_state["used_pairs"].append(pair_key)
-    folder_state["history"].append({"image": image_key, "ring": ring_key,
-                                    "selected_utc": selection["selected_utc"]})
+    history.append({
+        "image": image.relative_to(IMAGE_ROOT).as_posix(),
+        "ring": ring.relative_to(RING_ROOT).as_posix(),
+        "selected_utc": selection["selected_utc"],
+    })
+    folder_state["history"] = history[-200:]
     folder_state["last_selection"] = selection
     return image, ring, selection
 
@@ -178,11 +157,7 @@ def main() -> None:
             print(f"SKIP {folder_name}: {len(images)} images, {len(rings)} ringtones.")
             continue
 
-        try:
-            image, ring, selection = choose_pair(folder_name, images, rings, state)
-        except RuntimeError as exc:
-            print(f"SKIP {folder_name}: {exc}")
-            continue
+        image, ring, selection = choose_pair(folder_name, images, rings, state)
         # Defence in depth: never render if the actual selected paths do not match.
         actual_folder = assert_same_deity_folder(image, ring)
         if actual_folder != folder_name:
@@ -219,7 +194,8 @@ def main() -> None:
     if not generated:
         raise RuntimeError("No videos generated: all matching folders were empty or invalid.")
 
-    # Retain legacy aliases for integrations, while publishing uses folder-specific files.
+    # Backwards compatibility with the existing single-video publisher.
+    # The per-folder videos remain separate; this copy is NOT used to select media.
     primary = generated[0]
     shutil.copy2(primary[1], OUT_ROOT / "daily_reel.mp4")
     (OUT_ROOT / "caption.txt").write_text(primary[2], encoding="utf-8")
