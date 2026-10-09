@@ -1,4 +1,69 @@
 {
   "schema_version": 2,
-  "folders": {}
+  "folders": {
+    "hanumanji": {
+      "history": [
+        {
+          "image": "hanumanji/2822855.jpg",
+          "ring": "hanumanji/Om-Dakshin-Mukhay-Mantra.mp3",
+          "selected_utc": "2026-10-09T14:01:00.821934+00:00"
+        }
+      ],
+      "last_selection": {
+        "folder": "hanumanji",
+        "image": "images/hanumanji/2822855.jpg",
+        "ring": "rings/hanumanji/Om-Dakshin-Mukhay-Mantra.mp3",
+        "selected_utc": "2026-10-09T14:01:00.821934+00:00"
+      },
+      "cycle": 0
+    },
+    "maadurga": {
+      "history": [
+        {
+          "image": "maadurga/wp5235332.jpg",
+          "ring": "maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
+          "selected_utc": "2026-10-09T14:01:26.905443+00:00"
+        }
+      ],
+      "last_selection": {
+        "folder": "maadurga",
+        "image": "images/maadurga/wp5235332.jpg",
+        "ring": "rings/maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
+        "selected_utc": "2026-10-09T14:01:26.905443+00:00"
+      },
+      "cycle": 0
+    },
+    "shreekrishna": {
+      "history": [
+        {
+          "image": "shreekrishna/Krishna by the Sunset River.png",
+          "ring": "shreekrishna/Kan-kya-gotu-krishana.mp3",
+          "selected_utc": "2026-10-09T14:01:47.303041+00:00"
+        }
+      ],
+      "last_selection": {
+        "folder": "shreekrishna",
+        "image": "images/shreekrishna/Krishna by the Sunset River.png",
+        "ring": "rings/shreekrishna/Kan-kya-gotu-krishana.mp3",
+        "selected_utc": "2026-10-09T14:01:47.303041+00:00"
+      },
+      "cycle": 0
+    },
+    "shyambaba": {
+      "history": [
+        {
+          "image": "shyambaba/shree_shyam_image_4.jpg",
+          "ring": "shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
+          "selected_utc": "2026-10-09T14:02:11.252712+00:00"
+        }
+      ],
+      "last_selection": {
+        "folder": "shyambaba",
+        "image": "images/shyambaba/shree_shyam_image_4.jpg",
+        "ring": "rings/shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
+        "selected_utc": "2026-10-09T14:02:11.252712+00:00"
+      },
+      "cycle": 0
+    }
+  }
 }
