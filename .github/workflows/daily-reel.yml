@@ -11,8 +11,8 @@ on:
     # GitHub cron uses UTC. India Standard Time is UTC+05:30.
     # 6:00 AM IST = 00:30 UTC
     # 6:00 PM IST = 12:30 UTC
-    - cron: "0 1,14 * * *"
-
+    - cron: "30 0 * * *"
+    - cron: "30 12 * * *"
 permissions:
   contents: write
 
@@ -58,11 +58,14 @@ jobs:
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
-          name: daily-shyam-krishna-reel-${{ github.run_number }}
+          name: divine-india-reels-${{ github.run_number }}
           path: |
             output/daily_reel.mp4
             output/caption.txt
             output/selection.json
+            output/*/daily_reel.mp4
+            output/*/caption.txt
+            output/*/selection.json
           retention-days: 7
 
       # Instagram's Graph API needs a publicly reachable HTTPS video URL.

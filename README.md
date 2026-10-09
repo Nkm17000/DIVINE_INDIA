@@ -1,82 +1,87 @@
-# Divine India Daily Devotional Reel
+# DIVINE INDIA — Folder-Matched Devotional Reels
 
-The workflow automatically creates a moving 9:16 devotional reel from one image and one ringtone.
+## Critical media-matching guarantee
 
-## Animation
+**The image and ringtone are always selected from folders with the exact same name.**
+The generator reads only these pairs:
 
-The same image is reused across five animated segments:
-1. slow zoom in + drift
-2. slow zoom out
-3. left-to-right pan
-4. right-to-left pan
-5. diagonal drift + zoom
+- `images/hanumanji/` + `rings/hanumanji/`
+- `images/maadurga/` + `rings/maadurga/`
+- `images/shreekrishna/` + `rings/shreekrishna/`
+- `images/shyambaba/` + `rings/shyambaba/`
 
-The effect order changes on each run.
+For every run, it generates one separate MP4 for each matching deity folder.
+It never picks an image from one deity and a ringtone from another. Folder matching is
+case-sensitive on GitHub's Linux runner. If a folder is missing on either side, it is
+skipped with a warning rather than falling back to a different folder.
 
-## Media folders
+## Rotation
 
-The code supports the existing repository layout:
+Each deity folder has its own rotation history in `state/rotation_state.json`.
+The most recent 10 image/ringtone combinations for that folder are excluded from the next
+selection whenever other combinations are available. If a folder has no alternative
+combination outside its last 10, a repeat is mathematically unavoidable and the generator
+logs the start of a new cycle. Different folders never share rotation history.
 
-- `images/`
-- `audio/`
+## Output
 
-It also supports:
+- `output/hanumanji/daily_reel.mp4`
+- `output/maadurga/daily_reel.mp4`
+- `output/shreekrishna/daily_reel.mp4`
+- `output/shyambaba/daily_reel.mp4`
 
-- `assets/images/`
-- `assets/ringtones/`
+Each generated folder also has its own `caption.txt` and `selection.json`. For compatibility
+with the existing single-destination publishing step, `output/daily_reel.mp4` is a copy of
+the first generated folder's video. The GitHub Actions artifact includes all folder-specific
+videos. Review/update the publishing workflow before assuming every folder-specific video is
+being published to every social account.
 
-## Schedule
+## Run locally
 
-- Manual `workflow_dispatch`
-- Push to `main`
-- Daily at 5:00 AM IST (`30 23 * * *` UTC)
+Requires Python 3.12 and FFmpeg/ffprobe installed.
 
-## Video artifact
-
-Every generated MP4 is uploaded to GitHub Actions Artifacts for 7 days, regardless of publishing results.
-
-## Facebook
-
-Set these GitHub Secrets if Facebook publishing is wanted:
-
-- `FB_PAGE_ID`
-- `FB_PAGE_ACCESS_TOKEN`
-
-If missing, Facebook is skipped and video generation continues.
-
-## Instagram — fully automatic URL
-
-Set only:
-
-- `IG_USER_ID`
-- `IG_ACCESS_TOKEN`
-
-You do **not** need to set `INSTAGRAM_VIDEO_URL`.
-
-When Instagram credentials exist, the workflow automatically:
-1. creates the MP4;
-2. uploads it to a temporary public GitHub Release asset;
-3. obtains its public HTTPS download URL;
-4. sends that URL to the Instagram Graph API;
-5. waits for Instagram processing;
-6. publishes the Reel;
-7. deletes the temporary GitHub Release and tag.
-
-The repository must be **public** for Instagram to fetch the GitHub release asset without authentication.
-
-No R2 setup is required.
-
-## Required permissions
-
-The workflow uses:
-
-```yaml
-permissions:
-  contents: write
+```bash
+python -m pip install -r requirements.txt
+python src/main.py
 ```
 
-so its built-in GitHub token can create/delete the temporary release asset.
+## GitHub Actions
+
+The existing workflow supports manual run, push to `main`, and two scheduled runs per day
+(6:00 AM and 6:00 PM India Standard Time). Python dependencies are installed from
+`requirements.txt`; the workflow uploads generated MP4s and selection metadata as artifacts.
+
+## Account configuration and credentials
+
+Set publishing IDs/tokens as GitHub Actions secrets. Never commit access tokens to this
+repository. Instagram's Graph API needs a publicly downloadable video URL and the relevant
+Instagram professional-account permissions. Facebook publishing requires a Page ID and a
+Page access token with video publishing permissions.
+
+## Troubleshooting the folder match
+
+If a folder is not processed, check that the exact same folder name exists under both
+`images/` and `rings/`, and that each contains at least one supported image/audio file.
+Supported images: JPG, JPEG, PNG, WEBP. Supported audio: MP3, M4A, WAV, AAC, OGG, FLAC.
 
 
-### 30-second animation
-The same image is continuously animated through 8 subtle motion phases of about 3.75 seconds each. Effects are shuffled per reel. No fade-to-black or blank transition frames.
+## Continuous diagonal animation (updated)
+
+The renderer now creates each reel in one FFmpeg pass instead of joining eight separate motion segments.
+This removes segment cuts and direction-change freezes. Motion follows a continuous sinusoidal path:
+
+- **Portrait/vertical image:** top → center-left → bottom → center-right → top.
+- **Landscape/horizontal image:** left → center-top → right → center-bottom → left.
+
+The direction changes are gradual and loop smoothly until the audio ends. The output duration is matched to the selected audio duration; audio is not silently looped or cut to a fixed 30-second duration. Image and audio are still selected only from the same deity folder.
+
+Run a short local preview:
+
+```bash
+python src/video.py \
+  --image "images/shreekrishna/Krishna and Arjuna at Dawn.png" \
+  --audio "rings/shreekrishna/Krishna-Flute-Background-Music-Bansuri.mp3" \
+  --output output/test-preview.mp4 --width 540 --height 960 --fps 24 --max-seconds 8
+```
+
+Omit `--max-seconds` for the full audio duration. Production defaults are 1080×1920 at 30 FPS.

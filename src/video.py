@@ -1,73 +1,135 @@
 #!/usr/bin/env python3
+"""Create a single continuous, smooth diagonal devotional reel.
+
+Vertical source image: top -> center-left -> bottom -> center-right -> top.
+Landscape source image: left -> center-top -> right -> center-bottom -> left.
+The motion uses a smooth sinusoidal path with no segment cuts or pauses.
+"""
 from __future__ import annotations
-import argparse, math, random, subprocess, tempfile
+
+import argparse
+import json
+import math
+import subprocess
 from pathlib import Path
 
-W,H,FPS=1080,1920,30
-TOTAL_SECONDS=30
-SEGMENTS=8
-SEGMENT_SECONDS=TOTAL_SECONDS/SEGMENTS
-FRAMES=math.ceil(SEGMENT_SECONDS*FPS)
+W, H, FPS = 1080, 1920, 30
+ZOOM = 1.22
 
-EFFECTS=["zoom_in_up","pan_up","zoom_out","pan_lr","pan_rl","diagonal","zoom_in_left","zoom_out_up"]
 
-def run(cmd):
-    print(">", " ".join(map(str,cmd)))
-    subprocess.run(cmd,check=True)
+def run(cmd: list[str]) -> None:
+    print(">", " ".join(map(str, cmd)))
+    subprocess.run(cmd, check=True)
 
-def vf(effect):
-    # zoompan exposes the output-frame counter as `on`. Use the known
-    # segment length instead of N/d, which are not valid expression variables here.
-    den=max(FRAMES-1, 1)
-    if effect=="zoom_in_up":
-        z=f"min(1.02+on*0.00095,1.135)"; x=f"(iw-iw/zoom)/2"; y=f"(ih-ih/zoom)*(0.58-0.10*on/{den})"
-    elif effect=="pan_up":
-        z=f"1.08"; x=f"(iw-iw/zoom)/2"; y=f"(ih-ih/zoom)*(0.72-0.44*on/{den})"
-    elif effect=="zoom_out":
-        z="max(1.14-on*0.00095,1.02)"; x="(iw-iw/zoom)/2"; y="(ih-ih/zoom)/2"
-    elif effect=="pan_lr":
-        z=f"1.08"; x=f"(iw-iw/zoom)*(0.08+0.84*on/{den})"; y=f"(ih-ih/zoom)/2"
-    elif effect=="pan_rl":
-        z=f"1.08"; x=f"(iw-iw/zoom)*(0.92-0.84*on/{den})"; y=f"(ih-ih/zoom)/2"
-    elif effect=="diagonal":
-        z=f"1.06+on*0.00045"; x=f"(iw-iw/zoom)*(0.10+0.65*on/{den})"; y=f"(ih-ih/zoom)*(0.65-0.50*on/{den})"
-    elif effect=="zoom_in_left":
-        z=f"min(1.02+on*0.00090,1.13)"; x=f"(iw-iw/zoom)*(0.78-0.50*on/{den})"; y=f"(ih-ih/zoom)/2"
-    else:
-        z=f"max(1.13-on*0.00090,1.02)"; x=f"(iw-iw/zoom)/2"; y=f"(ih-ih/zoom)*(0.65-0.30*on/{den})"
-    return (f"scale=2160:3840:force_original_aspect_ratio=increase,"
-            f"crop=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':"
-            f"d={FRAMES}:s={W}x{H}:fps={FPS},setsar=1,format=yuv420p")
 
-def make_segment(image,out,effect):
-    run(["ffmpeg","-y","-hide_banner","-loglevel","error","-loop","1","-i",str(image),
-         "-vf",vf(effect),"-frames:v",str(FRAMES),"-an",
-         "-c:v","libx264","-preset","medium","-crf","20","-pix_fmt","yuv420p",
-         "-movflags","+faststart",str(out)])
+def probe(path: Path) -> dict:
+    result = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries",
+         "format=duration:stream=codec_type,width,height,duration",
+         "-of", "json", str(path)],
+        capture_output=True, text=True, check=True,
+    )
+    return json.loads(result.stdout)
 
-def create_video(image,audio,output,seed=None):
-    rng=random.Random(seed if seed is not None else random.randrange(2**32))
-    effects=EFFECTS[:]; rng.shuffle(effects)
-    output.parent.mkdir(parents=True,exist_ok=True)
-    with tempfile.TemporaryDirectory() as td:
-        td=Path(td); segs=[]
-        for i,e in enumerate(effects):
-            p=td/f"seg{i}.mp4"; make_segment(image,p,e); segs.append(p)
-        concat=td/"concat.txt"
-        concat.write_text("".join(f"file '{p.as_posix()}'\n" for p in segs),encoding="utf-8")
-        joined=td/"joined.mp4"
-        run(["ffmpeg","-y","-hide_banner","-loglevel","error","-f","concat","-safe","0",
-             "-i",str(concat),"-vf",f"fps={FPS},format=yuv420p","-t",str(TOTAL_SECONDS),
-             "-an","-c:v","libx264","-preset","medium","-crf","20","-pix_fmt","yuv420p",
-             "-movflags","+faststart",str(joined)])
-        run(["ffmpeg","-y","-hide_banner","-loglevel","error","-i",str(joined),
-             "-stream_loop","-1","-i",str(audio),"-map","0:v:0","-map","1:a:0",
-             "-t",str(TOTAL_SECONDS),"-c:v","copy","-c:a","aac","-b:a","192k",
-             "-ar","44100","-shortest","-movflags","+faststart",str(output)])
-    return effects
 
-if __name__=="__main__":
-    ap=argparse.ArgumentParser()
-    ap.add_argument("--image",required=True,type=Path); ap.add_argument("--audio",required=True,type=Path)
-    ap.add_argument("--output",required=True,type=Path); ap.add_argument("--seed",type=int)
-    a=ap.parse_args(); print("EFFECTS:",create_video(a.image,a.audio,a.output,a.seed))
+def media_duration(path: Path) -> float:
+    data = probe(path)
+    durations = []
+    for stream in data.get("streams", []):
+        if stream.get("codec_type") == "audio" and stream.get("duration"):
+            durations.append(float(stream["duration"]))
+    if data.get("format", {}).get("duration"):
+        durations.append(float(data["format"]["duration"]))
+    if not durations:
+        raise RuntimeError(f"Could not determine media duration: {path}")
+    return max(durations)
+
+
+def image_dimensions(path: Path) -> tuple[int, int]:
+    data = probe(path)
+    for stream in data.get("streams", []):
+        if stream.get("codec_type") == "video":
+            return int(stream["width"]), int(stream["height"])
+    raise RuntimeError(f"Could not determine image dimensions: {path}")
+
+
+def vf_for(image: Path, duration: float, width: int, height: int, fps: int) -> str:
+    """Build a continuous looped path; `on` is the output-frame counter."""
+    iw, ih = image_dimensions(image)
+    frames = max(2, math.ceil(duration * fps))
+    # Scale up without cropping: zoompan needs spare source area to pan over.
+    # `increase` guarantees enough pixels to cover the portrait output.
+    base = f"scale={width*2}:{height*2}:force_original_aspect_ratio=increase"
+    phase = f"(2*PI*on/{frames})"
+    # Coordinates are normalized over the zoompan source's available travel.
+    if ih >= iw:  # portrait / vertical image: top-bottom with a gentle diagonal drift
+        x = f"(iw-iw/zoom)*(0.50+0.22*sin({phase}))"
+        y = f"(ih-ih/zoom)*(0.50-0.50*cos({phase}))"
+    else:  # landscape / horizontal image: left-right with a gentle diagonal drift
+        x = f"(iw-iw/zoom)*(0.50-0.50*cos({phase}))"
+        y = f"(ih-ih/zoom)*(0.50-0.22*sin({phase}))"
+    return (
+        f"{base},zoompan=z='{ZOOM}':x='{x}':y='{y}':d=1:"
+        f"s={width}x{height}:fps={fps},setsar=1,format=yuv420p"
+    )
+
+
+def create_video(
+    image: Path,
+    audio: Path,
+    output: Path,
+    seed: int | None = None,
+    width: int = W,
+    height: int = H,
+    fps: int = FPS,
+    max_seconds: float | None = None,
+) -> dict:
+    """Render a single uninterrupted video, with video length matched to audio."""
+    image, audio, output = image.resolve(), audio.resolve(), output.resolve()
+    if not image.is_file():
+        raise FileNotFoundError(f"Image not found: {image}")
+    if not audio.is_file():
+        raise FileNotFoundError(f"Audio not found: {audio}")
+    if width <= 0 or height <= 0 or fps <= 0:
+        raise ValueError("Width, height and FPS must be positive.")
+    duration = media_duration(audio)
+    if max_seconds is not None:
+        duration = min(duration, max_seconds)
+    if duration <= 0:
+        raise RuntimeError(f"Audio duration is invalid: {duration}")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    vf = vf_for(image, duration, width, height, fps)
+    # One ffmpeg render only: no segment boundaries, concatenation or direction jumps.
+    run([
+        "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+        "-loop", "1", "-framerate", str(fps), "-i", str(image),
+        "-i", str(audio), "-map", "0:v:0", "-map", "1:a:0",
+        "-vf", vf, "-t", f"{duration:.6f}",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+        "-pix_fmt", "yuv420p", "-r", str(fps),
+        "-c:a", "aac", "-b:a", "192k", "-ar", "44100",
+        "-shortest", "-movflags", "+faststart", str(output),
+    ])
+    return {
+        "image": str(image), "audio": str(audio), "output": str(output),
+        "duration_seconds": round(duration, 3),
+        "width": width, "height": height, "fps": fps,
+        "movement": "continuous smooth diagonal sinusoidal loop",
+        "orientation": "vertical" if image_dimensions(image)[1] >= image_dimensions(image)[0] else "horizontal",
+    }
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--image", required=True, type=Path)
+    parser.add_argument("--audio", required=True, type=Path)
+    parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--seed", type=int, help="Accepted for backwards compatibility; motion is deterministic.")
+    parser.add_argument("--width", type=int, default=W)
+    parser.add_argument("--height", type=int, default=H)
+    parser.add_argument("--fps", type=int, default=FPS)
+    parser.add_argument("--max-seconds", type=float, help="Optional cap for short test renders.")
+    args = parser.parse_args()
+    print(json.dumps(create_video(args.image, args.audio, args.output, args.seed,
+                                  args.width, args.height, args.fps, args.max_seconds),
+                     indent=2))
