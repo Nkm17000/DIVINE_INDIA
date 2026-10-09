@@ -17,20 +17,26 @@
           "image": "hanumanji/hanuman-3840x2160.jpg",
           "ring": "hanumanji/Lal-Langote-Wale-Veer-Hanuman-Hai.mp3",
           "selected_utc": "2026-10-09T15:52:25.953127+00:00"
+        },
+        {
+          "image": "hanumanji/hanuman-3840x2160.jpg",
+          "ring": "hanumanji/dheere-dheere-Ram-Ji-ka-Sath-chahie.mp3",
+          "selected_utc": "2026-10-09T18:28:51.248434+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
         "image": "images/hanumanji/hanuman-3840x2160.jpg",
-        "ring": "rings/hanumanji/Lal-Langote-Wale-Veer-Hanuman-Hai.mp3",
-        "selected_utc": "2026-10-09T15:52:25.953127+00:00",
+        "ring": "rings/hanumanji/dheere-dheere-Ram-Ji-ka-Sath-chahie.mp3",
+        "selected_utc": "2026-10-09T18:28:51.248434+00:00",
         "cycle": 0
       },
       "cycle": 0,
       "used_pairs": [
         "hanumanji/2822855.jpg|||hanumanji/Om-Dakshin-Mukhay-Mantra.mp3",
         "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3",
-        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Lal-Langote-Wale-Veer-Hanuman-Hai.mp3"
+        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Lal-Langote-Wale-Veer-Hanuman-Hai.mp3",
+        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/dheere-dheere-Ram-Ji-ka-Sath-chahie.mp3"
       ]
     },
     "maadurga": {
@@ -49,20 +55,26 @@
           "image": "maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg",
           "ring": "maadurga/maa-shok-dukh-nivarani.mp3",
           "selected_utc": "2026-10-09T15:53:18.459534+00:00"
+        },
+        {
+          "image": "maadurga/wp6709263.jpg",
+          "ring": "maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3",
+          "selected_utc": "2026-10-09T18:29:45.191165+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg",
-        "ring": "rings/maadurga/maa-shok-dukh-nivarani.mp3",
-        "selected_utc": "2026-10-09T15:53:18.459534+00:00",
+        "image": "images/maadurga/wp6709263.jpg",
+        "ring": "rings/maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3",
+        "selected_utc": "2026-10-09T18:29:45.191165+00:00",
         "cycle": 0
       },
       "cycle": 0,
       "used_pairs": [
         "maadurga/wp5235332.jpg|||maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
         "maadurga/wp5478376.jpg|||maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3",
-        "maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg|||maadurga/maa-shok-dukh-nivarani.mp3"
+        "maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg|||maadurga/maa-shok-dukh-nivarani.mp3",
+        "maadurga/wp6709263.jpg|||maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3"
       ]
     },
     "shreekrishna": {
@@ -81,20 +93,26 @@
           "image": "shreekrishna/Krishna by the Sacred River at Sunset.png",
           "ring": "shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
           "selected_utc": "2026-10-09T15:53:41.084962+00:00"
+        },
+        {
+          "image": "shreekrishna/Krishna by the Sacred River at Sunset.png",
+          "ring": "shreekrishna/shri_krishna (2).mp3",
+          "selected_utc": "2026-10-09T18:30:04.164219+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
         "image": "images/shreekrishna/Krishna by the Sacred River at Sunset.png",
-        "ring": "rings/shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
-        "selected_utc": "2026-10-09T15:53:41.084962+00:00",
+        "ring": "rings/shreekrishna/shri_krishna (2).mp3",
+        "selected_utc": "2026-10-09T18:30:04.164219+00:00",
         "cycle": 0
       },
       "cycle": 0,
       "used_pairs": [
         "shreekrishna/Krishna by the Sunset River.png|||shreekrishna/Kan-kya-gotu-krishana.mp3",
         "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
-        "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3"
+        "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
+        "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/shri_krishna (2).mp3"
       ]
     },
     "shyambaba": {
@@ -113,20 +131,26 @@
           "image": "shyambaba/11109687.webp",
           "ring": "shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
           "selected_utc": "2026-10-09T15:54:02.812123+00:00"
+        },
+        {
+          "image": "shyambaba/Krishna Lifts Govardhan Hill (1).png",
+          "ring": "shyambaba/mera-shyam-aa-jata-mere-samne.mp3",
+          "selected_utc": "2026-10-09T18:30:22.461504+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/11109687.webp",
-        "ring": "rings/shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
-        "selected_utc": "2026-10-09T15:54:02.812123+00:00",
+        "image": "images/shyambaba/Krishna Lifts Govardhan Hill (1).png",
+        "ring": "rings/shyambaba/mera-shyam-aa-jata-mere-samne.mp3",
+        "selected_utc": "2026-10-09T18:30:22.461504+00:00",
         "cycle": 0
       },
       "cycle": 0,
       "used_pairs": [
         "shyambaba/shree_shyam_image_4.jpg|||shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
         "shyambaba/Ornate Khatu Shyam Temple Shrine-10.png|||shyambaba/mere-khatu-wale-shyam.mp3",
-        "shyambaba/11109687.webp|||shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3"
+        "shyambaba/11109687.webp|||shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
+        "shyambaba/Krishna Lifts Govardhan Hill (1).png|||shyambaba/mera-shyam-aa-jata-mere-samne.mp3"
       ]
     }
   }
