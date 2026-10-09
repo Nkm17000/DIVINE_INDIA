@@ -19,7 +19,7 @@ OUT_ROOT = ROOT / "output"
 STATE_FILE = ROOT / "state" / "rotation_state.json"
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
 AUDIO_EXTS = {".mp3", ".m4a", ".wav", ".aac", ".ogg", ".flac"}
-EXCLUDE_EDGE_FILES = 10
+RECENT_MEDIA_EXCLUSION = 5
 
 
 def media_in(folder: Path, extensions: set[str]) -> list[Path]:
@@ -48,34 +48,31 @@ def save_state(state: dict) -> None:
     tmp.replace(STATE_FILE)
 
 
-def eligible_media(files: list[Path], edge_count: int = EXCLUDE_EDGE_FILES) -> list[Path]:
-    """Prefer excluding first/last N files; fall back to all files when too few remain."""
-    ordered = sorted(files, key=lambda p: p.as_posix().casefold())
-    if not ordered:
-        return []
-    if len(ordered) > edge_count * 2:
-        return ordered[edge_count:-edge_count]
-    # User-approved fallback: when strict edge exclusion would leave no media,
-    # use the full collection. Combination history still prevents pair reuse
-    # until every possible image/ringtone pair has been used.
-    print(f"WARNING: only {len(ordered)} files; using all media instead of edge exclusion.")
-    return ordered
+def eligible_media(files: list[Path], edge_count: int = 0) -> list[Path]:
+    """Return all supported files; exclude recent selections by history, not filename order.
+
+    The old first/last ten-file slicing left only two Hanuman images in a
+    22-image folder, which caused the same image to recur with different tones.
+    """
+    return sorted(files, key=lambda p: p.as_posix().casefold())
 
 
 def choose_pair(folder_name: str, images: list[Path], rings: list[Path],
                 state: dict) -> tuple[Path, Path, dict]:
-    """Choose an eligible pair never used before, until all eligible pairs are exhausted."""
+    """Choose a fresh image and ringtone, excluding the last five of each."""
     folder_state = state["folders"].setdefault(
         folder_name, {"history": [], "used_pairs": [], "last_selection": None, "cycle": 0}
     )
     folder_state.setdefault("history", [])
     folder_state.setdefault("used_pairs", [])
-    # Migrate the prior rotation format so its recorded combinations stay excluded.
+
+    # Migrate older selection history into the exact-pair ledger.
     for old_entry in folder_state["history"]:
         if isinstance(old_entry, dict) and old_entry.get("image") and old_entry.get("ring"):
             old_key = f"{old_entry['image']}|||{old_entry['ring']}"
             if old_key not in folder_state["used_pairs"]:
                 folder_state["used_pairs"].append(old_key)
+
     eligible_images = eligible_media(images)
     eligible_rings = eligible_media(rings)
     if not eligible_images or not eligible_rings:
@@ -84,18 +81,43 @@ def choose_pair(folder_name: str, images: list[Path], rings: list[Path],
             f"Found {len(images)} images and {len(rings)} ringtones."
         )
 
-    # Persist relative paths so combinations are remembered across workflow runs.
-    all_pairs = [(im, ring) for im in eligible_images for ring in eligible_rings]
-    used = set(folder_state["used_pairs"])
-    candidates = [
-        (im, ring) for im, ring in all_pairs
-        if f"{im.relative_to(IMAGE_ROOT).as_posix()}|||{ring.relative_to(RING_ROOT).as_posix()}" not in used
+    # History paths are relative to images/ and rings/. Exclude the five
+    # most recently selected items separately, even when the pair differs.
+    recent_history = [
+        item for item in folder_state["history"][-RECENT_MEDIA_EXCLUSION:]
+        if isinstance(item, dict)
     ]
+    recent_images = {item.get("image") for item in recent_history if item.get("image")}
+    recent_rings = {item.get("ring") for item in recent_history if item.get("ring")}
+
+    def build_candidates():
+        used = set(folder_state["used_pairs"])
+        pairs = []
+        for im in eligible_images:
+            image_key = im.relative_to(IMAGE_ROOT).as_posix()
+            if image_key in recent_images:
+                continue
+            for ring in eligible_rings:
+                ring_key = ring.relative_to(RING_ROOT).as_posix()
+                if ring_key in recent_rings:
+                    continue
+                pair_key = f"{image_key}|||{ring_key}"
+                if pair_key not in used:
+                    pairs.append((im, ring))
+        return pairs
+
+    candidates = build_candidates()
     if not candidates:
+        # Start a new exact-pair cycle without relaxing the recent-media rule.
         folder_state["cycle"] = int(folder_state.get("cycle", 0)) + 1
         folder_state["used_pairs"] = []
-        candidates = all_pairs
-        print(f"PAIR CYCLE RESET [{folder_name}]: all eligible combinations have been used.")
+        candidates = build_candidates()
+        print(f"PAIR CYCLE RESET [{folder_name}]: unused eligible pairs exhausted.")
+    if not candidates:
+        raise RuntimeError(
+            f"Folder '{folder_name}' has no candidates after excluding the last "
+            f"{RECENT_MEDIA_EXCLUSION} images and ringtones. Add more media."
+        )
 
     image, ring = random.choice(candidates)
     image_key = image.relative_to(IMAGE_ROOT).as_posix()
@@ -109,8 +131,11 @@ def choose_pair(folder_name: str, images: list[Path], rings: list[Path],
         "cycle": folder_state["cycle"],
     }
     folder_state["used_pairs"].append(pair_key)
-    folder_state["history"].append({"image": image_key, "ring": ring_key,
-                                    "selected_utc": selection["selected_utc"]})
+    folder_state["history"].append({
+        "image": image_key,
+        "ring": ring_key,
+        "selected_utc": selection["selected_utc"],
+    })
     folder_state["last_selection"] = selection
     return image, ring, selection
 
@@ -130,7 +155,7 @@ def assert_same_deity_folder(image: Path, ring: Path) -> str:
     return image_rel.parts[0]
 
 
-def verify_video(path: Path, expected_width: int, expected_height: int) -> None:
+def verify_video(path: Path) -> None:
     probe = subprocess.run(
         ["ffprobe", "-v", "error", "-select_streams", "v:0",
          "-show_entries", "stream=width,height,nb_frames", "-of", "json", str(path)],
@@ -140,8 +165,8 @@ def verify_video(path: Path, expected_width: int, expected_height: int) -> None:
     if not streams:
         raise RuntimeError(f"ffprobe found no video stream in {path}")
     stream = streams[0]
-    if int(stream.get("width", 0)) != expected_width or int(stream.get("height", 0)) != expected_height:
-        raise RuntimeError(f"Unexpected dimensions for {path}: expected {expected_width}x{expected_height}, got {stream}")
+    if int(stream.get("width", 0)) != 1080 or int(stream.get("height", 0)) != 1920:
+        raise RuntimeError(f"Unexpected dimensions for {path}: {stream}")
     # Audio length determines the final video length, so short ringtone clips are valid.
     if int(stream.get("nb_frames", 0)) < 2:
         raise RuntimeError(f"Video has too few frames: {path}: {stream}")
@@ -195,7 +220,7 @@ def main() -> None:
         seed_text = f"{selection['folder']}|{selection['image']}|{selection['ring']}|{selection['selected_utc']}"
         seed = int(hashlib.sha256(seed_text.encode()).hexdigest()[:8], 16)
         effects = create_video(image, ring, output, seed)
-        verify_video(output, int(effects["width"]), int(effects["height"]))
+        verify_video(output)
 
         caption = {
             "hanumanji": "🙏 जय बजरंगबली 🙏",
