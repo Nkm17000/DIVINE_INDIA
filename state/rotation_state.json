@@ -7,16 +7,22 @@
           "image": "hanumanji/hanuman-3840x2160.jpg",
           "ring": "hanumanji/Ramdoot-Baldham-Ki-Pawanputra-Birvaan-Ki.mp3",
           "selected_utc": "2026-10-09T12:12:25.597254+00:00"
+        },
+        {
+          "image": "hanumanji/hanuman-3840x2160.jpg",
+          "ring": "hanumanji/Main-To-Ho-Gaya-Tha-Bada-Majboor-Balaji.mp3",
+          "selected_utc": "2026-10-09T12:27:46.935112+00:00"
         }
       ],
       "used_pairs": [
-        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Ramdoot-Baldham-Ki-Pawanputra-Birvaan-Ki.mp3"
+        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Ramdoot-Baldham-Ki-Pawanputra-Birvaan-Ki.mp3",
+        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Main-To-Ho-Gaya-Tha-Bada-Majboor-Balaji.mp3"
       ],
       "last_selection": {
         "folder": "hanumanji",
         "image": "images/hanumanji/hanuman-3840x2160.jpg",
-        "ring": "rings/hanumanji/Ramdoot-Baldham-Ki-Pawanputra-Birvaan-Ki.mp3",
-        "selected_utc": "2026-10-09T12:12:25.597254+00:00",
+        "ring": "rings/hanumanji/Main-To-Ho-Gaya-Tha-Bada-Majboor-Balaji.mp3",
+        "selected_utc": "2026-10-09T12:27:46.935112+00:00",
         "cycle": 0
       },
       "cycle": 0
@@ -27,16 +33,22 @@
           "image": "maadurga/wp5214755.jpg",
           "ring": "maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3",
           "selected_utc": "2026-10-09T12:13:17.124308+00:00"
+        },
+        {
+          "image": "maadurga/wp5235332.jpg",
+          "ring": "maadurga/Main-Balak-Tu-Mata-Jubin-Nautiyal.mp3",
+          "selected_utc": "2026-10-09T12:28:35.030072+00:00"
         }
       ],
       "used_pairs": [
-        "maadurga/wp5214755.jpg|||maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3"
+        "maadurga/wp5214755.jpg|||maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3",
+        "maadurga/wp5235332.jpg|||maadurga/Main-Balak-Tu-Mata-Jubin-Nautiyal.mp3"
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/wp5214755.jpg",
-        "ring": "rings/maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3",
-        "selected_utc": "2026-10-09T12:13:17.124308+00:00",
+        "image": "images/maadurga/wp5235332.jpg",
+        "ring": "rings/maadurga/Main-Balak-Tu-Mata-Jubin-Nautiyal.mp3",
+        "selected_utc": "2026-10-09T12:28:35.030072+00:00",
         "cycle": 0
       },
       "cycle": 0
@@ -47,16 +59,22 @@
           "image": "shreekrishna/Krishna by the Sacred River at Sunset.png",
           "ring": "shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
           "selected_utc": "2026-10-09T12:13:40.549524+00:00"
+        },
+        {
+          "image": "shreekrishna/Krishna by the Sacred River at Sunset.png",
+          "ring": "shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
+          "selected_utc": "2026-10-09T12:29:02.836254+00:00"
         }
       ],
       "used_pairs": [
-        "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/Naam-Hai-Tera-Taranhara.mp3"
+        "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
+        "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3"
       ],
       "last_selection": {
         "folder": "shreekrishna",
         "image": "images/shreekrishna/Krishna by the Sacred River at Sunset.png",
-        "ring": "rings/shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
-        "selected_utc": "2026-10-09T12:13:40.549524+00:00",
+        "ring": "rings/shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
+        "selected_utc": "2026-10-09T12:29:02.836254+00:00",
         "cycle": 0
       },
       "cycle": 0
@@ -67,16 +85,22 @@
           "image": "shyambaba/11109689.jpg",
           "ring": "shyambaba/kitna-pyara-hai-singar.mp3",
           "selected_utc": "2026-10-09T12:13:57.214344+00:00"
+        },
+        {
+          "image": "shyambaba/Ornate Shyam Devotional Temple Garden.png",
+          "ring": "shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3",
+          "selected_utc": "2026-10-09T12:29:40.441119+00:00"
         }
       ],
       "used_pairs": [
-        "shyambaba/11109689.jpg|||shyambaba/kitna-pyara-hai-singar.mp3"
+        "shyambaba/11109689.jpg|||shyambaba/kitna-pyara-hai-singar.mp3",
+        "shyambaba/Ornate Shyam Devotional Temple Garden.png|||shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3"
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/11109689.jpg",
-        "ring": "rings/shyambaba/kitna-pyara-hai-singar.mp3",
-        "selected_utc": "2026-10-09T12:13:57.214344+00:00",
+        "image": "images/shyambaba/Ornate Shyam Devotional Temple Garden.png",
+        "ring": "rings/shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3",
+        "selected_utc": "2026-10-09T12:29:40.441119+00:00",
         "cycle": 0
       },
       "cycle": 0
