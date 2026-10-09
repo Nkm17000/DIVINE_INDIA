@@ -80,8 +80,8 @@ def create_video(
     audio: Path,
     output: Path,
     seed: int | None = None,
-    width: int = W,
-    height: int = H,
+    width: int | None = None,
+    height: int | None = None,
     fps: int = FPS,
     max_seconds: float | None = None,
 ) -> dict:
@@ -91,6 +91,12 @@ def create_video(
         raise FileNotFoundError(f"Image not found: {image}")
     if not audio.is_file():
         raise FileNotFoundError(f"Audio not found: {audio}")
+    # Match the output orientation to the source image unless explicit dimensions were supplied.
+    iw, ih = image_dimensions(image)
+    if width is None and height is None:
+        width, height = (W, H) if ih >= iw else (1920, 1080)
+    elif width is None or height is None:
+        raise ValueError("Specify both width and height, or neither for automatic orientation.")
     if width <= 0 or height <= 0 or fps <= 0:
         raise ValueError("Width, height and FPS must be positive.")
     duration = media_duration(audio)
@@ -126,8 +132,8 @@ if __name__ == "__main__":
     parser.add_argument("--audio", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--seed", type=int, help="Accepted for backwards compatibility; motion is deterministic.")
-    parser.add_argument("--width", type=int, default=W)
-    parser.add_argument("--height", type=int, default=H)
+    parser.add_argument("--width", type=int, default=None)
+    parser.add_argument("--height", type=int, default=None)
     parser.add_argument("--fps", type=int, default=FPS)
     parser.add_argument("--max-seconds", type=float, help="Optional cap for short test renders.")
     args = parser.parse_args()
