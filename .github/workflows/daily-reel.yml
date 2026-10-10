@@ -48,6 +48,8 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Generate all reels and record image/ringtone selections
         run: python src/main.py
+      - name: Apply progressive 5% per-second zoom to generated reels
+        run: python src/apply_zoom_effect.py --input-dir output --zoom-per-second 0.05
       - name: Build per-account publishing matrices
         id: matrix
         shell: bash
