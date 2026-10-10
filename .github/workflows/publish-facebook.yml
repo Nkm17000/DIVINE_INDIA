@@ -1,4 +1,4 @@
-name: Divine India - All Facebook Pages
+name: Divine India - All Facebook Pages (Independent)
 
 on:
   workflow_dispatch:
@@ -101,11 +101,6 @@ jobs:
           if-no-files-found: error
       - name: Publish each folder to its configured Facebook accounts
         run: python src/publish.py facebook
-      - name: Delete temporary public video release
-        if: ${{ always() && env.INSTAGRAM_RELEASE_TAG != '' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release delete "$INSTAGRAM_RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
       - name: Commit persistent media-combination history
         if: always()
         run: |

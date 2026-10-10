@@ -1,0 +1,24 @@
+DIVINE INDIA — INDEPENDENT FACEBOOK AND INSTAGRAM WORKFLOWS
+
+IMPORTANT: GitHub Actions workflows are separate runs. A Facebook publishing failure cannot cancel the Instagram workflow unless the repository still has an older combined workflow that publishes Facebook first and Instagram second, or an explicit needs/workflow_run dependency.
+
+FILES INCLUDED (replace these in the repository):
+  .github/workflows/publish-facebook.yml
+  .github/workflows/publish-instagram.yml
+  src/publish.py
+
+CRITICAL CLEANUP:
+1. In GitHub, open .github/workflows/ and DELETE the old combined workflow if present, especially:
+     .github/workflows/daily-reel.yml
+   Also remove any other workflow that runs `python src/publish.py all` or runs Facebook and then Instagram in the same job. Otherwise that old workflow can still fail at Facebook before reaching Instagram.
+2. Commit and push these changes. Make sure both new YAML files exist on the repository's default branch.
+3. Open Actions. Run “Divine India - All Instagram Accounts (Independent)” directly with Run workflow to verify Instagram without waiting for Facebook.
+4. Facebook and Instagram each have their own workflow_dispatch, push trigger, cron schedule and concurrency group. There is no `needs:` dependency between them.
+
+PUBLISHING / HISTORY:
+- `src/publish.py facebook` attempts all configured Facebook destinations and writes per-account status records even when one target fails. It exits nonzero at the end if any target failed, so the GitHub run correctly shows failure.
+- `src/publish.py instagram` is a separate invocation in the Instagram workflow. Facebook API errors are not passed into that workflow.
+- Each workflow uses an `if: always()` history/state commit step.
+- Both workflows still generate videos independently, so their selected media combinations are not guaranteed to be identical in the same cycle.
+
+SCHEDULE: 06:00 and 18:00 IST (00:30 and 12:30 UTC).
