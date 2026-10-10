@@ -66,8 +66,9 @@ def main():
                 f"[motion][brand]overlay=x=32:y=32:format=auto[outv]"
             )
             run(['ffmpeg','-y','-i',str(video),'-loop','1','-i',str(logo),'-filter_complex',filter_complex,
-                 '-map','[outv]','-map','0:a?','-c:v','libx264','-preset','veryfast','-crf','21',
-                 '-c:a','aac','-b:a','192k','-shortest','-movflags','+faststart',str(temp)])
+                 '-map','[outv]','-map','0:a?','-c:v','libx264','-profile:v','high','-level:v','4.0',
+                 '-pix_fmt','yuv420p','-preset','veryfast','-crf','21','-r','30','-fps_mode','cfr',
+                 '-c:a','aac','-b:a','192k','-ar','44100','-ac','2','-shortest','-movflags','+faststart',str(temp)])
             if not temp.exists() or temp.stat().st_size == 0: raise RuntimeError('ffmpeg did not create output')
             temp.replace(video); successes += 1
             print(f'MOTION_APPLIED: {video} effect={effect_name} logo=top-left')
