@@ -5,11 +5,13 @@ JSON maps secret *key names* to folder names. Credentials are read from environm
 variables populated by GitHub Actions secrets; no tokens belong in the JSON file.
 """
 from __future__ import annotations
+import argparse
 import json
 import os
 import re
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 import requests
 
@@ -146,7 +148,7 @@ def instagram_urls() -> dict:
     return value if isinstance(value, dict) else {}
 
 
-def post_facebook(video: Path, caption: str, account: dict, folder: str) -> None:
+def post_facebook(video: Path, caption: str, account: dict, folder: str) -> str:
     page_id, token = str(account.get("page_id", "")).strip(), str(account.get("access_token", "")).strip()
     if not page_id or not token:
         print(f"Facebook account skipped for {folder}: missing page_id/access_token")
@@ -157,10 +159,13 @@ def post_facebook(video: Path, caption: str, account: dict, folder: str) -> None
                           files={"source": (video.name, f, "video/mp4")}, timeout=300)
     if not r.ok:
         raise RuntimeError(f"Facebook publish failed for {folder}/Page {page_id}: HTTP {r.status_code}: {r.text}")
-    print(f"Facebook published [{folder}] account key {account.get('account_key', '')}, Page {page_id}: {r.json()}")
+    payload = r.json()
+    post_id = str(payload.get("id", ""))
+    print(f"Facebook published [{folder}] account key {account.get('account_key', '')}, Page {page_id}: {payload}")
+    return post_id
 
 
-def post_instagram(video_url: str, caption: str, account: dict, folder: str) -> None:
+def post_instagram(video_url: str, caption: str, account: dict, folder: str) -> str:
     user_id, token = str(account.get("user_id", "")).strip(), str(account.get("access_token", "")).strip()
     if not user_id or not token:
         print(f"Instagram account skipped for {folder}: missing user_id/access_token")
@@ -193,48 +198,107 @@ def post_instagram(video_url: str, caption: str, account: dict, folder: str) -> 
                             data={"creation_id": creation_id, "access_token": token}, timeout=120)
     if not publish.ok:
         raise RuntimeError(f"Instagram publish failed for {folder}/{user_id}: HTTP {publish.status_code}: {publish.text}")
-    print(f"Instagram published [{folder}] account key {account.get('account_key', '')}, account {user_id}: {publish.json()}")
+    payload = publish.json()
+    post_id = str(payload.get("id", ""))
+    print(f"Instagram published [{folder}] account key {account.get('account_key', '')}, account {user_id}: {payload}")
+    return post_id
+
+
+def _write_result(path: str | None, platform: str, folder: str, video: str, records: list[dict]) -> None:
+    if not path:
+        return
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "run_id": os.getenv("GITHUB_RUN_ID", "local"),
+        "platform": platform,
+        "folder": folder,
+        "video": video,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "records": records,
+    }
+    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def main() -> None:
-    if len(sys.argv) != 2 or sys.argv[1].lower() not in {"facebook", "instagram", "all", "has-instagram"}:
-        raise SystemExit("Usage: python src/publish.py facebook|instagram|all|has-instagram")
-    target = sys.argv[1].lower()
+    parser = argparse.ArgumentParser(description="Publish generated Divine India reels.")
+    parser.add_argument("target", choices=["facebook", "instagram", "all", "has-instagram"])
+    parser.add_argument("--folder", help="Only publish the specified generated folder.")
+    parser.add_argument("--video", help="Only publish the specified video filename within --folder.")
+    parser.add_argument("--result", help="Write per-account publication statuses to this JSON file.")
+    args = parser.parse_args()
+    target = args.target.lower()
+
     if target == "has-instagram":
-        # Keep stdout machine-readable for GitHub Actions $GITHUB_OUTPUT.
+        # stdout must contain only a valid GitHub Actions output assignment.
         accounts = load_accounts(platform_filter="instagram", log_skipped=False)
         print("has_instagram=" + str(any(v.get("instagram") for v in accounts.values())).lower())
         return
+    if args.video and not args.folder:
+        parser.error("--video requires --folder")
+
     accounts = load_accounts(platform_filter=target if target in {"facebook", "instagram"} else None)
     urls = instagram_urls()
-    errors = []
-    for folder_dir in sorted(p for p in OUT_ROOT.iterdir() if p.is_dir()):
+    errors: list[str] = []
+    records: list[dict] = []
+    if not OUT_ROOT.is_dir():
+        raise RuntimeError(f"Generated output directory does not exist: {OUT_ROOT}")
+
+    folders = [OUT_ROOT / args.folder] if args.folder else sorted(p for p in OUT_ROOT.iterdir() if p.is_dir())
+    for folder_dir in folders:
+        if not folder_dir.is_dir():
+            errors.append(f"Generated folder not found: {folder_dir.name}")
+            continue
         folder = folder_dir.name
         caption_file = folder_dir / "caption.txt"
         if not caption_file.is_file():
+            errors.append(f"Missing caption for generated folder: {folder}")
             continue
         videos = sorted(folder_dir.glob("daily_reel*.mp4"), key=lambda path: (path.name != "daily_reel.mp4", path.name))
+        if args.video:
+            videos = [v for v in videos if v.name == args.video]
         if not videos:
+            errors.append(f"No requested generated video found for {folder}/{args.video or '*'}")
             continue
+
         caption = caption_file.read_text(encoding="utf-8").strip()
         configured = accounts.get(folder, {"facebook": [], "instagram": []})
         platforms = ("facebook", "instagram") if target == "all" else (target,)
         for video in videos:
-            url_key = f"{folder}/{video.name}"
-            video_url = str(urls.get(url_key, urls.get(folder, "") if video.name == "daily_reel.mp4" else ""))
+            video_url = str(urls.get(f"{folder}/{video.name}", urls.get(folder, "") if video.name == "daily_reel.mp4" else ""))
             for platform in platforms:
-                if platform == "has-instagram":
+                destinations = configured.get(platform, [])
+                if not destinations:
+                    records.append({
+                        "platform": platform, "folder": folder, "video": video.name,
+                        "account_key": "", "account_id": "", "status": "SKIPPED",
+                        "post_id": "", "published_at": "", "error": "No configured credentials for this folder/platform.",
+                    })
+                    print(f"WARNING: no configured {platform} account for folder {folder}; recording SKIPPED.")
                     continue
-                for account in configured.get(platform, []):
+                for account in destinations:
+                    account_key = str(account.get("account_key", "unknown"))
+                    account_id = str(account.get("page_id" if platform == "facebook" else "user_id", ""))
+                    record = {
+                        "platform": platform, "folder": folder, "video": video.name,
+                        "account_key": account_key, "account_id": account_id,
+                        "status": "FAILED", "post_id": "", "published_at": "", "error": "",
+                    }
                     try:
                         caption_for_platform = platform_caption(caption, platform, account)
                         if platform == "facebook":
-                            post_facebook(video, caption_for_platform, account, folder)
+                            post_id = post_facebook(video, caption_for_platform, account, folder)
                         else:
-                            post_instagram(video_url, caption_for_platform, account, folder)
+                            post_id = post_instagram(video_url, caption_for_platform, account, folder)
+                        record.update(status="PUBLISHED", post_id=post_id,
+                                      published_at=datetime.now(timezone.utc).isoformat())
                     except Exception as exc:
-                        errors.append(f"{platform} [{folder}/{video.name}] [{account.get('account_key', 'unknown')}]: {exc}")
+                        record["error"] = str(exc)
+                        errors.append(f"{platform} [{folder}/{video.name}] [{account_key}]: {exc}")
                         print(f"ERROR: {errors[-1]}")
+                    records.append(record)
+
+    _write_result(args.result, target, args.folder or "*", args.video or "*", records)
     if errors:
         raise RuntimeError("One or more publishing targets failed:\n" + "\n".join(errors))
 

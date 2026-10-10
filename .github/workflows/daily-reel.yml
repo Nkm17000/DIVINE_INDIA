@@ -5,7 +5,9 @@ on:
   push:
     paths-ignore:
       - "state/rotation_state.json"
+      - "data/history/**"
       - "output/**"
+      - "publish_results/**"
   schedule:
     # 6:00 AM and 6:00 PM India Standard Time (UTC+05:30)
     - cron: "30 0 * * *"
@@ -24,6 +26,8 @@ jobs:
     name: Generate reels once
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,9 +45,28 @@ jobs:
           cache-dependency-path: requirements.txt
       - name: Install Python dependencies
         run: python -m pip install -r requirements.txt
-      - name: Generate one video per eligible deity folder
+      - name: Generate all reels and record image/ringtone selections
         run: python src/main.py
-      - name: Upload generated reels for both publishing jobs
+      - name: Build publishing matrix
+        id: matrix
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          items = []
+          for video in sorted(Path('output').glob('*/daily_reel*.mp4')):
+              folder = video.parent.name
+              safe_id = re.sub(r'[^A-Za-z0-9_-]+', '_', f'{folder}__{video.stem}').strip('_')
+              items.append({"folder": folder, "video": video.name, "job_id": safe_id})
+          if not items:
+              raise SystemExit('No generated daily_reel*.mp4 files were found.')
+          matrix = json.dumps({"include": items}, separators=(',', ':'))
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
+              f.write('matrix=' + matrix + '\n')
+          print(f'Prepared {len(items)} video jobs; each platform will run at most 3 concurrently.')
+          PY
+      - name: Upload generated reels, selections, and rotation state
         uses: actions/upload-artifact@v4
         with:
           name: divine-india-reels-${{ github.run_id }}
@@ -51,46 +74,20 @@ jobs:
             output/*/daily_reel*.mp4
             output/*/caption.txt
             output/*/selection*.json
-          retention-days: 1
+            state/rotation_state.json
+          retention-days: 2
           if-no-files-found: error
-      - name: Commit and push persistent media-combination history (retry)
-        if: always()
-        shell: bash
-        env:
-          GIT_TERMINAL_PROMPT: 0
-        run: |
-          set -uo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state/rotation_state.json
-          if git diff --cached --quiet; then
-            echo "No rotation history changes to commit."
-            exit 0
-          fi
-          git commit -m "chore: update deity media combination history"
-
-          branch="${GITHUB_REF_NAME:-main}"
-          for attempt in 1 2 3; do
-            echo "Git push attempt ${attempt}/3 to ${branch}"
-            if git push origin "HEAD:${branch}"; then
-              echo "Rotation history pushed successfully."
-              exit 0
-            fi
-            if [[ "$attempt" -lt 3 ]]; then
-              sleep $((attempt * 10))
-            fi
-          done
-
-          echo "::warning::Could not push rotation history after 3 attempts. Publishing jobs will still run; the history commit remains local to this runner and may not persist."
-          # Do not fail the generate job solely because GitHub was unreachable.
-          # Both publishing jobs depend on generate and should still be allowed to run.
-          exit 0
 
   publish-facebook:
-    name: Publish all Facebook Pages
+    name: Facebook — ${{ matrix.folder }} / ${{ matrix.video }}
     needs: generate
+    if: needs.generate.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix: ${{ fromJSON(needs.generate.outputs.matrix) }}
     env:
       META_GRAPH_VERSION: v24.0
       FB_PAGE_KEY: ${{ secrets.FB_PAGE_KEY }}
@@ -126,15 +123,31 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: divine-india-reels-${{ github.run_id }}
-          path: output
-      - name: Publish to all configured Facebook Pages
-        run: python src/publish.py facebook
+          path: .
+      - name: Publish this video to configured Facebook Pages
+        env:
+          TARGET_FOLDER: ${{ matrix.folder }}
+          TARGET_VIDEO: ${{ matrix.video }}
+          RESULT_FILE: publish_results/facebook/facebook-${{ matrix.job_id }}.json
+        run: python src/publish.py facebook --folder "$TARGET_FOLDER" --video "$TARGET_VIDEO" --result "$RESULT_FILE"
+      - name: Upload Facebook publication result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-result-facebook-${{ matrix.job_id }}
+          path: publish_results/facebook/facebook-${{ matrix.job_id }}.json
+          if-no-files-found: ignore
+          retention-days: 2
 
-  publish-instagram:
-    name: Publish all Instagram accounts
+  prepare-instagram:
+    name: Prepare public video URLs for Instagram
     needs: generate
+    if: needs.generate.result == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    outputs:
+      has_instagram: ${{ steps.account-check.outputs.has_instagram }}
+      release_tag: ${{ steps.release.outputs.release_tag }}
+      urls_json: ${{ steps.release.outputs.urls_json }}
     env:
       META_GRAPH_VERSION: v24.0
       INSTA_PAGE_KEY: ${{ secrets.INSTA_PAGE_KEY }}
@@ -170,26 +183,26 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: divine-india-reels-${{ github.run_id }}
-          path: output
-      - name: Check whether Instagram accounts are configured
+          path: .
+      - name: Check Instagram accounts only
         id: account-check
         run: python src/publish.py has-instagram >> "$GITHUB_OUTPUT"
-      - name: Create temporary public URLs for Instagram
-        if: ${{ steps.account-check.outputs.has_instagram == 'true' }}
+      - name: Create temporary public release and URL map
+        id: release
+        if: steps.account-check.outputs.has_instagram == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          VISIBILITY="$(gh api "repos/${{ github.repository }}" --jq '.visibility')"
-          if [[ "$VISIBILITY" != "public" ]]; then
-            echo "::error::Instagram Reels require public HTTPS video URLs. This workflow uses GitHub Release assets, so the repository must be public."
+          visibility="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.visibility')"
+          if [[ "$visibility" != "public" ]]; then
+            echo "::error::Instagram Reels need public HTTPS video URLs; this workflow uses temporary GitHub Release assets, so the repository must be public."
             exit 1
           fi
           mkdir -p output/release-assets
           shopt -s nullglob
           for video in output/*/daily_reel*.mp4; do
-            [[ -f "$video" ]] || continue
             folder="$(basename "$(dirname "$video")")"
             filename="$(basename "$video")"
             cp "$video" "output/release-assets/${folder}__${filename}"
@@ -199,26 +212,26 @@ jobs:
             echo "::error::No generated MP4 files found for Instagram publishing."
             exit 1
           fi
-          TAG="daily-reel-${{ github.run_id }}"
-          gh release create "$TAG" "${files[@]}" \
-            --repo "${{ github.repository }}" --target "${{ github.sha }}" \
-            --title "Temporary Divine India Reels ${{ github.run_number }}" \
-            --notes "Temporary public video URLs for Meta publishing; cleaned after this workflow."
-          echo "INSTAGRAM_RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
-          python - <<'PYCODE'
-          import json, os, pathlib
+          tag="daily-reel-${GITHUB_RUN_ID}"
+          gh release create "$tag" "${files[@]}" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "Temporary Divine India Reels ${GITHUB_RUN_NUMBER}" \
+            --notes "Temporary public video URLs for Instagram publishing; removed after this run."
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
           repo = os.environ['GITHUB_REPOSITORY']
           tag = f"daily-reel-{os.environ['GITHUB_RUN_ID']}"
           urls = {}
-          for path in sorted(pathlib.Path('output/release-assets').glob('*.mp4')):
+          for path in sorted(Path('output/release-assets').glob('*.mp4')):
               folder, filename = path.name.split('__', 1)
               urls[f"{folder}/{filename}"] = f"https://github.com/{repo}/releases/download/{tag}/{path.name}"
-          with open('output/instagram_video_urls.json', 'w', encoding='utf-8') as urls_file:
-              json.dump(urls, urls_file)
-          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as env_file:
-              env_file.write('INSTAGRAM_VIDEO_URLS_JSON=' + json.dumps(urls) + '\n')
-          print('Created public URLs for:', ', '.join(urls))
-          PYCODE
+          encoded = json.dumps(urls, separators=(',', ':'))
+          Path('output/instagram_video_urls.json').write_text(encoded, encoding='utf-8')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
+              f.write('release_tag=' + tag + '\n')
+              f.write('urls_json=' + encoded + '\n')
+          print(f"Prepared {len(urls)} public video URLs for Instagram matrix jobs.")
+          PY
           while IFS= read -r url; do
             [[ -n "$url" ]] || continue
             code=""
@@ -227,13 +240,138 @@ jobs:
               [[ "$code" == "200" ]] && break
               sleep 5
             done
-            [[ "$code" == "200" ]] || { echo "::error::Release asset not publicly available: $url"; exit 1; }
+            [[ "$code" == "200" ]] || { echo "::error::Release asset did not become public: $url"; exit 1; }
           done < <(python -c 'import json; print("\n".join(json.load(open("output/instagram_video_urls.json")).values()))')
-      - name: Publish to all configured Instagram accounts
-        if: ${{ steps.account-check.outputs.has_instagram == 'true' }}
-        run: python src/publish.py instagram
-      - name: Delete temporary public video release
-        if: ${{ always() && env.INSTAGRAM_RELEASE_TAG != '' }}
+
+  publish-instagram:
+    name: Instagram — ${{ matrix.folder }} / ${{ matrix.video }}
+    needs: [generate, prepare-instagram]
+    if: needs.generate.result == 'success' && needs.prepare-instagram.outputs.has_instagram == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix: ${{ fromJSON(needs.generate.outputs.matrix) }}
+    env:
+      META_GRAPH_VERSION: v24.0
+      INSTAGRAM_VIDEO_URLS_JSON: ${{ needs.prepare-instagram.outputs.urls_json }}
+      INSTA_PAGE_KEY: ${{ secrets.INSTA_PAGE_KEY }}
+      INSTA_PAGE_TOKEN: ${{ secrets.INSTA_PAGE_TOKEN }}
+      INSTA_PAGE_KEY_2: ${{ secrets.INSTA_PAGE_KEY_2 }}
+      INSTA_PAGE_TOKEN_2: ${{ secrets.INSTA_PAGE_TOKEN_2 }}
+      INSTA_PAGE_KEY_3: ${{ secrets.INSTA_PAGE_KEY_3 }}
+      INSTA_PAGE_TOKEN_3: ${{ secrets.INSTA_PAGE_TOKEN_3 }}
+      INSTA_PAGE_KEY_4: ${{ secrets.INSTA_PAGE_KEY_4 }}
+      INSTA_PAGE_TOKEN_4: ${{ secrets.INSTA_PAGE_TOKEN_4 }}
+      INSTA_PAGE_KEY_5: ${{ secrets.INSTA_PAGE_KEY_5 }}
+      INSTA_PAGE_TOKEN_5: ${{ secrets.INSTA_PAGE_TOKEN_5 }}
+      INSTA_PAGE_KEY_6: ${{ secrets.INSTA_PAGE_KEY_6 }}
+      INSTA_PAGE_TOKEN_6: ${{ secrets.INSTA_PAGE_TOKEN_6 }}
+      INSTA_PAGE_KEY_7: ${{ secrets.INSTA_PAGE_KEY_7 }}
+      INSTA_PAGE_TOKEN_7: ${{ secrets.INSTA_PAGE_TOKEN_7 }}
+      INSTA_PAGE_KEY_8: ${{ secrets.INSTA_PAGE_KEY_8 }}
+      INSTA_PAGE_TOKEN_8: ${{ secrets.INSTA_PAGE_TOKEN_8 }}
+      INSTA_PAGE_KEY_9: ${{ secrets.INSTA_PAGE_KEY_9 }}
+      INSTA_PAGE_TOKEN_9: ${{ secrets.INSTA_PAGE_TOKEN_9 }}
+      INSTA_PAGE_KEY_10: ${{ secrets.INSTA_PAGE_KEY_10 }}
+      INSTA_PAGE_TOKEN_10: ${{ secrets.INSTA_PAGE_TOKEN_10 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Download generated reels
+        uses: actions/download-artifact@v4
+        with:
+          name: divine-india-reels-${{ github.run_id }}
+          path: .
+      - name: Publish this video to configured Instagram accounts
+        env:
+          TARGET_FOLDER: ${{ matrix.folder }}
+          TARGET_VIDEO: ${{ matrix.video }}
+          RESULT_FILE: publish_results/instagram/instagram-${{ matrix.job_id }}.json
+        run: python src/publish.py instagram --folder "$TARGET_FOLDER" --video "$TARGET_VIDEO" --result "$RESULT_FILE"
+      - name: Upload Instagram publication result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-result-instagram-${{ matrix.job_id }}
+          path: publish_results/instagram/instagram-${{ matrix.job_id }}.json
+          if-no-files-found: ignore
+          retention-days: 2
+
+  cleanup-instagram-release:
+    name: Remove temporary Instagram release
+    needs: [prepare-instagram, publish-instagram]
+    if: always() && needs.prepare-instagram.outputs.release_tag != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete temporary release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release delete "$INSTAGRAM_RELEASE_TAG" --repo "${{ github.repository }}" --yes --cleanup-tag || true
+          RELEASE_TAG: ${{ needs.prepare-instagram.outputs.release_tag }}
+        run: gh release delete "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
+
+  update-history:
+    name: Update final media and publication history
+    needs: [generate, publish-facebook, prepare-instagram, publish-instagram, cleanup-instagram-release]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download generated media selections and rotation state
+        if: always() && needs.generate.result == 'success'
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: divine-india-reels-${{ github.run_id }}
+          path: .
+      - name: Download per-video publishing results
+        if: always()
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          pattern: publish-result-*
+          path: publish_results
+          merge-multiple: true
+      - name: Update CSV history table
+        if: always()
+        run: python src/update_history.py
+      - name: Commit and push rotation state and final history table
+        if: always()
+        shell: bash
+        env:
+          GIT_TERMINAL_PROMPT: 0
+        run: |
+          set -uo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/rotation_state.json data/history/publication_history.csv
+          if git diff --cached --quiet; then
+            echo "No history changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update media and publication history"
+          branch="${GITHUB_REF_NAME:-main}"
+          for attempt in 1 2 3; do
+            echo "Git push attempt ${attempt}/3 to ${branch}"
+            if git push origin "HEAD:${branch}"; then
+              echo "History pushed successfully."
+              exit 0
+            fi
+            if [[ "$attempt" -lt 3 ]]; then sleep $((attempt * 10)); fi
+          done
+          echo "::warning::Could not push history after 3 attempts; the workflow runner may discard the local commit."
+          exit 0
