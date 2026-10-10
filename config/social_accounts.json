@@ -1,48 +1,20 @@
 {
   "facebook": {
     "FB_PAGE_KEY": {
-      "folders": [
-        {
-          "name": "hanumanji",
-          "count": 2
-        },
-        {
-          "name": "shreekrishna",
-          "count": 1
-        },
-        {
-          "name": "maadurga",
-          "count": 1
-        },
-        {
-          "name": "shyambaba",
-          "count": 1
-        }
-      ],
+      "folders": ["hanumanji", "shreekrishna", "maadurga", "shyambaba"],
       "profile_url": "https://www.facebook.com/profile.php?id=61595272193048"
+    },
+    "FB_PAGE_KEY_2": {
+      "folders": ["hanumanji", "shreekrishna", "maadurga", "shyambaba"]
     }
   },
   "instagram": {
     "INSTA_PAGE_KEY": {
-      "folders": [
-        {
-          "name": "hanumanji",
-          "count": 2
-        },
-        {
-          "name": "shreekrishna",
-          "count": 1
-        },
-        {
-          "name": "maadurga",
-          "count": 1
-        },
-        {
-          "name": "shyambaba",
-          "count": 1
-        }
-      ],
+      "folders": ["hanumanji", "shreekrishna", "maadurga", "shyambaba"],
       "profile_url": "https://www.instagram.com/divineindia247/"
+    },
+    "INSTA_PAGE_KEY_2": {
+      "folders": ["hanumanji", "shreekrishna", "maadurga", "shyambaba"]
     }
   }
 }
