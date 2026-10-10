@@ -107,13 +107,23 @@
           "image": "hanumanji/wp2610449.jpg",
           "ring": "hanumanji/Ab-Daya-Karo-Bajrangbali-Dj-Remix.mp3",
           "selected_utc": "2026-10-10T06:45:47.549419+00:00"
+        },
+        {
+          "image": "hanumanji/hanuman-3840x2160.jpg",
+          "ring": "hanumanji/Rama-Rama-Ratte-Ratte-Chodunga-Ye-Duniya.mp3",
+          "selected_utc": "2026-10-10T07:03:02.143188+00:00"
+        },
+        {
+          "image": "hanumanji/Hanuman_08.jpg",
+          "ring": "hanumanji/Ramdut-Baldham-Ki-Babla-Mehta-Bhajan.mp3",
+          "selected_utc": "2026-10-10T07:03:44.552324+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/wp2610449.jpg",
-        "ring": "rings/hanumanji/Ab-Daya-Karo-Bajrangbali-Dj-Remix.mp3",
-        "selected_utc": "2026-10-10T06:45:47.549419+00:00",
+        "image": "images/hanumanji/Hanuman_08.jpg",
+        "ring": "rings/hanumanji/Ramdut-Baldham-Ki-Babla-Mehta-Bhajan.mp3",
+        "selected_utc": "2026-10-10T07:03:44.552324+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -138,7 +148,9 @@
         "hanumanji/Hanuman_15.jpg|||hanumanji/Aarti-Kije-Hanuman-Lala-Ki-Lakhbir-Singh-Lakha-Bhakti.mp3",
         "hanumanji/Hanuman_16.jpg|||hanumanji/Jeemo-Jeemo-Salasar-Hanuman-Lakhbir-Singh-Lakkha-Bhajan.mp3",
         "hanumanji/1000_F_1537013489_kYWOSBy7DNJ72Ahm4njflvqmaoi6pBAJ.jpg|||hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version (1).mp3",
-        "hanumanji/wp2610449.jpg|||hanumanji/Ab-Daya-Karo-Bajrangbali-Dj-Remix.mp3"
+        "hanumanji/wp2610449.jpg|||hanumanji/Ab-Daya-Karo-Bajrangbali-Dj-Remix.mp3",
+        "hanumanji/hanuman-3840x2160.jpg|||hanumanji/Rama-Rama-Ratte-Ratte-Chodunga-Ye-Duniya.mp3",
+        "hanumanji/Hanuman_08.jpg|||hanumanji/Ramdut-Baldham-Ki-Babla-Mehta-Bhajan.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -10295,13 +10307,18 @@
           "image": "maadurga/wp5214755.jpg",
           "ring": "maadurga/Koi-bhet-karega-chunri-koi-lagaye-ga-tilk-shinduri.mp3",
           "selected_utc": "2026-10-10T06:46:09.028276+00:00"
+        },
+        {
+          "image": "maadurga/Maa_Durga_0003.jpg",
+          "ring": "maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3",
+          "selected_utc": "2026-10-10T07:04:07.569219+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/wp5214755.jpg",
-        "ring": "rings/maadurga/Koi-bhet-karega-chunri-koi-lagaye-ga-tilk-shinduri.mp3",
-        "selected_utc": "2026-10-10T06:46:09.028276+00:00",
+        "image": "images/maadurga/Maa_Durga_0003.jpg",
+        "ring": "rings/maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3",
+        "selected_utc": "2026-10-10T07:04:07.569219+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10318,7 +10335,8 @@
         "maadurga/wp5214764.jpg|||maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-031.mp3",
         "maadurga/Maa_Durga_0005.jpg|||maadurga/maa_durga_mantra.mp3",
         "maadurga/Maa_Durga_0024.jpg|||maadurga/ringtone.mp3",
-        "maadurga/wp5214755.jpg|||maadurga/Koi-bhet-karega-chunri-koi-lagaye-ga-tilk-shinduri.mp3"
+        "maadurga/wp5214755.jpg|||maadurga/Koi-bhet-karega-chunri-koi-lagaye-ga-tilk-shinduri.mp3",
+        "maadurga/Maa_Durga_0003.jpg|||maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -10400,13 +10418,18 @@
           "image": "shreekrishna/Shree_Krishna_32.jpg",
           "ring": "shreekrishna/rasiya-ko-naar-banao-ri-indresh-upadhyay-ji-bhakti-105016.mp3",
           "selected_utc": "2026-10-10T06:46:20.243909+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_22.jpg",
+          "ring": "shreekrishna/Saanware-ko-Dil-mein-basa-kar-to-dekho.mp3",
+          "selected_utc": "2026-10-10T07:04:23.147312+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_32.jpg",
-        "ring": "rings/shreekrishna/rasiya-ko-naar-banao-ri-indresh-upadhyay-ji-bhakti-105016.mp3",
-        "selected_utc": "2026-10-10T06:46:20.243909+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_22.jpg",
+        "ring": "rings/shreekrishna/Saanware-ko-Dil-mein-basa-kar-to-dekho.mp3",
+        "selected_utc": "2026-10-10T07:04:23.147312+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10423,7 +10446,8 @@
         "shreekrishna/Shree_Krishna_24.jpg|||shreekrishna/ik_arj_meri.mp3",
         "shreekrishna/Krishna╬ô├ç├ûs Dance on Kaliya╬ô├ç├ûs Hoods.png|||shreekrishna/Mera-Shyam-Aa-Jata-Mere-Samne-026.mp3",
         "shreekrishna/Krishna and Radha in Vrindavan.png|||shreekrishna/us-basuri-Wale-ki-bhajanus-basuri-wale-ki-us-basuri-wale-ki.mp3",
-        "shreekrishna/Shree_Krishna_32.jpg|||shreekrishna/rasiya-ko-naar-banao-ri-indresh-upadhyay-ji-bhakti-105016.mp3"
+        "shreekrishna/Shree_Krishna_32.jpg|||shreekrishna/rasiya-ko-naar-banao-ri-indresh-upadhyay-ji-bhakti-105016.mp3",
+        "shreekrishna/Shree_Krishna_22.jpg|||shreekrishna/Saanware-ko-Dil-mein-basa-kar-to-dekho.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -18032,13 +18056,18 @@
           "image": "shyambaba/Khatu Shyam Devotional Temple Montage-7.png",
           "ring": "shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3",
           "selected_utc": "2026-10-10T06:46:45.929474+00:00"
+        },
+        {
+          "image": "shyambaba/Khatu_Shyam_0087.png",
+          "ring": "shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
+          "selected_utc": "2026-10-10T07:04:51.562614+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Khatu Shyam Devotional Temple Montage-7.png",
-        "ring": "rings/shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3",
-        "selected_utc": "2026-10-10T06:46:45.929474+00:00",
+        "image": "images/shyambaba/Khatu_Shyam_0087.png",
+        "ring": "rings/shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
+        "selected_utc": "2026-10-10T07:04:51.562614+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -18054,7 +18083,8 @@
         "shyambaba/Khatu_Shyam_0023.png|||shyambaba/teen-baan-ke-dhari-download.mp3",
         "shyambaba/Khatu_Shyam_0103.png|||shyambaba/hai-jiske-saath-sawra.mp3",
         "shyambaba/Khatu_Shyam_0127.png|||shyambaba/hare-ka-sahara-khatu-shyam-hamara.mp3",
-        "shyambaba/Khatu Shyam Devotional Temple Montage-7.png|||shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3"
+        "shyambaba/Khatu Shyam Devotional Temple Montage-7.png|||shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3",
+        "shyambaba/Khatu_Shyam_0087.png|||shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3"
       ],
       "history_migrated": true
     }
