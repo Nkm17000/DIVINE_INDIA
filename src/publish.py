@@ -226,6 +226,7 @@ def main() -> None:
     parser.add_argument("--folder", help="Only publish the specified generated folder.")
     parser.add_argument("--video", help="Only publish the specified video filename within --folder.")
     parser.add_argument("--result", help="Write per-account publication statuses to this JSON file.")
+    parser.add_argument("--account-key", help="Publish only to this configured GitHub secret key, e.g. FB_PAGE_KEY_2.")
     args = parser.parse_args()
     target = args.target.lower()
 
@@ -238,6 +239,11 @@ def main() -> None:
         parser.error("--video requires --folder")
 
     accounts = load_accounts(platform_filter=target if target in {"facebook", "instagram"} else None)
+    if args.account_key:
+        if target not in {"facebook", "instagram"}:
+            parser.error("--account-key can only be used with facebook or instagram")
+        for folder_name, platform_map in accounts.items():
+            platform_map[target] = [a for a in platform_map.get(target, []) if a.get("account_key") == args.account_key]
     urls = instagram_urls()
     errors: list[str] = []
     records: list[dict] = []
@@ -269,12 +275,20 @@ def main() -> None:
             for platform in platforms:
                 destinations = configured.get(platform, [])
                 if not destinations:
+                    missing_message = (
+                        f"Account '{args.account_key}' is not configured with a complete ID/token pair for {platform} and folder '{folder}'."
+                        if args.account_key else f"No configured credentials for {platform} and folder '{folder}'."
+                    )
                     records.append({
                         "platform": platform, "folder": folder, "video": video.name,
-                        "account_key": "", "account_id": "", "status": "SKIPPED",
-                        "post_id": "", "published_at": "", "error": "No configured credentials for this folder/platform.",
+                        "account_key": args.account_key or "", "account_id": "", "status": "FAILED" if args.account_key else "SKIPPED",
+                        "post_id": "", "published_at": "", "error": missing_message,
                     })
-                    print(f"WARNING: no configured {platform} account for folder {folder}; recording SKIPPED.")
+                    if args.account_key:
+                        errors.append(missing_message)
+                        print(f"ERROR: {missing_message}")
+                    else:
+                        print(f"WARNING: {missing_message} Recording SKIPPED.")
                     continue
                 for account in destinations:
                     account_key = str(account.get("account_key", "unknown"))
@@ -299,6 +313,13 @@ def main() -> None:
                     records.append(record)
 
     _write_result(args.result, target, args.folder or "*", args.video or "*", records)
+    if records and all(record.get("status") == "PUBLISHED" for record in records):
+        print(f"SUCCESS: {target} account {args.account_key or '(all configured accounts)'} published {len(records)} target(s).")
+    elif records:
+        published = sum(record.get("status") == "PUBLISHED" for record in records)
+        failed = sum(record.get("status") == "FAILED" for record in records)
+        skipped = sum(record.get("status") == "SKIPPED" for record in records)
+        print(f"PUBLICATION SUMMARY: account={args.account_key or '(all)'} published={published}, failed={failed}, skipped={skipped}.")
     if errors:
         raise RuntimeError("One or more publishing targets failed:\n" + "\n".join(errors))
 

@@ -27,7 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
+      facebook_matrix: ${{ steps.matrix.outputs.facebook_matrix }}
+      instagram_matrix: ${{ steps.matrix.outputs.instagram_matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,25 +48,37 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Generate all reels and record image/ringtone selections
         run: python src/main.py
-      - name: Build publishing matrix
+      - name: Build per-account publishing matrices
         id: matrix
         shell: bash
         run: |
-          python - <<'PY'
+          python - <<'PYCODE'
           import json, os, re
           from pathlib import Path
-          items = []
+          config = json.loads(Path('config/social_accounts.json').read_text(encoding='utf-8'))
+          videos = []
           for video in sorted(Path('output').glob('*/daily_reel*.mp4')):
               folder = video.parent.name
-              safe_id = re.sub(r'[^A-Za-z0-9_-]+', '_', f'{folder}__{video.stem}').strip('_')
-              items.append({"folder": folder, "video": video.name, "job_id": safe_id})
-          if not items:
+              videos.append({"folder": folder, "video": video.name})
+          if not videos:
               raise SystemExit('No generated daily_reel*.mp4 files were found.')
-          matrix = json.dumps({"include": items}, separators=(',', ':'))
+          outputs = {}
+          for platform in ('facebook', 'instagram'):
+              rows = []
+              for account_key, account_config in config.get(platform, {}).items():
+                  folders = account_config.get('folders', []) if isinstance(account_config, dict) else account_config
+                  folder_names = [x.get('name') if isinstance(x, dict) else x for x in folders]
+                  for item in videos:
+                      if item['folder'] not in folder_names:
+                          continue
+                      safe_id = re.sub(r'[^A-Za-z0-9_-]+', '_', f"{account_key}__{item['folder']}__{Path(item['video']).stem}").strip('_')
+                      rows.append({**item, "account_key": account_key, "job_id": safe_id})
+              outputs[platform] = json.dumps({"include": rows}, separators=(',', ':'))
+              print(f"{platform}: prepared {len(rows)} account/video jobs; max 3 concurrent.")
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
-              f.write('matrix=' + matrix + '\n')
-          print(f'Prepared {len(items)} video jobs; each platform will run at most 3 concurrently.')
-          PY
+              f.write('facebook_matrix=' + outputs['facebook'] + '\n')
+              f.write('instagram_matrix=' + outputs['instagram'] + '\n')
+          PYCODE
       - name: Upload generated reels, selections, and rotation state
         uses: actions/upload-artifact@v4
         with:
@@ -79,7 +92,7 @@ jobs:
           if-no-files-found: error
 
   publish-facebook:
-    name: Facebook — ${{ matrix.folder }} / ${{ matrix.video }}
+    name: Facebook — ${{ matrix.account_key }} — ${{ matrix.folder }} / ${{ matrix.video }}
     needs: generate
     if: needs.generate.result == 'success'
     runs-on: ubuntu-latest
@@ -87,7 +100,7 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 3
-      matrix: ${{ fromJSON(needs.generate.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.generate.outputs.facebook_matrix) }}
     env:
       META_GRAPH_VERSION: v24.0
       FB_PAGE_KEY: ${{ secrets.FB_PAGE_KEY }}
@@ -128,8 +141,9 @@ jobs:
         env:
           TARGET_FOLDER: ${{ matrix.folder }}
           TARGET_VIDEO: ${{ matrix.video }}
+          TARGET_ACCOUNT_KEY: ${{ matrix.account_key }}
           RESULT_FILE: publish_results/facebook/facebook-${{ matrix.job_id }}.json
-        run: python src/publish.py facebook --folder "$TARGET_FOLDER" --video "$TARGET_VIDEO" --result "$RESULT_FILE"
+        run: python src/publish.py facebook --folder "$TARGET_FOLDER" --video "$TARGET_VIDEO" --account-key "$TARGET_ACCOUNT_KEY" --result "$RESULT_FILE"
       - name: Upload Facebook publication result
         if: always()
         uses: actions/upload-artifact@v4
@@ -244,7 +258,7 @@ jobs:
           done < <(python -c 'import json; print("\n".join(json.load(open("output/instagram_video_urls.json")).values()))')
 
   publish-instagram:
-    name: Instagram — ${{ matrix.folder }} / ${{ matrix.video }}
+    name: Instagram — ${{ matrix.account_key }} — ${{ matrix.folder }} / ${{ matrix.video }}
     needs: [generate, prepare-instagram]
     if: needs.generate.result == 'success' && needs.prepare-instagram.outputs.has_instagram == 'true'
     runs-on: ubuntu-latest
@@ -252,7 +266,7 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 3
-      matrix: ${{ fromJSON(needs.generate.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.generate.outputs.instagram_matrix) }}
     env:
       META_GRAPH_VERSION: v24.0
       INSTAGRAM_VIDEO_URLS_JSON: ${{ needs.prepare-instagram.outputs.urls_json }}
@@ -294,8 +308,9 @@ jobs:
         env:
           TARGET_FOLDER: ${{ matrix.folder }}
           TARGET_VIDEO: ${{ matrix.video }}
+          TARGET_ACCOUNT_KEY: ${{ matrix.account_key }}
           RESULT_FILE: publish_results/instagram/instagram-${{ matrix.job_id }}.json
-        run: python src/publish.py instagram --folder "$TARGET_FOLDER" --video "$TARGET_VIDEO" --result "$RESULT_FILE"
+        run: python src/publish.py instagram --folder "$TARGET_FOLDER" --video "$TARGET_VIDEO" --account-key "$TARGET_ACCOUNT_KEY" --result "$RESULT_FILE"
       - name: Upload Instagram publication result
         if: always()
         uses: actions/upload-artifact@v4
