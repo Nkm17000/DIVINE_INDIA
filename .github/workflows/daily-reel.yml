@@ -53,14 +53,38 @@ jobs:
             output/*/selection*.json
           retention-days: 1
           if-no-files-found: error
-      - name: Commit persistent media-combination history
+      - name: Commit and push persistent media-combination history (retry)
         if: always()
+        shell: bash
+        env:
+          GIT_TERMINAL_PROMPT: 0
         run: |
+          set -uo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add state/rotation_state.json
-          git diff --cached --quiet || git commit -m "chore: update deity media combination history"
-          git push
+          if git diff --cached --quiet; then
+            echo "No rotation history changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update deity media combination history"
+
+          branch="${GITHUB_REF_NAME:-main}"
+          for attempt in 1 2 3; do
+            echo "Git push attempt ${attempt}/3 to ${branch}"
+            if git push origin "HEAD:${branch}"; then
+              echo "Rotation history pushed successfully."
+              exit 0
+            fi
+            if [[ "$attempt" -lt 3 ]]; then
+              sleep $((attempt * 10))
+            fi
+          done
+
+          echo "::warning::Could not push rotation history after 3 attempts. Publishing jobs will still run; the history commit remains local to this runner and may not persist."
+          # Do not fail the generate job solely because GitHub was unreachable.
+          # Both publishing jobs depend on generate and should still be allowed to run.
+          exit 0
 
   publish-facebook:
     name: Publish all Facebook Pages
@@ -149,13 +173,7 @@ jobs:
           path: output
       - name: Check whether Instagram accounts are configured
         id: account-check
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Capture logs separately; only the exact output assignment goes to GITHUB_OUTPUT.
-          python src/publish.py has-instagram > account-check.log
-          cat account-check.log
-          grep -E '^has_instagram=(true|false)$' account-check.log >> "$GITHUB_OUTPUT"
+        run: python src/publish.py has-instagram >> "$GITHUB_OUTPUT"
       - name: Create temporary public URLs for Instagram
         if: ${{ steps.account-check.outputs.has_instagram == 'true' }}
         env:

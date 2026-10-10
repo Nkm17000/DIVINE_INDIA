@@ -7,7 +7,6 @@ variables populated by GitHub Actions secrets; no tokens belong in the JSON file
 from __future__ import annotations
 import json
 import os
-import contextlib
 import re
 import sys
 import time
@@ -55,12 +54,8 @@ def platform_caption(caption: str, platform: str, account: dict) -> str:
     return f"{caption.rstrip()}\n\n{cta}"
 
 
-def load_accounts(platform_filter: tuple[str, ...] | None = None) -> dict:
-    """Resolve credentials for configured platforms and assign accounts to folders.
-
-    platform_filter allows lightweight platform-only checks to avoid reading/logging
-    unrelated platform credentials.
-    """
+def load_accounts(platform_filter: str | None = None, log_skipped: bool = True) -> dict:
+    """Resolve configured credentials, optionally for one platform only."""
     config_path = ROOT / "config" / "social_accounts.json"
     try:
         data = json.loads(config_path.read_text(encoding="utf-8"))
@@ -72,7 +67,7 @@ def load_accounts(platform_filter: tuple[str, ...] | None = None) -> dict:
         raise RuntimeError("config/social_accounts.json must be an object with facebook and instagram mappings.")
 
     resolved: dict[str, dict[str, list[dict]]] = {}
-    platforms = platform_filter or ("facebook", "instagram")
+    platforms = (platform_filter,) if platform_filter else ("facebook", "instagram")
     for platform in platforms:
         mappings = data.get(platform, {})
         if not isinstance(mappings, dict):
@@ -120,10 +115,12 @@ def load_accounts(platform_filter: tuple[str, ...] | None = None) -> dict:
             account_id = os.getenv(key_env, "").strip()
             token = os.getenv(token_env, "").strip()
             if not account_id and not token:
-                print(f"INFO: {platform} account '{key_env}' skipped (GitHub secrets not configured).")
+                if log_skipped:
+                    print(f"INFO: {platform} account '{key_env}' skipped (GitHub secrets not configured).")
                 continue
             if not account_id or not token:
-                print(f"WARNING: incomplete {platform} credentials: configure both {key_env} and {token_env} in GitHub Secrets.")
+                if log_skipped:
+                    print(f"WARNING: incomplete {platform} credentials: configure both {key_env} and {token_env} in GitHub Secrets.")
                 continue
             for folder in dict.fromkeys(folder.strip() for folder in folders):
                 resolved.setdefault(folder, {"facebook": [], "instagram": []})
@@ -203,16 +200,12 @@ def main() -> None:
     if len(sys.argv) != 2 or sys.argv[1].lower() not in {"facebook", "instagram", "all", "has-instagram"}:
         raise SystemExit("Usage: python src/publish.py facebook|instagram|all|has-instagram")
     target = sys.argv[1].lower()
-    accounts = load_accounts()
     if target == "has-instagram":
-        # GitHub $GITHUB_OUTPUT must contain only NAME=VALUE records. Keep any
-        # diagnostic messages from account loading on stderr, and inspect only
-        # Instagram secrets so Facebook configuration cannot affect this check.
-        with contextlib.redirect_stdout(sys.stderr):
-            instagram_accounts = load_accounts(platform_filter=("instagram",))
-        has_instagram = any(v.get("instagram") for v in instagram_accounts.values())
-        print("has_instagram=" + str(has_instagram).lower())
+        # Keep stdout machine-readable for GitHub Actions $GITHUB_OUTPUT.
+        accounts = load_accounts(platform_filter="instagram", log_skipped=False)
+        print("has_instagram=" + str(any(v.get("instagram") for v in accounts.values())).lower())
         return
+    accounts = load_accounts(platform_filter=target if target in {"facebook", "instagram"} else None)
     urls = instagram_urls()
     errors = []
     for folder_dir in sorted(p for p in OUT_ROOT.iterdir() if p.is_dir()):
