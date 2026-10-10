@@ -40,6 +40,27 @@
           "count": 1
         }
       ]
+    },
+    "FB_PAGE_KEY_3": {
+      "folders": [
+        {
+          "name": "hanumanji",
+          "count": 2
+        },
+        {
+          "name": "shreekrishna",
+          "count": 1
+        },
+        {
+          "name": "maadurga",
+          "count": 1
+        },
+        {
+          "name": "shyambaba",
+          "count": 1
+        }
+      ],
+      "profile_url": "https://www.facebook.com/bhavykiduniya/"
     }
   },
   "instagram": {
@@ -83,6 +104,27 @@
           "count": 1
         }
       ]
+    },
+    "INSTA_PAGE_KEY_3": {
+      "folders": [
+        {
+          "name": "hanumanji",
+          "count": 2
+        },
+        {
+          "name": "shreekrishna",
+          "count": 1
+        },
+        {
+          "name": "maadurga",
+          "count": 1
+        },
+        {
+          "name": "shyambaba",
+          "count": 1
+        }
+      ],
+      "profile_url": "https://www.instagram.com/nitin_mittal12345/"
     }
   }
 }

@@ -170,9 +170,15 @@ def load_accounts(platform_filter: str | None = None, log_skipped: bool = True) 
     resolved: dict[str, dict[str, list[dict]]] = {}
     platforms = (platform_filter,) if platform_filter else ("facebook", "instagram")
     for platform in platforms:
-        mappings = data.get(platform, {})
+        # A platform can be omitted from the JSON (or set to null/empty) to disable it.
+        # This is an intentional skip, not a workflow error.
+        mappings = data.get(platform)
+        if mappings is None or mappings == {}:
+            if log_skipped:
+                print(f"INFO: no '{platform}' accounts configured in config/social_accounts.json; skipping platform.")
+            continue
         if not isinstance(mappings, dict):
-            raise RuntimeError(f"The '{platform}' value in config/social_accounts.json must be an object mapping secret key names to folder arrays.")
+            raise RuntimeError(f"The '{platform}' value in config/social_accounts.json must be an object mapping secret key names to folder arrays, or be omitted to skip the platform.")
         for key_env, account_config in mappings.items():
             if not isinstance(key_env, str):
                 raise RuntimeError(f"Invalid account key name in {platform} mapping: {key_env!r}")

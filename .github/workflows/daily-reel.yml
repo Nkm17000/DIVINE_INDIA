@@ -67,7 +67,14 @@ jobs:
           outputs = {}
           for platform in ('facebook', 'instagram'):
               rows = []
-              for account_key, account_config in config.get(platform, {}).items():
+              mappings = config.get(platform)
+              if mappings is None or mappings == {}:
+                  print(f"INFO: no '{platform}' accounts configured in config/social_accounts.json; publishing jobs will be skipped.")
+                  outputs[platform] = json.dumps({"include": []}, separators=(',', ':'))
+                  continue
+              if not isinstance(mappings, dict):
+                  raise SystemExit(f"The '{platform}' config must be an object or omitted/null to skip that platform.")
+              for account_key, account_config in mappings.items():
                   folders = account_config.get('folders', []) if isinstance(account_config, dict) else account_config
                   counts = {}
                   for entry in folders:
