@@ -149,7 +149,13 @@ jobs:
           path: output
       - name: Check whether Instagram accounts are configured
         id: account-check
-        run: python src/publish.py has-instagram >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Capture logs separately; only the exact output assignment goes to GITHUB_OUTPUT.
+          python src/publish.py has-instagram > account-check.log
+          cat account-check.log
+          grep -E '^has_instagram=(true|false)$' account-check.log >> "$GITHUB_OUTPUT"
       - name: Create temporary public URLs for Instagram
         if: ${{ steps.account-check.outputs.has_instagram == 'true' }}
         env:

@@ -7,7 +7,7 @@ variables populated by GitHub Actions secrets; no tokens belong in the JSON file
 from __future__ import annotations
 import json
 import os
-from datetime import datetime, timezone
+import contextlib
 import re
 import sys
 import time
@@ -17,8 +17,6 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 OUT_ROOT = ROOT / "output"
 GRAPH = os.getenv("META_GRAPH_VERSION", "v24.0")
-HISTORY_FILE = ROOT / "data" / "history" / "publication_history.json"
-STATUS_FILE = ROOT / "data" / "history" / "publication_status.json"
 
 
 def _paired_token_name(key_name: str, platform: str) -> str:
@@ -57,8 +55,12 @@ def platform_caption(caption: str, platform: str, account: dict) -> str:
     return f"{caption.rstrip()}\n\n{cta}"
 
 
-def load_accounts() -> dict:
-    """Resolve shared account credentials and assign each account only to configured folders."""
+def load_accounts(platform_filter: tuple[str, ...] | None = None) -> dict:
+    """Resolve credentials for configured platforms and assign accounts to folders.
+
+    platform_filter allows lightweight platform-only checks to avoid reading/logging
+    unrelated platform credentials.
+    """
     config_path = ROOT / "config" / "social_accounts.json"
     try:
         data = json.loads(config_path.read_text(encoding="utf-8"))
@@ -70,7 +72,8 @@ def load_accounts() -> dict:
         raise RuntimeError("config/social_accounts.json must be an object with facebook and instagram mappings.")
 
     resolved: dict[str, dict[str, list[dict]]] = {}
-    for platform in ("facebook", "instagram"):
+    platforms = platform_filter or ("facebook", "instagram")
+    for platform in platforms:
         mappings = data.get(platform, {})
         if not isinstance(mappings, dict):
             raise RuntimeError(f"The '{platform}' value in config/social_accounts.json must be an object mapping secret key names to folder arrays.")
@@ -157,9 +160,7 @@ def post_facebook(video: Path, caption: str, account: dict, folder: str) -> None
                           files={"source": (video.name, f, "video/mp4")}, timeout=300)
     if not r.ok:
         raise RuntimeError(f"Facebook publish failed for {folder}/Page {page_id}: HTTP {r.status_code}: {r.text}")
-    result = r.json()
-    print(f"Facebook published [{folder}] account key {account.get('account_key', '')}, Page {page_id}: {result}")
-    return result.get("id") or result.get("post_id")
+    print(f"Facebook published [{folder}] account key {account.get('account_key', '')}, Page {page_id}: {r.json()}")
 
 
 def post_instagram(video_url: str, caption: str, account: dict, folder: str) -> None:
@@ -195,32 +196,7 @@ def post_instagram(video_url: str, caption: str, account: dict, folder: str) -> 
                             data={"creation_id": creation_id, "access_token": token}, timeout=120)
     if not publish.ok:
         raise RuntimeError(f"Instagram publish failed for {folder}/{user_id}: HTTP {publish.status_code}: {publish.text}")
-    result = publish.json()
-    print(f"Instagram published [{folder}] account key {account.get('account_key', '')}, account {user_id}: {result}")
-    return result.get("id")
-
-
-def _write_publication_record(record: dict) -> None:
-    """Persist append-only history plus latest status for every platform/account/video."""
-    HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        history = json.loads(HISTORY_FILE.read_text(encoding="utf-8")) if HISTORY_FILE.exists() else []
-        if not isinstance(history, list):
-            history = []
-    except (OSError, json.JSONDecodeError):
-        history = []
-    history.append(record)
-    HISTORY_FILE.write_text(json.dumps(history[-20000:], ensure_ascii=False, indent=2), encoding="utf-8")
-
-    try:
-        status = json.loads(STATUS_FILE.read_text(encoding="utf-8")) if STATUS_FILE.exists() else {}
-        if not isinstance(status, dict):
-            status = {}
-    except (OSError, json.JSONDecodeError):
-        status = {}
-    key = "|".join(str(record.get(k, "")) for k in ("platform", "account_key", "folder", "video"))
-    status[key] = record
-    STATUS_FILE.write_text(json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"Instagram published [{folder}] account key {account.get('account_key', '')}, account {user_id}: {publish.json()}")
 
 
 def main() -> None:
@@ -229,11 +205,16 @@ def main() -> None:
     target = sys.argv[1].lower()
     accounts = load_accounts()
     if target == "has-instagram":
-        print("has_instagram=" + str(any(v.get("instagram") for v in accounts.values())).lower())
+        # GitHub $GITHUB_OUTPUT must contain only NAME=VALUE records. Keep any
+        # diagnostic messages from account loading on stderr, and inspect only
+        # Instagram secrets so Facebook configuration cannot affect this check.
+        with contextlib.redirect_stdout(sys.stderr):
+            instagram_accounts = load_accounts(platform_filter=("instagram",))
+        has_instagram = any(v.get("instagram") for v in instagram_accounts.values())
+        print("has_instagram=" + str(has_instagram).lower())
         return
     urls = instagram_urls()
     errors = []
-    run_started = datetime.now(timezone.utc).isoformat()
     for folder_dir in sorted(p for p in OUT_ROOT.iterdir() if p.is_dir()):
         folder = folder_dir.name
         caption_file = folder_dir / "caption.txt"
@@ -249,34 +230,20 @@ def main() -> None:
             url_key = f"{folder}/{video.name}"
             video_url = str(urls.get(url_key, urls.get(folder, "") if video.name == "daily_reel.mp4" else ""))
             for platform in platforms:
+                if platform == "has-instagram":
+                    continue
                 for account in configured.get(platform, []):
-                    record = {
-                        "run_started_utc": run_started,
-                        "updated_utc": datetime.now(timezone.utc).isoformat(),
-                        "platform": platform.upper(), "account_key": account.get("account_key", "unknown"),
-                        "account_id": account.get("page_id") if platform == "facebook" else account.get("user_id"),
-                        "folder": folder, "video": video.name, "caption": caption,
-                        "status": "FAILED", "post_id": None, "error": None,
-                    }
                     try:
                         caption_for_platform = platform_caption(caption, platform, account)
                         if platform == "facebook":
-                            post_id = post_facebook(video, caption_for_platform, account, folder)
+                            post_facebook(video, caption_for_platform, account, folder)
                         else:
-                            post_id = post_instagram(video_url, caption_for_platform, account, folder)
-                        record["status"] = "PUBLISHED"
-                        record["post_id"] = str(post_id) if post_id is not None else None
+                            post_instagram(video_url, caption_for_platform, account, folder)
                     except Exception as exc:
-                        record["error"] = str(exc)
                         errors.append(f"{platform} [{folder}/{video.name}] [{account.get('account_key', 'unknown')}]: {exc}")
                         print(f"ERROR: {errors[-1]}")
-                    finally:
-                        record["updated_utc"] = datetime.now(timezone.utc).isoformat()
-                        _write_publication_record(record)
-    print(f"Publication run finished for {target}. History: {HISTORY_FILE}; latest status: {STATUS_FILE}")
     if errors:
-        raise RuntimeError("One or more publishing targets failed (other targets were still attempted):\n" + "\n".join(errors))
-
+        raise RuntimeError("One or more publishing targets failed:\n" + "\n".join(errors))
 
 
 if __name__ == "__main__":
