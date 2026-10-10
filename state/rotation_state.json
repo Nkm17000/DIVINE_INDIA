@@ -47,13 +47,23 @@
           "image": "hanumanji/7381146.jpg",
           "ring": "hanumanji/Bala-Ji-Acha-Lage-Se-Remix.mp3",
           "selected_utc": "2026-10-10T02:51:55.820671+00:00"
+        },
+        {
+          "image": "hanumanji/Hanuman_08.jpg",
+          "ring": "hanumanji/Baba-Arji-Hamari-Marji-Tumhari-Veer-Hanumana-Ati-Balwana-Hanuman-Ji.mp3",
+          "selected_utc": "2026-10-10T03:14:16.740640+00:00"
+        },
+        {
+          "image": "hanumanji/Hanuman_13.jpg",
+          "ring": "hanumanji/Aaj-Hanuman-Jayanti-Hai-Lakhbir-Singh-Lakha.mp3",
+          "selected_utc": "2026-10-10T03:14:38.740280+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/7381146.jpg",
-        "ring": "rings/hanumanji/Bala-Ji-Acha-Lage-Se-Remix.mp3",
-        "selected_utc": "2026-10-10T02:51:55.820671+00:00",
+        "image": "images/hanumanji/Hanuman_13.jpg",
+        "ring": "rings/hanumanji/Aaj-Hanuman-Jayanti-Hai-Lakhbir-Singh-Lakha.mp3",
+        "selected_utc": "2026-10-10T03:14:38.740280+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -66,7 +76,9 @@
         "hanumanji/Hanuman_19.jpg|||hanumanji/Puri-Sada-Hi-Hamari-Har-Aas-Karna.mp3",
         "hanumanji/Hanuman_10.jpg|||hanumanji/Kejo-Kesari-Ke-Lal-Lakhbir-Singh-Lakha-Bhakti.mp3",
         "hanumanji/58605329-hanuman-ji-photo-dp-image-picture.jpg|||hanumanji/Bajrang-Baan-Lofi-Slowed-Reverb.mp3",
-        "hanumanji/7381146.jpg|||hanumanji/Bala-Ji-Acha-Lage-Se-Remix.mp3"
+        "hanumanji/7381146.jpg|||hanumanji/Bala-Ji-Acha-Lage-Se-Remix.mp3",
+        "hanumanji/Hanuman_08.jpg|||hanumanji/Baba-Arji-Hamari-Marji-Tumhari-Veer-Hanumana-Ati-Balwana-Hanuman-Ji.mp3",
+        "hanumanji/Hanuman_13.jpg|||hanumanji/Aaj-Hanuman-Jayanti-Hai-Lakhbir-Singh-Lakha.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -10193,13 +10205,18 @@
           "image": "maadurga/Maa_Durga_0018.jpg",
           "ring": "maadurga/tere-haan-gulam-daatiye-96820.mp3",
           "selected_utc": "2026-10-10T02:00:37.265704+00:00"
+        },
+        {
+          "image": "maadurga/Maa_Durga_0020.jpg",
+          "ring": "maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3",
+          "selected_utc": "2026-10-10T03:15:03.883680+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/Maa_Durga_0018.jpg",
-        "ring": "rings/maadurga/tere-haan-gulam-daatiye-96820.mp3",
-        "selected_utc": "2026-10-10T02:00:37.265704+00:00",
+        "image": "images/maadurga/Maa_Durga_0020.jpg",
+        "ring": "rings/maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3",
+        "selected_utc": "2026-10-10T03:15:03.883680+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10210,7 +10227,8 @@
         "maadurga/wp6709263.jpg|||maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Jubin-Bhakti.mp3",
         "maadurga/Maa_Durga_0006.jpg|||maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3",
         "maadurga/desktop-wallpaper-lakshmi-hindu-goddess-for-wealth-and-abundance-chant-om-shreem-laxmi-mata.jpg|||maadurga/Tera-Bharosa-Tera-Sahara-Sachet-Tandon.mp3",
-        "maadurga/Maa_Durga_0018.jpg|||maadurga/tere-haan-gulam-daatiye-96820.mp3"
+        "maadurga/Maa_Durga_0018.jpg|||maadurga/tere-haan-gulam-daatiye-96820.mp3",
+        "maadurga/Maa_Durga_0020.jpg|||maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -10262,13 +10280,18 @@
           "image": "shreekrishna/Shree_Krishna_02.jpg",
           "ring": "shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3",
           "selected_utc": "2026-10-10T02:52:35.109511+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_03.jpg",
+          "ring": "shreekrishna/Madhav.mp3",
+          "selected_utc": "2026-10-10T03:15:23.988797+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_02.jpg",
-        "ring": "rings/shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3",
-        "selected_utc": "2026-10-10T02:52:35.109511+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_03.jpg",
+        "ring": "rings/shreekrishna/Madhav.mp3",
+        "selected_utc": "2026-10-10T03:15:23.988797+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10279,7 +10302,8 @@
         "shreekrishna/Krishna by the Sacred River at Sunset.png|||shreekrishna/shri_krishna (2).mp3",
         "shreekrishna/Krishna Overlooking Golden Dwarka.png|||shreekrishna/sanwariya-thari-kripa-re-bade.mp3",
         "shreekrishna/Shree_Krishna_01.jpg|||shreekrishna/shyama-aan-baso-vrindavan-mein.mp3",
-        "shreekrishna/Shree_Krishna_02.jpg|||shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3"
+        "shreekrishna/Shree_Krishna_02.jpg|||shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3",
+        "shreekrishna/Shree_Krishna_03.jpg|||shreekrishna/Madhav.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -17858,13 +17882,18 @@
           "image": "shyambaba/Golden Temple Shrine with Peacock-Crowned Deity-4.png",
           "ring": "shyambaba/tere-hote-hue-sarkar-nahin-ho-sakti-meri-har.mp3",
           "selected_utc": "2026-10-10T02:01:28.004477+00:00"
+        },
+        {
+          "image": "shyambaba/Khatu_Shyam_0142.png",
+          "ring": "shyambaba/jis-ghar-me-khatu-wale-ki.mp3",
+          "selected_utc": "2026-10-10T03:15:58.937680+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Golden Temple Shrine with Peacock-Crowned Deity-4.png",
-        "ring": "rings/shyambaba/tere-hote-hue-sarkar-nahin-ho-sakti-meri-har.mp3",
-        "selected_utc": "2026-10-10T02:01:28.004477+00:00",
+        "image": "images/shyambaba/Khatu_Shyam_0142.png",
+        "ring": "rings/shyambaba/jis-ghar-me-khatu-wale-ki.mp3",
+        "selected_utc": "2026-10-10T03:15:58.937680+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -17873,10 +17902,11 @@
         "shyambaba/Ornate Khatu Shyam Temple Shrine-10.png|||shyambaba/mere-khatu-wale-shyam.mp3",
         "shyambaba/11109687.webp|||shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
         "shyambaba/Krishna Lifts Govardhan Hill (1).png|||shyambaba/mera-shyam-aa-jata-mere-samne.mp3",
-        "shyambaba/Khatu_Shyam_0123.png|||shyambaba/jai-shree-shyam-song-message.mp3",
         "shyambaba/shree_shyam_image_3.jpg|||shyambaba/mere-khatu-wale-shyam-mere-sanware.mp3",
-        "shyambaba/Golden Temple Shrine with Peacock-Crowned Deity-4.png|||shyambaba/tere-hote-hue-sarkar-nahin-ho-sakti-meri-har.mp3"
-      ]
+        "shyambaba/Golden Temple Shrine with Peacock-Crowned Deity-4.png|||shyambaba/tere-hote-hue-sarkar-nahin-ho-sakti-meri-har.mp3",
+        "shyambaba/Khatu_Shyam_0142.png|||shyambaba/jis-ghar-me-khatu-wale-ki.mp3"
+      ],
+      "history_migrated": true
     }
   }
 }
