@@ -1,0 +1,67 @@
+[
+  {
+    "run_started_utc": "2026-10-10T05:59:19.413125+00:00",
+    "updated_utc": "2026-10-10T05:59:20.822520+00:00",
+    "platform": "FACEBOOK",
+    "account_key": "FB_PAGE_KEY",
+    "account_id": "1252116237996398",
+    "folder": "hanumanji",
+    "video": "daily_reel.mp4",
+    "caption": "🙏 जय बजरंगबली 🙏\n\n#Bhakti #Devotional #SanatanDharma",
+    "status": "FAILED",
+    "post_id": null,
+    "error": "Facebook publish failed for hanumanji/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"AeuTQSHvV6x_Ha7-8mEUKVy4Y6LNaY-V4bhyMq8L_C5uqTELMaX0yh35yR4T3SgU8BmMvT-firAO7rIdXp0u4kGEsLTa_J6uDOYrknpA0aZBcPVg6Rco7BeysMN7CRccogNWfLTC9WTxcbb8xUSc--cCvQp3w_bupbmcwmTW2a3vkSzA0bWaUd4fZOueiU9_SD-SXIGaPSZAobGbGYAm9VsVbpT8zhTKLP1qRbOuTNDVo4Ryg2iXdqMgxBk50uuswAUJrTZDgUh9RBi700et1Gpy9oP1dZqCkSCihi3zshqQh6fXpJqtMR4pIcJj79iTnD4\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"A3xvakPYY_h4kZGCgOuoofH\"}}"
+  },
+  {
+    "run_started_utc": "2026-10-10T05:59:19.413125+00:00",
+    "updated_utc": "2026-10-10T05:59:22.596931+00:00",
+    "platform": "FACEBOOK",
+    "account_key": "FB_PAGE_KEY",
+    "account_id": "1252116237996398",
+    "folder": "hanumanji",
+    "video": "daily_reel_2.mp4",
+    "caption": "🙏 जय बजरंगबली 🙏\n\n#Bhakti #Devotional #SanatanDharma",
+    "status": "FAILED",
+    "post_id": null,
+    "error": "Facebook publish failed for hanumanji/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"AeuQkuE7BUZDKUHzDWwclA7HxXzF_RiRWNlzjbPeILze1u0Q7_CcjKqIyX-ejKhO9X21JpFBSCCFiTeMoqI-RTuu9wd6NmoIP6h_HxligOHAM-cuNAsx1Zow4waGpF6zB2tKWRsyqBxlzXWpkY48AMeRK8oo45YPW_chVBuzJECwR1pouqoK50bLEwWCAdXAracEiwHWYlf9xcJvGwzX8QNpPxUtJdrcBPuJBDx22sHHFJks3jQ08tXb01AOLriXTtDMndddyv5NHbft2vqHTOqA_qEZhh-rvMP-lcmHFs1Pj5PBR9_fs50Elc4Q-nRN2g\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"ATvsGeIHfmfQ3CaqSd3JFM0\"}}"
+  },
+  {
+    "run_started_utc": "2026-10-10T05:59:19.413125+00:00",
+    "updated_utc": "2026-10-10T05:59:23.708500+00:00",
+    "platform": "FACEBOOK",
+    "account_key": "FB_PAGE_KEY",
+    "account_id": "1252116237996398",
+    "folder": "maadurga",
+    "video": "daily_reel.mp4",
+    "caption": "🌺 जय माता दी 🌺\n\n#Bhakti #Devotional #SanatanDharma",
+    "status": "FAILED",
+    "post_id": null,
+    "error": "Facebook publish failed for maadurga/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"AetpYCea5hQaJsx_CHzyUa3iIwKqAQG8Wzr7gsX7xoEqVpGIAW4sGTO1lhRprX9Rge_ubEZW0oqnH5XtK-gBDOr6s_LM6T0EIlK6W21KPewtvJACak_W9xuUSsAsUsWYplOWTiXxynx07LhmqfBiXiHawIcNDbw1Z6O2PMEUlceLYhMZux8QfJ9C8SNWHP_kOAZUjgAIXUehuszwM_GlaN-TPbsI51hDuaJMqmKrL_B87CVsbMy7fX6rk1QEiDVITe2HLHvTqi8i5PnxtLv4Ve8LMsioydF8Z0R8w9MDARTfjGEb61QpqN3GzVjBAoQl6rLd\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"AJRYUfeuvNS2pbq8osAvvSd\"}}"
+  },
+  {
+    "run_started_utc": "2026-10-10T05:59:19.413125+00:00",
+    "updated_utc": "2026-10-10T05:59:24.915287+00:00",
+    "platform": "FACEBOOK",
+    "account_key": "FB_PAGE_KEY",
+    "account_id": "1252116237996398",
+    "folder": "shreekrishna",
+    "video": "daily_reel.mp4",
+    "caption": "🦚 जय श्री कृष्ण 🦚\n\n#Bhakti #Devotional #SanatanDharma",
+    "status": "FAILED",
+    "post_id": null,
+    "error": "Facebook publish failed for shreekrishna/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"Aes1HZmkTZvM9STVeY9HHpzQmCV2qVMsiXnnL-3LhH0E6mxDILJapS5Wg_cDnsMB42pFOw3vkm_g67yUAJaBgjD753kSykfyZh94evGE276ctqnn9eom62o-LtniYfs3pktoC4VDGnOxHeIhwfucnF2RTfqu7D0TL80h0mtxTuW9HnMD_2H2tLIslIPZOZTOCIDNRl5FCkSB4uBkggehygZOHRsY_ArpnOzdfakhF3zE9za2znEP_5oh-cp6gUDNmosu2vA342VGE1CMjTeSdsPCbrWYYp4LUQPTy9toOf0FMgrq439WygS67KC5TbTlkrU\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"AshbEZxT9z7cI8XZpZprzf9\"}}"
+  },
+  {
+    "run_started_utc": "2026-10-10T05:59:19.413125+00:00",
+    "updated_utc": "2026-10-10T05:59:27.280643+00:00",
+    "platform": "FACEBOOK",
+    "account_key": "FB_PAGE_KEY",
+    "account_id": "1252116237996398",
+    "folder": "shyambaba",
+    "video": "daily_reel.mp4",
+    "caption": "🌸 जय श्री श्याम 🌸\n\n#Bhakti #Devotional #SanatanDharma",
+    "status": "FAILED",
+    "post_id": null,
+    "error": "Facebook publish failed for shyambaba/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"Aes_NNyMt22fqA0_022fsXvZhWHVDn2YUHbvXNkvyh4vyI5vDPp6YijXN13f6vrLHA1j7pactyWHjgIQ3dbCbmDYC5CO1C2RmKCaHc09FtaarGkD2mHbjG_MPpxrZqd9JpfUIaMJofcH89RwQxC6b1B5QkyNCxSPbovDeJttnd08-hAW_9WYmHzyZe7UAHChgIivdFqPBCAEjKOrW737CKAaYvcuf4XrniV9alIl5GP-FHUoiG_n6qRPP-v1vrw79gTGyU5925OnID2zrOlTiqA9zWFAanagnK54slpX-XSCdceuLijZcOKYd5V_G4ObPqQ0\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"AHdklaG58gADQaI1I56T-lw\"}}"
+  }
+]
