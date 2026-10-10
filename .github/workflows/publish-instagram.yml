@@ -2,11 +2,15 @@ name: Divine India - All Instagram Accounts
 
 on:
   workflow_dispatch:
+  # Trigger on pushes to any branch. No hard-coded branch name, so this also
+  # works if the repository's default branch is master or has a custom name.
   push:
-    branches: [main]
     paths-ignore:
       - "state/rotation_state.json"
+      - "state/**"
       - "output/**"
+      - "data/history/**"
+      - "*.mp4"
   schedule:
     # 6:00 AM and 6:00 PM India Standard Time (UTC+05:30)
     - cron: "30 0 * * *"

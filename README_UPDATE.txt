@@ -14,3 +14,10 @@ Each configured target is attempted independently. An error for one Facebook Pag
 Important deployment note: both workflows currently generate videos in their own run, matching the existing daily-reel.yml architecture. They are serialized independently and therefore can select different rotation pairs if run at the same time. If both platforms must publish the exact same generated video in each cycle, the repository should use one shared generation workflow that uploads a video artifact and then triggers both platform publisher workflows from that artifact.
 
 Schedules retained from the current workflow: 6:00 AM and 6:00 PM IST (00:30 and 12:30 UTC). GitHub Secrets are still expected as FB_PAGE_KEY / FB_PAGE_TOKEN and _2 through _10; Instagram uses INSTA_PAGE_KEY / INSTA_PAGE_TOKEN and _2 through _10.
+
+
+PUSH TRIGGER FIX (2026-10-10):
+- Removed the hard-coded `branches: [main]` filter from both workflows. Pushes to `master` or a custom branch now match too.
+- Generated rotation/output/history-only commits remain ignored to prevent recursive publishing runs.
+- For a push to trigger, at least one changed file must not match paths-ignore. Changes to `.github/workflows/*.yml`, `src/**`, `config/**`, and `requirements.txt` will trigger.
+- GitHub only discovers workflow files that are committed at `.github/workflows/` in the repository root. Ensure these files are committed to the branch being pushed and Actions are enabled.
