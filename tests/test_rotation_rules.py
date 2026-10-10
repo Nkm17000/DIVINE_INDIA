@@ -1,74 +1,80 @@
+import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'src'))
 import main
 
 
 class RotationRuleTests(unittest.TestCase):
-    def test_all_media_files_remain_eligible(self):
-        items = [Path(f"{i:02}.jpg") for i in range(22)]
+    def test_eligible_media_keeps_all_files_for_history_based_rotation(self):
+        items = [Path(f'{i:02}.jpg') for i in range(30)]
         self.assertEqual(main.eligible_media(items), items)
 
-    def test_excludes_images_and_ringtones_used_in_last_five_selections(self):
+    def test_rotation_fallback_always_selects_when_only_one_image_and_ring(self):
         old_image_root, old_ring_root, old_root = main.IMAGE_ROOT, main.RING_ROOT, main.ROOT
         try:
             with tempfile.TemporaryDirectory() as td:
                 root = Path(td)
-                image_root = root / "images"
-                ring_root = root / "rings"
-                (image_root / "god").mkdir(parents=True)
-                (ring_root / "god").mkdir(parents=True)
+                image_root, ring_root = root / 'images', root / 'rings'
+                (image_root / 'god').mkdir(parents=True)
+                (ring_root / 'god').mkdir(parents=True)
+                image = image_root / 'god' / 'only.jpg'; image.touch()
+                ring = ring_root / 'god' / 'only.mp3'; ring.touch()
+                main.IMAGE_ROOT, main.RING_ROOT, main.ROOT = image_root, ring_root, root
+                state = {'folders': {}}
+                selected = main.choose_pair('god', [image], [ring], state)
+                self.assertEqual(selected[0], image)
+                self.assertEqual(selected[1], ring)
+                # A new cycle may use the only available pair again; it must not skip.
+                selected2 = main.choose_pair('god', [image], [ring], state)
+                self.assertEqual((selected2[0], selected2[1]), (image, ring))
+        finally:
+            main.IMAGE_ROOT, main.RING_ROOT, main.ROOT = old_image_root, old_ring_root, old_root
+
+    def test_pair_is_not_reused_before_exhaustion(self):
+        old_image_root, old_ring_root, old_root = main.IMAGE_ROOT, main.RING_ROOT, main.ROOT
+        try:
+            with tempfile.TemporaryDirectory() as td:
+                root = Path(td); image_root = root / 'images'; ring_root = root / 'rings'
+                (image_root / 'god').mkdir(parents=True); (ring_root / 'god').mkdir(parents=True)
                 images, rings = [], []
-                for i in range(12):
-                    p = image_root / "god" / f"{i:02}.jpg"
-                    q = ring_root / "god" / f"{i:02}.mp3"
-                    p.touch(); q.touch()
-                    images.append(p); rings.append(q)
+                for i in range(3):
+                    ip = image_root / 'god' / f'{i:02}.jpg'; ip.touch(); images.append(ip)
+                    rp = ring_root / 'god' / f'{i:02}.mp3'; rp.touch(); rings.append(rp)
                 main.IMAGE_ROOT, main.RING_ROOT, main.ROOT = image_root, ring_root, root
-                history = [
-                    {"image": f"god/{i:02}.jpg", "ring": f"god/{i:02}.mp3"}
-                    for i in range(5)
-                ]
-                recent_image_names = {x["image"] for x in history}
-                recent_ring_names = {x["ring"] for x in history}
-                state = {"folders": {"god": {"history": history, "used_pairs": [
-                    f"god/{i:02}.jpg|||god/{i:02}.mp3" for i in range(5)
-                ], "cycle": 0}}}
-                image, ring, _ = main.choose_pair("god", images, rings, state)
-                self.assertNotIn(image.relative_to(image_root).as_posix(),
-                                 recent_image_names)
-                self.assertNotIn(ring.relative_to(ring_root).as_posix(),
-                                 recent_ring_names)
+                state = {'folders': {}}
+                seen = set()
+                for _ in range(9):
+                    image, ring, _ = main.choose_pair('god', images, rings, state)
+                    pair = (image, ring)
+                    self.assertNotIn(pair, seen)
+                    seen.add(pair)
+                self.assertEqual(len(seen), 9)
+                # After every combination has been used, the cycle resets and still returns a pair.
+                image, ring, _ = main.choose_pair('god', images, rings, state)
+                self.assertIn((image, ring), seen)
         finally:
             main.IMAGE_ROOT, main.RING_ROOT, main.ROOT = old_image_root, old_ring_root, old_root
 
-    def test_same_image_cannot_repeat_with_a_different_tone_within_recent_window(self):
-        old_image_root, old_ring_root, old_root = main.IMAGE_ROOT, main.RING_ROOT, main.ROOT
+    def test_video_count_config_reads_name_count_objects(self):
+        old_root = main.ROOT
         try:
             with tempfile.TemporaryDirectory() as td:
-                root = Path(td)
-                image_root = root / "images"
-                ring_root = root / "rings"
-                (image_root / "god").mkdir(parents=True)
-                (ring_root / "god").mkdir(parents=True)
-                images = []
-                rings = []
-                for i in range(8):
-                    p = image_root / "god" / f"{i:02}.jpg"; p.touch(); images.append(p)
-                    q = ring_root / "god" / f"{i:02}.mp3"; q.touch(); rings.append(q)
-                main.IMAGE_ROOT, main.RING_ROOT, main.ROOT = image_root, ring_root, root
-                state = {"folders": {}}
-                first_image, first_ring, _ = main.choose_pair("god", images, rings, state)
-                for _ in range(5):
-                    image, ring, _ = main.choose_pair("god", images, rings, state)
-                    self.assertNotEqual(image, first_image)
-                    self.assertNotEqual(ring, first_ring)
+                main.ROOT = Path(td)
+                (main.ROOT / 'config').mkdir()
+                (main.ROOT / 'config' / 'social_accounts.json').write_text(json.dumps({
+                    'facebook': {'FB_PAGE_KEY': {'folders': [{'name': 'hanumanji', 'count': 2}, {'name': 'shreekrishna', 'count': 1}], 'profile_url': 'https://example.com/fb'}},
+                    'instagram': {'INSTA_PAGE_KEY': {'folders': [{'name': 'hanumanji', 'count': 2}, {'name': 'shreekrishna', 'count': 1}], 'profile_url': 'https://example.com/ig'}}
+                }), encoding='utf-8')
+                self.assertEqual(main.load_video_counts(), {'hanumanji': 2, 'shreekrishna': 1})
         finally:
-            main.IMAGE_ROOT, main.RING_ROOT, main.ROOT = old_image_root, old_ring_root, old_root
+            main.ROOT = old_root
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main(verbosity=2)

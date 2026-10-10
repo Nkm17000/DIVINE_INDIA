@@ -80,8 +80,26 @@ def load_accounts() -> dict:
                     f"{platform}.{key_env} must be an object with 'folders' and 'profile_url' "
                     "or a legacy array of folder names."
                 )
-            if not isinstance(folders, list) or not all(isinstance(folder, str) and folder.strip() for folder in folders):
-                raise RuntimeError(f"{platform}.{key_env}.folders must contain a JSON array of non-empty folder names.")
+            if not isinstance(folders, list):
+                raise RuntimeError(f"{platform}.{key_env}.folders must be a JSON array.")
+            normalized_folders = []
+            for folder_entry in folders:
+                if isinstance(folder_entry, str) and folder_entry.strip():
+                    normalized_folders.append(folder_entry.strip())
+                elif isinstance(folder_entry, dict):
+                    folder_name = folder_entry.get("name")
+                    count = folder_entry.get("count", 1)
+                    if not isinstance(folder_name, str) or not folder_name.strip():
+                        raise RuntimeError(f"{platform}.{key_env}.folders entries need a non-empty 'name'.")
+                    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+                        raise RuntimeError(f"{platform}.{key_env}.folders count for {folder_name!r} must be a positive integer.")
+                    normalized_folders.append(folder_name.strip())
+                else:
+                    raise RuntimeError(
+                        f"{platform}.{key_env}.folders entries must be strings or objects like "
+                        "{\"name\": \"hanumanji\", \"count\": 2}."
+                    )
+            folders = normalized_folders
             if profile_url and not profile_url.startswith(("https://", "http://")):
                 raise RuntimeError(f"{platform}.{key_env}.profile_url must start with https:// or http://.")
             token_env = _paired_token_name(key_env, platform)
@@ -179,26 +197,31 @@ def main() -> None:
     errors = []
     for folder_dir in sorted(p for p in OUT_ROOT.iterdir() if p.is_dir()):
         folder = folder_dir.name
-        video = folder_dir / "daily_reel.mp4"
         caption_file = folder_dir / "caption.txt"
-        if not video.is_file() or not caption_file.is_file():
+        if not caption_file.is_file():
+            continue
+        videos = sorted(folder_dir.glob("daily_reel*.mp4"), key=lambda path: (path.name != "daily_reel.mp4", path.name))
+        if not videos:
             continue
         caption = caption_file.read_text(encoding="utf-8").strip()
         configured = accounts.get(folder, {"facebook": [], "instagram": []})
         platforms = ("facebook", "instagram") if target == "all" else (target,)
-        for platform in platforms:
-            if platform == "has-instagram":
-                continue
-            for account in configured.get(platform, []):
-                try:
-                    caption_for_platform = platform_caption(caption, platform, account)
-                    if platform == "facebook":
-                        post_facebook(video, caption_for_platform, account, folder)
-                    else:
-                        post_instagram(str(urls.get(folder, "")), caption_for_platform, account, folder)
-                except Exception as exc:
-                    errors.append(f"{platform} [{folder}] [{account.get('account_key', 'unknown')}]: {exc}")
-                    print(f"ERROR: {errors[-1]}")
+        for video in videos:
+            url_key = f"{folder}/{video.name}"
+            video_url = str(urls.get(url_key, urls.get(folder, "") if video.name == "daily_reel.mp4" else ""))
+            for platform in platforms:
+                if platform == "has-instagram":
+                    continue
+                for account in configured.get(platform, []):
+                    try:
+                        caption_for_platform = platform_caption(caption, platform, account)
+                        if platform == "facebook":
+                            post_facebook(video, caption_for_platform, account, folder)
+                        else:
+                            post_instagram(video_url, caption_for_platform, account, folder)
+                    except Exception as exc:
+                        errors.append(f"{platform} [{folder}/{video.name}] [{account.get('account_key', 'unknown')}]: {exc}")
+                        print(f"ERROR: {errors[-1]}")
     if errors:
         raise RuntimeError("One or more publishing targets failed:\n" + "\n".join(errors))
 

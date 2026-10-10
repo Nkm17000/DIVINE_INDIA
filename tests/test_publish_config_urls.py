@@ -16,10 +16,10 @@ class ProfileURLConfigTests(unittest.TestCase):
             (root / "config").mkdir()
             (root / "config" / "social_accounts.json").write_text(json.dumps({
                 "facebook": {"FB_PAGE_KEY": {
-                    "folders": ["god"], "profile_url": "https://www.facebook.com/my-page"
+                    "folders": [{"name": "god", "count": 2}], "profile_url": "https://www.facebook.com/my-page"
                 }},
                 "instagram": {"INSTA_PAGE_KEY": {
-                    "folders": ["god"], "profile_url": "https://www.instagram.com/my-profile/"
+                    "folders": [{"name": "god", "count": 2}], "profile_url": "https://www.instagram.com/my-profile/"
                 }}
             }), encoding="utf-8")
             old_root = publish.ROOT

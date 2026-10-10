@@ -90,9 +90,9 @@ jobs:
         with:
           name: divine-india-reels-${{ github.run_number }}
           path: |
-            output/*/daily_reel.mp4
+            output/*/daily_reel*.mp4
             output/*/caption.txt
-            output/*/selection.json
+            output/*/selection*.json
           retention-days: 1
           if-no-files-found: error
       - name: Check whether Instagram accounts are configured
@@ -111,10 +111,11 @@ jobs:
             exit 1
           fi
           mkdir -p output/release-assets
-          for video in output/*/daily_reel.mp4; do
+          for video in output/*/daily_reel*.mp4; do
             [[ -f "$video" ]] || continue
             folder="$(basename "$(dirname "$video")")"
-            cp "$video" "output/release-assets/${folder}.mp4"
+            filename="$(basename "$video")"
+            cp "$video" "output/release-assets/${folder}__${filename}"
           done
           TAG="daily-reel-${GITHUB_RUN_ID}"
           gh release create "$TAG" output/release-assets/*.mp4 \
@@ -128,7 +129,8 @@ jobs:
           tag = f"daily-reel-{os.environ['GITHUB_RUN_ID']}"
           urls = {}
           for p in sorted(pathlib.Path('output/release-assets').glob('*.mp4')):
-              urls[p.stem] = f"https://github.com/{repo}/releases/download/{tag}/{p.name}"
+              folder, filename = p.name.split('__', 1)
+              urls[f"{folder}/{filename}"] = f"https://github.com/{repo}/releases/download/{tag}/{p.name}"
           pathlib.Path(os.environ['GITHUB_ENV']).open('a').write('INSTAGRAM_VIDEO_URLS_JSON=' + json.dumps(urls) + '\n')
           print('Created public URLs for:', ', '.join(urls))
           PY
