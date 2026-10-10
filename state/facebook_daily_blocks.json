@@ -1,3 +1,11 @@
 {
-  "accounts": {}
+  "accounts": {
+    "FB_PAGE_KEY": {
+      "blocked_date_ist": "2026-10-10",
+      "page_id": "1252116237996398",
+      "reason": "Meta Graph API error 368 (rate/spam prevention)",
+      "message": "Facebook publish failed for hanumanji/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"Aev52Gn9Nk6md2KmOFyLtxB8B6qaCAbXbBCcQ77uKvhuFi19KPO88vjTJCF2stEMBXpJaFu8k2MjQwkszW4F3EP4tzJ6hfqQ2g10V_T1yVwotRVIpol6CyMO-hlH_eMK4GZHs0vzksdsj4uBkLyaEaGGFQXf4Ug_nRDlpKLkWF2xp6MJzjLh6sd9t2ma-w16menGH5SpAzLcbVawwbtllp0h7zYGcPp3q1K_lZoFNw6PLAxlBcl1PdW_U3QxW_txrLPNPJ91pcb2Tu2rPxuzLA3AcNN-b3hyEg_w1qABTf-ycn6KQse3F78haJasYELizsI\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"AsjPllvsY9JExDL2pt1qhyC\"}}",
+      "blocked_at_utc": "2026-10-10T11:43:55.645316+00:00"
+    }
+  }
 }
