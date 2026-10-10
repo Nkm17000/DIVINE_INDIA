@@ -67,14 +67,27 @@ jobs:
               rows = []
               for account_key, account_config in config.get(platform, {}).items():
                   folders = account_config.get('folders', []) if isinstance(account_config, dict) else account_config
-                  folder_names = [x.get('name') if isinstance(x, dict) else x for x in folders]
-                  for item in videos:
-                      if item['folder'] not in folder_names:
-                          continue
-                      safe_id = re.sub(r'[^A-Za-z0-9_-]+', '_', f"{account_key}__{item['folder']}__{Path(item['video']).stem}").strip('_')
-                      rows.append({**item, "account_key": account_key, "job_id": safe_id})
+                  counts = {}
+                  for entry in folders:
+                      if isinstance(entry, dict):
+                          folder_name = entry.get('name')
+                          count = entry.get('count', 1)
+                      else:
+                          folder_name, count = entry, 1
+                      if not isinstance(folder_name, str) or not folder_name.strip():
+                          raise SystemExit(f"Invalid folder entry for {platform}.{account_key}: {entry!r}")
+                      if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+                          raise SystemExit(f"Invalid count for {platform}.{account_key}.{folder_name}: {count!r}")
+                      counts[folder_name.strip()] = count
+                  for folder_name, count in counts.items():
+                      available = [v for v in videos if v['folder'] == folder_name]
+                      if len(available) < count:
+                          print(f"WARNING: {platform}.{account_key}.{folder_name} requested count={count}, but only {len(available)} generated video(s) exist.")
+                      for item in available[:count]:
+                          safe_id = re.sub(r'[^A-Za-z0-9_-]+', '_', f"{account_key}__{item['folder']}__{Path(item['video']).stem}").strip('_')
+                          rows.append({**item, "account_key": account_key, "job_id": safe_id})
               outputs[platform] = json.dumps({"include": rows}, separators=(',', ':'))
-              print(f"{platform}: prepared {len(rows)} account/video jobs; max 3 concurrent.")
+              print(f"{platform}: prepared {len(rows)} account/video jobs using folder counts; max 3 concurrent.")
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
               f.write('facebook_matrix=' + outputs['facebook'] + '\n')
               f.write('instagram_matrix=' + outputs['instagram'] + '\n')
@@ -390,3 +403,53 @@ jobs:
           done
           echo "::warning::Could not push history after 3 attempts; the workflow runner may discard the local commit."
           exit 0
+
+
+  publication-summary:
+    name: Final publication summary
+    needs: [generate, publish-facebook, prepare-instagram, publish-instagram, cleanup-instagram-release, update-history]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all per-video publication results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: publish-result-*
+          path: summary_results
+          merge-multiple: true
+      - name: Report success, partial success, or failure
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          files = sorted(Path('summary_results').rglob('*.json'))
+          rows = []
+          for path in files:
+              try:
+                  data = json.loads(path.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  print(f'WARNING: cannot read {path}: {exc}')
+                  continue
+              records = data.get('records', [])
+              if isinstance(records, list):
+                  rows.extend(r for r in records if isinstance(r, dict))
+          published = [r for r in rows if str(r.get('status', '')).upper() == 'PUBLISHED']
+          failed = [r for r in rows if str(r.get('status', '')).upper() == 'FAILED']
+          skipped = [r for r in rows if str(r.get('status', '')).upper() == 'SKIPPED']
+          total = len(rows)
+          summary = Path(__import__('os').environ['GITHUB_STEP_SUMMARY'])
+          if published and (failed or skipped or len(published) < total):
+              status = 'PARTIAL_SUCCESS'
+          elif published:
+              status = 'SUCCESS'
+          else:
+              status = 'FAILURE'
+          lines = [f'# Divine India publication: {status}', '', f'- Successful videos/posts: **{len(published)}**', f'- Failed: **{len(failed)}**', f'- Skipped: **{len(skipped)}**', f'- Total result records: **{total}**', '', '| Platform | Account | Folder | Video | Status | Post ID | Error |', '|---|---|---|---|---|---|---|']
+          for r in rows:
+              values = [r.get('platform',''), r.get('account_key',''), r.get('folder',''), r.get('video',''), r.get('status',''), r.get('post_id',''), str(r.get('error','')).replace('|','\\|').replace('\n',' ') ]
+              lines.append('| ' + ' | '.join(str(v) for v in values) + ' |')
+          summary.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          print(f'{status}: successful={len(published)}, failed={len(failed)}, skipped={len(skipped)}, total={total}')
+          if status == 'FAILURE':
+              raise SystemExit(1)
