@@ -118,6 +118,7 @@ jobs:
       matrix: ${{ fromJSON(needs.generate.outputs.facebook_matrix) }}
     env:
       META_GRAPH_VERSION: v24.0
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       FB_PAGE_KEY: ${{ secrets.FB_PAGE_KEY }}
       FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
       FB_PAGE_KEY_2: ${{ secrets.FB_PAGE_KEY_2 }}

@@ -12,12 +12,111 @@ import re
 import sys
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+import base64
 from pathlib import Path
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT_ROOT = ROOT / "output"
 GRAPH = os.getenv("META_GRAPH_VERSION", "v24.0")
+
+BLOCK_STATE_PATH = "state/facebook_daily_blocks.json"
+INDIA_TZ = ZoneInfo("Asia/Kolkata")
+
+def _india_date() -> str:
+    return datetime.now(INDIA_TZ).date().isoformat()
+
+def _github_api_url(path: str = BLOCK_STATE_PATH) -> str | None:
+    repo = os.getenv("GITHUB_REPOSITORY", "").strip()
+    if not repo:
+        return None
+    return f"https://api.github.com/repos/{repo}/contents/{path}"
+
+def _read_fb_blocks() -> tuple[dict, str | None]:
+    """Read the persistent daily Facebook block list from the repository branch."""
+    url = _github_api_url()
+    token = os.getenv("GH_TOKEN", "").strip()
+    local_path = ROOT / BLOCK_STATE_PATH
+    local_data = {}
+    try:
+        local_data = json.loads(local_path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+    if not url or not token:
+        return local_data if isinstance(local_data, dict) else {}, None
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+    try:
+        response = requests.get(url, headers=headers, params={"ref": os.getenv("GITHUB_REF_NAME", "main")}, timeout=15)
+        if response.status_code == 404:
+            return {}, None
+        response.raise_for_status()
+        payload = response.json()
+        content = base64.b64decode(payload.get("content", "")).decode("utf-8")
+        data = json.loads(content) if content.strip() else {}
+        return (data if isinstance(data, dict) else {}), payload.get("sha")
+    except Exception as exc:
+        print(f"WARNING: could not read persistent Facebook daily-block state; using local state: {exc}")
+        return local_data if isinstance(local_data, dict) else {}, None
+
+def _write_fb_block(account_key: str, page_id: str, error: str) -> None:
+    """Persist a code-368 account block until the next India-local calendar day."""
+    local_path = ROOT / BLOCK_STATE_PATH
+    local_path.parent.mkdir(parents=True, exist_ok=True)
+    data, _ = _read_fb_blocks()
+    data.setdefault("accounts", {})[account_key] = {
+        "blocked_date_ist": _india_date(),
+        "page_id": page_id,
+        "reason": "Meta Graph API error 368 (rate/spam prevention)",
+        "message": error[:1200],
+        "blocked_at_utc": datetime.now(timezone.utc).isoformat(),
+    }
+    local_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    url = _github_api_url()
+    token = os.getenv("GH_TOKEN", "").strip()
+    if not url or not token:
+        print("WARNING: GH_TOKEN/GITHUB_REPOSITORY unavailable; daily block is only local to this job.")
+        return
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+    branch = os.getenv("GITHUB_REF_NAME", "main")
+    for attempt in range(3):
+        try:
+            current = requests.get(url, headers=headers, params={"ref": branch}, timeout=15)
+            sha = current.json().get("sha") if current.status_code == 200 else None
+            if current.status_code not in (200, 404):
+                current.raise_for_status()
+            # Re-read latest content before updating so concurrent 368 events are merged.
+            if current.status_code == 200:
+                latest = json.loads(base64.b64decode(current.json().get("content", "")).decode("utf-8") or "{}")
+                if isinstance(latest, dict):
+                    latest.setdefault("accounts", {}).update(data.get("accounts", {}))
+                    data = latest
+            body = {"message": f"chore: block Facebook account {account_key} for {_india_date()} after Meta 368",
+                    "content": base64.b64encode((json.dumps(data, ensure_ascii=False, indent=2) + "\n").encode()).decode(),
+                    "branch": branch}
+            if sha:
+                body["sha"] = sha
+            saved = requests.put(url, headers=headers, json=body, timeout=20)
+            if saved.status_code in (200, 201):
+                print(f"DAILY BLOCK SAVED: Facebook account {account_key} will be skipped for the rest of {_india_date()} IST.")
+                return
+            if saved.status_code not in (409, 422):
+                saved.raise_for_status()
+        except Exception as exc:
+            print(f"WARNING: could not persist Facebook daily block (attempt {attempt + 1}/3): {exc}")
+        time.sleep(attempt + 1)
+    print("WARNING: failed to persist Facebook daily block after retries; check GITHUB_TOKEN permissions.")
+
+def _facebook_account_blocked(account_key: str) -> tuple[bool, str]:
+    data, _ = _read_fb_blocks()
+    item = data.get("accounts", {}).get(account_key, {}) if isinstance(data, dict) else {}
+    blocked = bool(item and item.get("blocked_date_ist") == _india_date())
+    if blocked:
+        return True, f"Account blocked for today after Meta error 368 ({item.get('blocked_date_ist')} IST)."
+    return False, ""
+
+def _is_meta_368(error: str) -> bool:
+    return bool(re.search(r'(?i)(?:\"code\"\s*:\s*368|error code 368|\bcode[=: ]+368\b)', error))
 
 
 def _paired_token_name(key_name: str, platform: str) -> str:
@@ -298,6 +397,13 @@ def main() -> None:
                         "account_key": account_key, "account_id": account_id,
                         "status": "FAILED", "post_id": "", "published_at": "", "error": "",
                     }
+                    if platform == "facebook":
+                        is_blocked, block_reason = _facebook_account_blocked(account_key)
+                        if is_blocked:
+                            record.update(status="SKIPPED", error=block_reason)
+                            print(f"SKIPPED: Facebook account {account_key} for {folder}/{video.name}: {block_reason}")
+                            records.append(record)
+                            continue
                     try:
                         caption_for_platform = platform_caption(caption, platform, account)
                         if platform == "facebook":
@@ -308,6 +414,10 @@ def main() -> None:
                                       published_at=datetime.now(timezone.utc).isoformat())
                     except Exception as exc:
                         record["error"] = str(exc)
+                        if platform == "facebook" and _is_meta_368(str(exc)):
+                            _write_fb_block(account_key, account_id, str(exc))
+                            record.update(status="FAILED", error=str(exc))
+                            print(f"DAILY ACCOUNT BLOCKED: Facebook {account_key}; subsequent jobs for this account will be skipped today.")
                         errors.append(f"{platform} [{folder}/{video.name}] [{account_key}]: {exc}")
                         print(f"ERROR: {errors[-1]}")
                     records.append(record)
