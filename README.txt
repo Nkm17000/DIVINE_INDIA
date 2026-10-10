@@ -1,20 +1,27 @@
-DIVINE_INDIA orientation validation fix
+DIVINE_INDIA — Profile URLs at config level
 
-Replace:
-  src/main.py
+Changed:
+- src/publish.py
+- config/social_accounts.example.json
+- tests/test_rotation_and_caption_rules.py
 
-Cause:
-  verify_video() hard-coded portrait dimensions (1080x1920), but video.py intentionally
-  renders landscape source images as 1920x1080. FFmpeg succeeded; post-render validation
-  incorrectly rejected the valid horizontal video.
+Profile URLs now live in config/social_accounts.json, not GitHub secrets.
+Credentials (page/account IDs and access tokens) remain GitHub secrets.
 
-Fix:
-  main.py now passes the width and height returned by create_video() to verify_video().
-  It validates both orientations without disabling verification.
+For each platform account entry, use:
+{
+  "folders": ["hanumanji"],
+  "profile_url": "https://www.facebook.com/YOUR_PAGE"
+}
 
-Validation performed:
-  Python compilation succeeded for all Python files in the supplied src folder.
+For Instagram, use your Instagram profile URL instead. Copy the example file to
+config/social_accounts.json or merge the `profile_url` property and `folders` array
+into your existing account entries. Replace placeholder URLs with the actual public URLs.
 
-Expected behavior:
-  Portrait source -> 1080x1920
-  Landscape source -> 1920x1080
+Legacy array-only entries remain accepted for backward compatibility, but should be
+converted to objects to configure a profile URL.
+
+Validation:
+- Existing media rotation and caption tests plus the new config-level URL test.
+- Python compilation.
+- Real social publishing was not run.

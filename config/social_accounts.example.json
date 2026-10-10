@@ -1,0 +1,32 @@
+{
+  "facebook": {
+    "FB_PAGE_KEY": {
+      "folders": [
+        "hanumanji",
+        "shreekrishna"
+      ],
+      "profile_url": "https://www.facebook.com/YOUR_PAGE"
+    },
+    "FB_PAGE_KEY_2": {
+      "folders": [
+        "hanumanji"
+      ],
+      "profile_url": "https://www.facebook.com/YOUR_SECOND_PAGE"
+    }
+  },
+  "instagram": {
+    "INSTA_PAGE_KEY": {
+      "folders": [
+        "hanumanji",
+        "shreekrishna"
+      ],
+      "profile_url": "https://www.instagram.com/YOUR_PROFILE/"
+    },
+    "INSTA_PAGE_KEY_2": {
+      "folders": [
+        "shreekrishna"
+      ],
+      "profile_url": "https://www.instagram.com/YOUR_SECOND_PROFILE/"
+    }
+  }
+}

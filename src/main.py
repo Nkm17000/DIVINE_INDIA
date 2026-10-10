@@ -19,7 +19,7 @@ OUT_ROOT = ROOT / "output"
 STATE_FILE = ROOT / "state" / "rotation_state.json"
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
 AUDIO_EXTS = {".mp3", ".m4a", ".wav", ".aac", ".ogg", ".flac"}
-RECENT_MEDIA_EXCLUSION = 5
+RECENT_MEDIA_EXCLUSION = 10
 
 
 def media_in(folder: Path, extensions: set[str]) -> list[Path]:
@@ -57,21 +57,110 @@ def eligible_media(files: list[Path], edge_count: int = 0) -> list[Path]:
     return sorted(files, key=lambda p: p.as_posix().casefold())
 
 
+def _build_pair_order(
+    eligible_images: list[Path],
+    eligible_rings: list[Path],
+    used_pairs: set[str],
+    recent_image_keys: list[str],
+    recent_ring_keys: list[str],
+) -> list[dict[str, str]]:
+    """Create a full pair cycle while spacing both images and ringtones.
+
+    Cyclic round-robin schedules cover every image/ringtone combination exactly
+    once. Candidate schedules are accepted only if neither media item repeats in
+    the previous ten selections, including the boundary from the prior cycle.
+    """
+    image_keys = [p.relative_to(IMAGE_ROOT).as_posix() for p in eligible_images]
+    ring_keys = [p.relative_to(RING_ROOT).as_posix() for p in eligible_rings]
+    remaining_pairs = [
+        {"image": image_key, "ring": ring_key}
+        for image_key in image_keys for ring_key in ring_keys
+        if f"{image_key}|||{ring_key}" not in used_pairs
+    ]
+    if not remaining_pairs:
+        return []
+
+    # Generate one candidate schedule at a time to keep memory usage bounded
+    # even when a deity has many images and ringtones.
+    def schedule_candidates():
+        # Cyclic schedules cover the Cartesian product exactly once. Different
+        # phase offsets allow the next cycle to avoid the previous cycle's last ten.
+        for phase in range(len(image_keys)):
+            cyclic: list[dict[str, str]] = []
+            for round_index in range(len(image_keys)):
+                for ring_index, ring_key in enumerate(ring_keys):
+                    cyclic.append({
+                        "image": image_keys[(round_index + ring_index + phase) % len(image_keys)],
+                        "ring": ring_key,
+                    })
+            yield cyclic
+        for phase in range(len(ring_keys)):
+            transposed: list[dict[str, str]] = []
+            for round_index in range(len(ring_keys)):
+                for image_index, image_key in enumerate(image_keys):
+                    transposed.append({
+                        "image": image_key,
+                        "ring": ring_keys[(round_index + image_index + phase) % len(ring_keys)],
+                    })
+            yield transposed
+
+    def valid_cycle(sequence: list[dict[str, str]]) -> bool:
+        count = len(sequence)
+        for i, pair in enumerate(sequence):
+            for distance in range(1, min(RECENT_MEDIA_EXCLUSION, count - 1) + 1):
+                previous = sequence[(i - distance) % count]
+                if pair["image"] == previous["image"] or pair["ring"] == previous["ring"]:
+                    return False
+        return True
+
+    recent_images = list(recent_image_keys[-RECENT_MEDIA_EXCLUSION:])
+    recent_rings = list(recent_ring_keys[-RECENT_MEDIA_EXCLUSION:])
+    for full in schedule_candidates():
+        if not valid_cycle(full):
+            continue
+        # A media set can change mid-cycle; remove already-used pairs and check
+        # the resulting schedule again before accepting it.
+        remaining = [pair for pair in full
+                     if f"{pair['image']}|||{pair['ring']}" not in used_pairs]
+        if len(remaining) != len(remaining_pairs):
+            continue
+        if remaining and any(
+            pair["image"] in recent_images or pair["ring"] in recent_rings
+            for pair in remaining[:RECENT_MEDIA_EXCLUSION]
+        ):
+            # Try every rotation so the next run can start without repeating
+            # any media from the last ten selections of the previous cycle.
+            found = False
+            for offset in range(1, len(remaining)):
+                rotated = remaining[offset:] + remaining[:offset]
+                if all(pair["image"] not in recent_images and pair["ring"] not in recent_rings
+                       for pair in rotated[:RECENT_MEDIA_EXCLUSION]):
+                    remaining = rotated
+                    found = True
+                    break
+            if not found:
+                continue
+        return remaining
+
+    raise RuntimeError(
+        "Could not build a complete rotation satisfying both last-10 rules. "
+        "Keep at least 20 distinct images and 20 distinct ringtones per deity, "
+        "and avoid changing the media set mid-cycle."
+    )
+
+
 def choose_pair(folder_name: str, images: list[Path], rings: list[Path],
                 state: dict) -> tuple[Path, Path, dict]:
-    """Choose a fresh image and ringtone, excluding the last five of each."""
+    """Choose an unused image/ringtone pair; never reuse an image from the last 10."""
     folder_state = state["folders"].setdefault(
-        folder_name, {"history": [], "used_pairs": [], "last_selection": None, "cycle": 0}
+        folder_name, {
+            "history": [], "used_pairs": [], "last_selection": None, "cycle": 0,
+            "pair_order": [], "media_signature": None,
+        }
     )
     folder_state.setdefault("history", [])
     folder_state.setdefault("used_pairs", [])
-
-    # Migrate older selection history into the exact-pair ledger.
-    for old_entry in folder_state["history"]:
-        if isinstance(old_entry, dict) and old_entry.get("image") and old_entry.get("ring"):
-            old_key = f"{old_entry['image']}|||{old_entry['ring']}"
-            if old_key not in folder_state["used_pairs"]:
-                folder_state["used_pairs"].append(old_key)
+    folder_state.setdefault("cycle", 0)
 
     eligible_images = eligible_media(images)
     eligible_rings = eligible_media(rings)
@@ -80,49 +169,97 @@ def choose_pair(folder_name: str, images: list[Path], rings: list[Path],
             f"Folder '{folder_name}' has no usable images or ringtones. "
             f"Found {len(images)} images and {len(rings)} ringtones."
         )
+    # A strict rule spanning the end/start of cycles needs 20 unique items:
+    # the previous ten selections and the next ten must be able to use disjoint media.
+    minimum_pool = 2 * RECENT_MEDIA_EXCLUSION
+    if len(eligible_images) < minimum_pool:
+        raise RuntimeError(
+            f"Folder '{folder_name}' has {len(eligible_images)} images. At least "
+            f"{minimum_pool} distinct images are required to guarantee no image repeats "
+            f"within the last {RECENT_MEDIA_EXCLUSION} videos, including cycle resets."
+        )
+    if len(eligible_rings) < minimum_pool:
+        raise RuntimeError(
+            f"Folder '{folder_name}' has {len(eligible_rings)} ringtones. At least "
+            f"{minimum_pool} distinct ringtones are required to guarantee no ringtone repeats "
+            f"within the last {RECENT_MEDIA_EXCLUSION} videos, including cycle resets."
+        )
 
-    # History paths are relative to images/ and rings/. Exclude the five
-    # most recently selected items separately, even when the pair differs.
+    image_keys = [p.relative_to(IMAGE_ROOT).as_posix() for p in eligible_images]
+    ring_keys = [p.relative_to(RING_ROOT).as_posix() for p in eligible_rings]
+    valid_pair_keys = {
+        f"{image_key}|||{ring_key}" for image_key in image_keys for ring_key in ring_keys
+    }
+    # Keep only ledger entries that still correspond to files in this media set.
+    folder_state["used_pairs"] = list(dict.fromkeys(
+        key for key in folder_state["used_pairs"] if key in valid_pair_keys
+    ))
+    total_pairs = len(valid_pair_keys)
+    if len(folder_state["used_pairs"]) >= total_pairs:
+        folder_state["cycle"] = int(folder_state.get("cycle", 0)) + 1
+        folder_state["used_pairs"] = []
+        folder_state["pair_order"] = []
+        print(f"PAIR CYCLE RESET [{folder_name}]: all {total_pairs} combinations completed.")
+
+    # Migrate old history into the ledger once only. Re-importing history on
+    # every run would incorrectly mark pairs from earlier completed cycles as used.
+    if not folder_state.get("history_migrated", False):
+        for old_entry in folder_state["history"]:
+            if isinstance(old_entry, dict) and old_entry.get("image") and old_entry.get("ring"):
+                key = f"{old_entry['image']}|||{old_entry['ring']}"
+                if key in valid_pair_keys and key not in folder_state["used_pairs"]:
+                    folder_state["used_pairs"].append(key)
+        folder_state["history_migrated"] = True
+
+    # Re-check completion after one-time legacy migration.
+    if len(folder_state["used_pairs"]) >= total_pairs:
+        folder_state["cycle"] = int(folder_state.get("cycle", 0)) + 1
+        folder_state["used_pairs"] = []
+        folder_state["pair_order"] = []
+
+    signature = json.dumps({"images": image_keys, "rings": ring_keys}, separators=(",", ":"))
+    if folder_state.get("media_signature") != signature:
+        # If files were added/removed, rebuild only the remaining part of the cycle.
+        folder_state["pair_order"] = []
+        folder_state["media_signature"] = signature
+
     recent_history = [
         item for item in folder_state["history"][-RECENT_MEDIA_EXCLUSION:]
         if isinstance(item, dict)
     ]
-    recent_images = {item.get("image") for item in recent_history if item.get("image")}
-    recent_rings = {item.get("ring") for item in recent_history if item.get("ring")}
+    recent_images = [item.get("image") for item in recent_history if item.get("image")]
+    recent_rings = [item.get("ring") for item in recent_history if item.get("ring")]
+    used_pairs = set(folder_state["used_pairs"])
+    pair_order = folder_state.get("pair_order", [])
+    remaining_valid = {
+        f"{entry.get('image')}|||{entry.get('ring')}"
+        for entry in pair_order if isinstance(entry, dict)
+    }
+    expected_remaining = valid_pair_keys - used_pairs
+    if not pair_order or remaining_valid != expected_remaining:
+        pair_order = _build_pair_order(
+            eligible_images, eligible_rings, used_pairs, recent_images, recent_rings
+        )
+        folder_state["pair_order"] = pair_order
 
-    def build_candidates():
-        used = set(folder_state["used_pairs"])
-        pairs = []
-        for im in eligible_images:
-            image_key = im.relative_to(IMAGE_ROOT).as_posix()
-            if image_key in recent_images:
-                continue
-            for ring in eligible_rings:
-                ring_key = ring.relative_to(RING_ROOT).as_posix()
-                if ring_key in recent_rings:
-                    continue
-                pair_key = f"{image_key}|||{ring_key}"
-                if pair_key not in used:
-                    pairs.append((im, ring))
-        return pairs
-
-    candidates = build_candidates()
-    if not candidates:
-        # Start a new exact-pair cycle without relaxing the recent-media rule.
-        folder_state["cycle"] = int(folder_state.get("cycle", 0)) + 1
-        folder_state["used_pairs"] = []
-        candidates = build_candidates()
-        print(f"PAIR CYCLE RESET [{folder_name}]: unused eligible pairs exhausted.")
-    if not candidates:
+    if not pair_order:
         raise RuntimeError(
-            f"Folder '{folder_name}' has no candidates after excluding the last "
-            f"{RECENT_MEDIA_EXCLUSION} images and ringtones. Add more media."
+            f"Folder '{folder_name}' has no unused image/ringtone combinations available."
         )
 
-    image, ring = random.choice(candidates)
-    image_key = image.relative_to(IMAGE_ROOT).as_posix()
-    ring_key = ring.relative_to(RING_ROOT).as_posix()
+    next_pair = pair_order.pop(0)
+    image_key, ring_key = next_pair["image"], next_pair["ring"]
+    image = IMAGE_ROOT / image_key
+    ring = RING_ROOT / ring_key
     pair_key = f"{image_key}|||{ring_key}"
+    if pair_key in used_pairs:
+        raise RuntimeError(f"Rotation schedule attempted to reuse a pair in cycle {folder_state['cycle']}: {pair_key}")
+    # Final guard: if this image somehow appears in recent history, refuse selection.
+    if image_key in set(recent_images):
+        raise RuntimeError(f"Rotation schedule attempted to repeat a recent image: {image_key}")
+    if ring_key in set(recent_rings):
+        raise RuntimeError(f"Rotation schedule attempted to repeat a recent ringtone: {ring_key}")
+
     selection = {
         "folder": folder_name,
         "image": image.relative_to(ROOT).as_posix(),
@@ -136,6 +273,7 @@ def choose_pair(folder_name: str, images: list[Path], rings: list[Path],
         "ring": ring_key,
         "selected_utc": selection["selected_utc"],
     })
+    folder_state["history"] = folder_state["history"][-5000:]
     folder_state["last_selection"] = selection
     return image, ring, selection
 

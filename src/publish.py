@@ -27,6 +27,25 @@ def _paired_token_name(key_name: str, platform: str) -> str:
     return f"{prefix}_TOKEN{match.group(1) or ''}"
 
 
+def platform_caption(caption: str, platform: str, account: dict) -> str:
+    """Add platform-specific profile URL and like/follow call to action."""
+    url = str(account.get("profile_url", "")).strip()
+    if platform == "facebook":
+        cta = "Please like and follow our Facebook Page."
+        label = "Facebook Page"
+    else:
+        cta = "Please like and follow us on Instagram."
+        label = "Instagram"
+    if url:
+        cta += f"\n{label}: {url}"
+    else:
+        print(
+            f"WARNING: no profile URL configured for {platform} account "
+            f"{account.get('account_key', 'unknown')}; add profile_url in config/social_accounts.json."
+        )
+    return f"{caption.rstrip()}\n\n{cta}"
+
+
 def load_accounts() -> dict:
     """Resolve shared account credentials and assign each account only to configured folders."""
     config_path = ROOT / "config" / "social_accounts.json"
@@ -44,11 +63,27 @@ def load_accounts() -> dict:
         mappings = data.get(platform, {})
         if not isinstance(mappings, dict):
             raise RuntimeError(f"The '{platform}' value in config/social_accounts.json must be an object mapping secret key names to folder arrays.")
-        for key_env, folders in mappings.items():
+        for key_env, account_config in mappings.items():
             if not isinstance(key_env, str):
                 raise RuntimeError(f"Invalid account key name in {platform} mapping: {key_env!r}")
+            # Public profile URLs are configuration, not credentials/secrets.
+            # Preferred format: {"folders": ["hanumanji"], "profile_url": "https://..."}
+            # Legacy list format remains supported for backward compatibility.
+            if isinstance(account_config, list):
+                folders = account_config
+                profile_url = ""
+            elif isinstance(account_config, dict):
+                folders = account_config.get("folders", [])
+                profile_url = str(account_config.get("profile_url", "")).strip()
+            else:
+                raise RuntimeError(
+                    f"{platform}.{key_env} must be an object with 'folders' and 'profile_url' "
+                    "or a legacy array of folder names."
+                )
             if not isinstance(folders, list) or not all(isinstance(folder, str) and folder.strip() for folder in folders):
-                raise RuntimeError(f"{platform}.{key_env} must contain a JSON array of non-empty folder names.")
+                raise RuntimeError(f"{platform}.{key_env}.folders must contain a JSON array of non-empty folder names.")
+            if profile_url and not profile_url.startswith(("https://", "http://")):
+                raise RuntimeError(f"{platform}.{key_env}.profile_url must start with https:// or http://.")
             token_env = _paired_token_name(key_env, platform)
             account_id = os.getenv(key_env, "").strip()
             token = os.getenv(token_env, "").strip()
@@ -61,9 +96,15 @@ def load_accounts() -> dict:
             for folder in dict.fromkeys(folder.strip() for folder in folders):
                 resolved.setdefault(folder, {"facebook": [], "instagram": []})
                 if platform == "facebook":
-                    resolved[folder][platform].append({"page_id": account_id, "access_token": token, "account_key": key_env})
+                    resolved[folder][platform].append({
+                        "page_id": account_id, "access_token": token, "account_key": key_env,
+                        "profile_url": profile_url,
+                    })
                 else:
-                    resolved[folder][platform].append({"user_id": account_id, "access_token": token, "account_key": key_env})
+                    resolved[folder][platform].append({
+                        "user_id": account_id, "access_token": token, "account_key": key_env,
+                        "profile_url": profile_url,
+                    })
     return resolved
 
 
@@ -150,10 +191,11 @@ def main() -> None:
                 continue
             for account in configured.get(platform, []):
                 try:
+                    caption_for_platform = platform_caption(caption, platform, account)
                     if platform == "facebook":
-                        post_facebook(video, caption, account, folder)
+                        post_facebook(video, caption_for_platform, account, folder)
                     else:
-                        post_instagram(str(urls.get(folder, "")), caption, account, folder)
+                        post_instagram(str(urls.get(folder, "")), caption_for_platform, account, folder)
                 except Exception as exc:
                     errors.append(f"{platform} [{folder}] [{account.get('account_key', 'unknown')}]: {exc}")
                     print(f"ERROR: {errors[-1]}")
