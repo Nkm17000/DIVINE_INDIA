@@ -52,7 +52,9 @@ class ProfileURLConfigTests(unittest.TestCase):
                                       {"profile_url": "https://www.instagram.com/my-profile/"})
         self.assertIn("Please like and follow our Facebook Page.", fb)
         self.assertIn("https://www.facebook.com/my-page", fb)
-        self.assertIn("Please like and follow us on Instagram.", ig)
+        self.assertIn("Please like and follow us on Instagram @divineindia247.", ig)
+        self.assertIn("Visit the link in our bio.", ig)
+        # URL is included for visibility, but Instagram Reel caption URLs aren't clickable.
         self.assertIn("https://www.instagram.com/my-profile/", ig)
 
 

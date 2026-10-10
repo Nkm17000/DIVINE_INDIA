@@ -28,21 +28,29 @@ def _paired_token_name(key_name: str, platform: str) -> str:
 
 
 def platform_caption(caption: str, platform: str, account: dict) -> str:
-    """Add platform-specific profile URL and like/follow call to action."""
+    """Add platform-specific CTA; Instagram Reel caption URLs are not clickable."""
     url = str(account.get("profile_url", "")).strip()
     if platform == "facebook":
         cta = "Please like and follow our Facebook Page."
-        label = "Facebook Page"
+        if url:
+            # Facebook recognizes ordinary https URLs in post captions as links.
+            cta += f"\nFacebook Page: {url}"
+        else:
+            print(
+                f"WARNING: no profile URL configured for facebook account "
+                f"{account.get('account_key', 'unknown')}; add profile_url in config/social_accounts.json."
+            )
     else:
-        cta = "Please like and follow us on Instagram."
-        label = "Instagram"
-    if url:
-        cta += f"\n{label}: {url}"
-    else:
-        print(
-            f"WARNING: no profile URL configured for {platform} account "
-            f"{account.get('account_key', 'unknown')}; add profile_url in config/social_accounts.json."
-        )
+        # Instagram does not make URLs in Reel captions clickable. Direct viewers
+        # to the profile instead; place any destination URL in the profile's website field.
+        cta = "Please like and follow us on Instagram @divineindia247. Visit the link in our bio."
+        if url:
+            cta += f"\nInstagram profile: {url}"
+        else:
+            print(
+                f"WARNING: no profile URL configured for instagram account "
+                f"{account.get('account_key', 'unknown')}; add profile_url in config/social_accounts.json."
+            )
     return f"{caption.rstrip()}\n\n{cta}"
 
 
