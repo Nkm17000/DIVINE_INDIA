@@ -14,7 +14,13 @@ import subprocess
 from pathlib import Path
 
 W, H, FPS = 1080, 1920, 30
-ZOOM = 1.22
+# Gentle zoom-only animation for clips shorter than 10 seconds.
+SHORT_VIDEO_ZOOM = 1.16
+SHORT_VIDEO_ZOOM_RANGE = 0.06
+SHORT_VIDEO_THRESHOLD_SECONDS = 10.0
+# Longer clips keep the existing diagonal pan at a steady, moderate pace.
+PAN_ZOOM = 1.22
+PAN_CYCLE_SECONDS = 30.0
 
 
 def run(cmd: list[str]) -> None:
@@ -60,17 +66,31 @@ def vf_for(image: Path, duration: float, width: int, height: int, fps: int) -> s
     # Scale up without cropping: zoompan needs spare source area to pan over.
     # `increase` guarantees enough pixels to cover the portrait output.
     base = f"scale={width*2}:{height*2}:force_original_aspect_ratio=increase"
-    # Slow the existing motion by 20%: one full motion cycle now takes 1.25x as long.
-    phase = f"(2*PI*on/{frames * 1.25:.6f})"
-    # Coordinates are normalized over the zoompan source's available travel.
-    if ih >= iw:  # portrait / vertical image: top-bottom with a gentle diagonal drift
-        x = f"(iw-iw/zoom)*(0.50+0.22*sin({phase}))"
-        y = f"(ih-ih/zoom)*(0.50-0.50*cos({phase}))"
-    else:  # landscape / horizontal image: left-right with a gentle diagonal drift
-        x = f"(iw-iw/zoom)*(0.50-0.50*cos({phase}))"
-        y = f"(ih-ih/zoom)*(0.50-0.22*sin({phase}))"
+    # Clips under 10 seconds use zoom only: keep the framing centered and
+    # animate one gentle zoom-in then zoom-out pulse, with no diagonal panning.
+    if duration < SHORT_VIDEO_THRESHOLD_SECONDS:
+        zoom = (
+            f"{SHORT_VIDEO_ZOOM}+{SHORT_VIDEO_ZOOM_RANGE}*"
+            f"(0.5-0.5*cos(2*PI*on/{frames:.6f}))"
+        )
+        x = "(iw-iw/zoom)*0.5"
+        y = "(ih-ih/zoom)*0.5"
+        zoom_mode = "centered zoom-in then zoom-out only"
+    else:
+        # Longer clips keep the established diagonal route. A fixed zoom and
+        # one full cycle over ~1.25x the clip duration keeps motion unhurried
+        # and consistently paced without zoom pulsing or end-of-video jumps.
+        phase = f"(2*PI*on/{max(2, int(round(PAN_CYCLE_SECONDS * fps))):.6f})"
+        zoom = str(PAN_ZOOM)
+        if ih >= iw:  # vertical: top -> center-left -> bottom -> center-right -> top
+            x = f"(iw-iw/zoom)*(0.50+0.22*sin({phase}))"
+            y = f"(ih-ih/zoom)*(0.50-0.50*cos({phase}))"
+        else:  # horizontal: left -> center-top -> right -> center-bottom -> left
+            x = f"(iw-iw/zoom)*(0.50-0.50*cos({phase}))"
+            y = f"(ih-ih/zoom)*(0.50-0.22*sin({phase}))"
+        zoom_mode = "steady diagonal movement at moderate pace"
     return (
-        f"{base},zoompan=z='{ZOOM}':x='{x}':y='{y}':d=1:"
+        f"{base},zoompan=z='{zoom}':x='{x}':y='{y}':d=1:"
         f"s={width}x{height}:fps={fps},setsar=1,format=yuv420p"
     )
 
@@ -121,7 +141,12 @@ def create_video(
         "image": str(image), "audio": str(audio), "output": str(output),
         "duration_seconds": round(duration, 3),
         "width": width, "height": height, "fps": fps,
-        "movement": "continuous smooth diagonal sinusoidal loop",
+        "movement": ("centered zoom only" if duration < SHORT_VIDEO_THRESHOLD_SECONDS else "continuous diagonal pan at a steady moderate pace"),
+        "zoom_effect": (
+            "centered zoom-in then zoom-out only"
+            if duration < SHORT_VIDEO_THRESHOLD_SECONDS
+            else "steady diagonal movement at moderate pace"
+        ),
         "orientation": "vertical" if image_dimensions(image)[1] >= image_dimensions(image)[0] else "horizontal",
     }
 

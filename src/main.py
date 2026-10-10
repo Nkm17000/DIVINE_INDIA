@@ -156,7 +156,7 @@ def assert_same_deity_folder(image: Path, ring: Path) -> str:
 
 
 def verify_video(path: Path, expected_width: int, expected_height: int) -> None:
-    """Verify the rendered video against the orientation chosen by create_video()."""
+    """Verify the rendered video against the orientation selected by create_video()."""
     probe = subprocess.run(
         ["ffprobe", "-v", "error", "-select_streams", "v:0",
          "-show_entries", "stream=width,height,nb_frames", "-of", "json", str(path)],
@@ -226,8 +226,6 @@ def main() -> None:
         seed_text = f"{selection['folder']}|{selection['image']}|{selection['ring']}|{selection['selected_utc']}"
         seed = int(hashlib.sha256(seed_text.encode()).hexdigest()[:8], 16)
         effects = create_video(image, ring, output, seed)
-        # Validate the dimensions selected by create_video for this source image.
-        # Portrait sources render 1080x1920; landscape sources render 1920x1080.
         verify_video(output, int(effects["width"]), int(effects["height"]))
 
         caption = {
