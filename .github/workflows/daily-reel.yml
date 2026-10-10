@@ -3,7 +3,6 @@ name: Daily Divine India Reels
 on:
   workflow_dispatch:
   push:
-    branches: [main]
     paths-ignore:
       - "state/rotation_state.json"
       - "output/**"
@@ -21,9 +20,53 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  generate-and-publish:
+  generate:
+    name: Generate reels once
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Generate one video per eligible deity folder
+        run: python src/main.py
+      - name: Upload generated reels for both publishing jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: divine-india-reels-${{ github.run_id }}
+          path: |
+            output/*/daily_reel*.mp4
+            output/*/caption.txt
+            output/*/selection*.json
+          retention-days: 1
+          if-no-files-found: error
+      - name: Commit persistent media-combination history
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/rotation_state.json
+          git diff --cached --quiet || git commit -m "chore: update deity media combination history"
+          git push
+
+  publish-facebook:
+    name: Publish all Facebook Pages
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       META_GRAPH_VERSION: v24.0
       FB_PAGE_KEY: ${{ secrets.FB_PAGE_KEY }}
@@ -46,6 +89,30 @@ jobs:
       FB_PAGE_TOKEN_9: ${{ secrets.FB_PAGE_TOKEN_9 }}
       FB_PAGE_KEY_10: ${{ secrets.FB_PAGE_KEY_10 }}
       FB_PAGE_TOKEN_10: ${{ secrets.FB_PAGE_TOKEN_10 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Download generated reels
+        uses: actions/download-artifact@v4
+        with:
+          name: divine-india-reels-${{ github.run_id }}
+          path: output
+      - name: Publish to all configured Facebook Pages
+        run: python src/publish.py facebook
+
+  publish-instagram:
+    name: Publish all Instagram accounts
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      META_GRAPH_VERSION: v24.0
       INSTA_PAGE_KEY: ${{ secrets.INSTA_PAGE_KEY }}
       INSTA_PAGE_TOKEN: ${{ secrets.INSTA_PAGE_TOKEN }}
       INSTA_PAGE_KEY_2: ${{ secrets.INSTA_PAGE_KEY_2 }}
@@ -69,32 +136,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Install FFmpeg
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: requirements.txt
       - name: Install Python dependencies
         run: python -m pip install -r requirements.txt
-      - name: Generate one video per eligible deity folder
-        run: python src/main.py
-      - name: Upload generated videos for one day
-        uses: actions/upload-artifact@v4
+      - name: Download generated reels
+        uses: actions/download-artifact@v4
         with:
-          name: divine-india-reels-${{ github.run_number }}
-          path: |
-            output/*/daily_reel*.mp4
-            output/*/caption.txt
-            output/*/selection*.json
-          retention-days: 1
-          if-no-files-found: error
+          name: divine-india-reels-${{ github.run_id }}
+          path: output
       - name: Check whether Instagram accounts are configured
         id: account-check
         run: python src/publish.py has-instagram >> "$GITHUB_OUTPUT"
@@ -105,58 +157,59 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VISIBILITY="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.visibility')"
+          VISIBILITY="$(gh api "repos/${{ github.repository }}" --jq '.visibility')"
           if [[ "$VISIBILITY" != "public" ]]; then
-            echo "::error::Instagram Reels require public HTTPS video URLs. This workflow currently uses GitHub Release assets, so the repository must be public."
+            echo "::error::Instagram Reels require public HTTPS video URLs. This workflow uses GitHub Release assets, so the repository must be public."
             exit 1
           fi
           mkdir -p output/release-assets
+          shopt -s nullglob
           for video in output/*/daily_reel*.mp4; do
             [[ -f "$video" ]] || continue
             folder="$(basename "$(dirname "$video")")"
             filename="$(basename "$video")"
             cp "$video" "output/release-assets/${folder}__${filename}"
           done
-          TAG="daily-reel-${GITHUB_RUN_ID}"
-          gh release create "$TAG" output/release-assets/*.mp4 \
-            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-            --title "Temporary Divine India Reels ${GITHUB_RUN_NUMBER}" \
+          files=(output/release-assets/*.mp4)
+          if (( ${#files[@]} == 0 )); then
+            echo "::error::No generated MP4 files found for Instagram publishing."
+            exit 1
+          fi
+          TAG="daily-reel-${{ github.run_id }}"
+          gh release create "$TAG" "${files[@]}" \
+            --repo "${{ github.repository }}" --target "${{ github.sha }}" \
+            --title "Temporary Divine India Reels ${{ github.run_number }}" \
             --notes "Temporary public video URLs for Meta publishing; cleaned after this workflow."
           echo "INSTAGRAM_RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
-          python - <<'PY'
+          python - <<'PYCODE'
           import json, os, pathlib
           repo = os.environ['GITHUB_REPOSITORY']
           tag = f"daily-reel-{os.environ['GITHUB_RUN_ID']}"
           urls = {}
-          for p in sorted(pathlib.Path('output/release-assets').glob('*.mp4')):
-              folder, filename = p.name.split('__', 1)
-              urls[f"{folder}/{filename}"] = f"https://github.com/{repo}/releases/download/{tag}/{p.name}"
-          pathlib.Path(os.environ['GITHUB_ENV']).open('a').write('INSTAGRAM_VIDEO_URLS_JSON=' + json.dumps(urls) + '\n')
+          for path in sorted(pathlib.Path('output/release-assets').glob('*.mp4')):
+              folder, filename = path.name.split('__', 1)
+              urls[f"{folder}/{filename}"] = f"https://github.com/{repo}/releases/download/{tag}/{path.name}"
+          with open('output/instagram_video_urls.json', 'w', encoding='utf-8') as urls_file:
+              json.dump(urls, urls_file)
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as env_file:
+              env_file.write('INSTAGRAM_VIDEO_URLS_JSON=' + json.dumps(urls) + '\n')
           print('Created public URLs for:', ', '.join(urls))
-          PY
-          for url in $(python -c 'import json,os; print(" ".join(json.loads(os.environ.get("INSTAGRAM_VIDEO_URLS_JSON", "{}")).values()))'); do
+          PYCODE
+          while IFS= read -r url; do
+            [[ -n "$url" ]] || continue
+            code=""
             for attempt in $(seq 1 12); do
               code="$(curl -L -s -o /dev/null -w '%{http_code}' "$url" || true)"
               [[ "$code" == "200" ]] && break
               sleep 5
             done
-            [[ "${code:-}" == "200" ]] || { echo "::error::Release asset not publicly available: $url"; exit 1; }
-          done
-      - name: Publish each folder to its configured Facebook accounts
-        run: python src/publish.py facebook
-      - name: Publish each folder to its configured Instagram accounts
+            [[ "$code" == "200" ]] || { echo "::error::Release asset not publicly available: $url"; exit 1; }
+          done < <(python -c 'import json; print("\n".join(json.load(open("output/instagram_video_urls.json")).values()))')
+      - name: Publish to all configured Instagram accounts
         if: ${{ steps.account-check.outputs.has_instagram == 'true' }}
         run: python src/publish.py instagram
       - name: Delete temporary public video release
         if: ${{ always() && env.INSTAGRAM_RELEASE_TAG != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release delete "$INSTAGRAM_RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
-      - name: Commit persistent media-combination history
-        if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state/rotation_state.json
-          git diff --cached --quiet || git commit -m "chore: update deity media combination history"
-          git push
+        run: gh release delete "$INSTAGRAM_RELEASE_TAG" --repo "${{ github.repository }}" --yes --cleanup-tag || true
