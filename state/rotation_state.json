@@ -197,13 +197,23 @@
           "image": "hanumanji/wp14165422.jpg",
           "ring": "hanumanji/Jai-Hanuman-Gyan-Gun-Sagar-Powerful-Hanuman-Chalisa-Bhakti.mp3",
           "selected_utc": "2026-10-11T17:46:26.943867+00:00"
+        },
+        {
+          "image": "hanumanji/Hanuman_14.jpg",
+          "ring": "hanumanji/Hriday-Main-Jinke-Sitaram-Hanuman-Ansh.mp3",
+          "selected_utc": "2026-10-12T08:31:04.689837+00:00"
+        },
+        {
+          "image": "hanumanji/wp8207248.jpg",
+          "ring": "hanumanji/Mangal-Ko-Janme-Mangal-Hi-Karte.mp3",
+          "selected_utc": "2026-10-12T08:31:22.925382+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/wp14165422.jpg",
-        "ring": "rings/hanumanji/Jai-Hanuman-Gyan-Gun-Sagar-Powerful-Hanuman-Chalisa-Bhakti.mp3",
-        "selected_utc": "2026-10-11T17:46:26.943867+00:00",
+        "image": "images/hanumanji/wp8207248.jpg",
+        "ring": "rings/hanumanji/Mangal-Ko-Janme-Mangal-Hi-Karte.mp3",
+        "selected_utc": "2026-10-12T08:31:22.925382+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -246,7 +256,9 @@
         "hanumanji/12589319.webp|||hanumanji/Jeemo-Jeemo-Salasar-Hanuman-Lakhbir-Singh-Lakkha-Bhajan.mp3",
         "hanumanji/Hanuman_11.jpg|||hanumanji/Mangal-Murati-Maruti-Nandan-Bhajan.mp3",
         "hanumanji/Hanuman_02.jpg|||hanumanji/Jai-Hanuman.mp3",
-        "hanumanji/wp14165422.jpg|||hanumanji/Jai-Hanuman-Gyan-Gun-Sagar-Powerful-Hanuman-Chalisa-Bhakti.mp3"
+        "hanumanji/wp14165422.jpg|||hanumanji/Jai-Hanuman-Gyan-Gun-Sagar-Powerful-Hanuman-Chalisa-Bhakti.mp3",
+        "hanumanji/Hanuman_14.jpg|||hanumanji/Hriday-Main-Jinke-Sitaram-Hanuman-Ansh.mp3",
+        "hanumanji/wp8207248.jpg|||hanumanji/Mangal-Ko-Janme-Mangal-Hi-Karte.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -10453,13 +10465,18 @@
           "image": "maadurga/Maa_Durga_0016.jpg",
           "ring": "maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3",
           "selected_utc": "2026-10-11T17:47:35.156462+00:00"
+        },
+        {
+          "image": "maadurga/Maa_Durga_0023.jpg",
+          "ring": "maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
+          "selected_utc": "2026-10-12T08:31:43.641695+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/Maa_Durga_0016.jpg",
-        "ring": "rings/maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3",
-        "selected_utc": "2026-10-11T17:47:35.156462+00:00",
+        "image": "images/maadurga/Maa_Durga_0023.jpg",
+        "ring": "rings/maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
+        "selected_utc": "2026-10-12T08:31:43.641695+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10486,7 +10503,8 @@
         "maadurga/Maa_Durga_0014.jpg|||maadurga/jagmag-jyot-jale-shahnaaz-akhtar-navratri-2025-96421.mp3",
         "maadurga/Maa_Durga_0019.jpg|||maadurga/leke-pooja-ki-thali-suresh-wadekar-bhakti-96834.mp3",
         "maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg|||maadurga/Sada-Hoti-Hai-Jai-Jai-Kar-Maaki-Mandir-Me.mp3",
-        "maadurga/Maa_Durga_0016.jpg|||maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3"
+        "maadurga/Maa_Durga_0016.jpg|||maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3",
+        "maadurga/Maa_Durga_0023.jpg|||maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -10618,13 +10636,18 @@
           "image": "shreekrishna/Shree_Krishna_37.jpg",
           "ring": "shreekrishna/Madhav.mp3",
           "selected_utc": "2026-10-11T17:47:49.690114+00:00"
+        },
+        {
+          "image": "shreekrishna/Bal Krishna╬ô├ç├ûs Butter-Stealing Delight.png",
+          "ring": "shreekrishna/govind-mero-hai-gopal-mero-hai.mp3",
+          "selected_utc": "2026-10-12T08:32:06.899866+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_37.jpg",
-        "ring": "rings/shreekrishna/Madhav.mp3",
-        "selected_utc": "2026-10-11T17:47:49.690114+00:00",
+        "image": "images/shreekrishna/Bal Krishna╬ô├ç├ûs Butter-Stealing Delight.png",
+        "ring": "rings/shreekrishna/govind-mero-hai-gopal-mero-hai.mp3",
+        "selected_utc": "2026-10-12T08:32:06.899866+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10651,7 +10674,8 @@
         "shreekrishna/Radha Krishna’s Vibrant Holi Celebration.png|||shreekrishna/Vajvito-Pava-Krushna-Murari.mp3",
         "shreekrishna/Krishna╬ô├ç├ûs Tender Meadow Embrace.png|||shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
         "shreekrishna/Krishna Overlooking Golden Dwarka.png|||shreekrishna/Kanhaiya-ye-to-bata-do-mujhe.mp3",
-        "shreekrishna/Shree_Krishna_37.jpg|||shreekrishna/Madhav.mp3"
+        "shreekrishna/Shree_Krishna_37.jpg|||shreekrishna/Madhav.mp3",
+        "shreekrishna/Bal Krishna╬ô├ç├ûs Butter-Stealing Delight.png|||shreekrishna/govind-mero-hai-gopal-mero-hai.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -18310,13 +18334,18 @@
           "image": "shyambaba/shree_shyam_image_9.jpg",
           "ring": "shyambaba/door-se-aaya-baba-dham-tere-khatu.mp3",
           "selected_utc": "2026-10-11T17:48:26.489953+00:00"
+        },
+        {
+          "image": "shyambaba/shree_shyam_image_2.jpg",
+          "ring": "shyambaba/yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3",
+          "selected_utc": "2026-10-12T08:32:23.124590+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/shree_shyam_image_9.jpg",
-        "ring": "rings/shyambaba/door-se-aaya-baba-dham-tere-khatu.mp3",
-        "selected_utc": "2026-10-11T17:48:26.489953+00:00",
+        "image": "images/shyambaba/shree_shyam_image_2.jpg",
+        "ring": "rings/shyambaba/yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3",
+        "selected_utc": "2026-10-12T08:32:23.124590+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -18342,7 +18371,8 @@
         "shyambaba/Devotional Shri Shyam in a Temple Garden.png|||shyambaba/jis-ghar-me-khatu-wale-ki.mp3",
         "shyambaba/Khatu_Shyam_0013.png|||shyambaba/kitna-pyara-hai-singar.mp3",
         "shyambaba/Khatu_Shyam_0068.png|||shyambaba/teen-baan-ke-dhari-download.mp3",
-        "shyambaba/shree_shyam_image_9.jpg|||shyambaba/door-se-aaya-baba-dham-tere-khatu.mp3"
+        "shyambaba/shree_shyam_image_9.jpg|||shyambaba/door-se-aaya-baba-dham-tere-khatu.mp3",
+        "shyambaba/shree_shyam_image_2.jpg|||shyambaba/yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3"
       ],
       "history_migrated": true
     }
