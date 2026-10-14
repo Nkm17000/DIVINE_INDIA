@@ -257,13 +257,23 @@
           "image": "hanumanji/Hanuman_15.jpg",
           "ring": "hanumanji/Pawan-Putra-Hanuman-Mile-Mahakaal-B-Praak-Jaani-Hindi.mp3",
           "selected_utc": "2026-10-13T19:29:17.144595+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_23.webp",
+          "ring": "hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3",
+          "selected_utc": "2026-10-14T05:17:18.890142+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_10.webp",
+          "ring": "hanumanji/Hey-Bajrang-Bali-Hanuman.mp3",
+          "selected_utc": "2026-10-14T05:17:51.191861+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/Hanuman_15.jpg",
-        "ring": "rings/hanumanji/Pawan-Putra-Hanuman-Mile-Mahakaal-B-Praak-Jaani-Hindi.mp3",
-        "selected_utc": "2026-10-13T19:29:17.144595+00:00",
+        "image": "images/hanumanji/Hanumanji_10.webp",
+        "ring": "rings/hanumanji/Hey-Bajrang-Bali-Hanuman.mp3",
+        "selected_utc": "2026-10-14T05:17:51.191861+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -273,7 +283,9 @@
         "hanumanji/Hanumanji_44.webp|||hanumanji/Sankat-Mochan-Mahabali-Hanuman-Serial.mp3",
         "hanumanji/Hanumanji_43.webp|||hanumanji/Tum-Apni-Gada-Chalao-Na-Lakhbir-Singh-Lakha-Bhajan.mp3",
         "hanumanji/Hanumanji_42.webp|||hanumanji/Jai-Hanuman.mp3",
-        "hanumanji/Hanuman_15.jpg|||hanumanji/Pawan-Putra-Hanuman-Mile-Mahakaal-B-Praak-Jaani-Hindi.mp3"
+        "hanumanji/Hanuman_15.jpg|||hanumanji/Pawan-Putra-Hanuman-Mile-Mahakaal-B-Praak-Jaani-Hindi.mp3",
+        "hanumanji/Hanumanji_23.webp|||hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3",
+        "hanumanji/Hanumanji_10.webp|||hanumanji/Hey-Bajrang-Bali-Hanuman.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -10510,20 +10522,26 @@
           "image": "maadurga/Durga_Story_24_3D_4D_5D.webp",
           "ring": "maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Maa.mp3",
           "selected_utc": "2026-10-13T19:29:37.673122+00:00"
+        },
+        {
+          "image": "maadurga/wp4716157.jpg",
+          "ring": "maadurga/thumak-thumak-chotu-singh-rawna-rajasthani-96819.mp3",
+          "selected_utc": "2026-10-14T05:18:16.111327+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/Durga_Story_24_3D_4D_5D.webp",
-        "ring": "rings/maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Maa.mp3",
-        "selected_utc": "2026-10-13T19:29:37.673122+00:00",
+        "image": "images/maadurga/wp4716157.jpg",
+        "ring": "rings/maadurga/thumak-thumak-chotu-singh-rawna-rajasthani-96819.mp3",
+        "selected_utc": "2026-10-14T05:18:16.111327+00:00",
         "cycle": 0
       },
       "cycle": 0,
       "used_pairs": [
         "maadurga/image_20261013_165459.webp|||maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3",
         "maadurga/Maa_Durga_0024.jpg|||maadurga/aaye-navratre-mata-ke-navratri-2025-96370.mp3",
-        "maadurga/Durga_Story_24_3D_4D_5D.webp|||maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Maa.mp3"
+        "maadurga/Durga_Story_24_3D_4D_5D.webp|||maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Maa.mp3",
+        "maadurga/wp4716157.jpg|||maadurga/thumak-thumak-chotu-singh-rawna-rajasthani-96819.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -10685,13 +10703,18 @@
           "image": "shreekrishna/Shree_Krishna_05.jpg",
           "ring": "shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
           "selected_utc": "2026-10-13T19:30:07.405669+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_51_4D5D6D.webp",
+          "ring": "shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3",
+          "selected_utc": "2026-10-14T05:18:47.986949+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_05.jpg",
-        "ring": "rings/shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
-        "selected_utc": "2026-10-13T19:30:07.405669+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_51_4D5D6D.webp",
+        "ring": "rings/shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3",
+        "selected_utc": "2026-10-14T05:18:47.986949+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10720,7 +10743,8 @@
         "shreekrishna/Bal Krishna╬ô├ç├ûs Butter-Stealing Delight.png|||shreekrishna/govind-mero-hai-gopal-mero-hai.mp3",
         "shreekrishna/Shree_Krishna_16.jpg|||shreekrishna/Mera-Shyam-Aa-Jata-Mere-Samne-026.mp3",
         "shreekrishna/Shree_Krishna_30.jpg|||shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
-        "shreekrishna/Shree_Krishna_05.jpg|||shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3"
+        "shreekrishna/Shree_Krishna_05.jpg|||shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
+        "shreekrishna/Shree_Krishna_51_4D5D6D.webp|||shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -18409,20 +18433,26 @@
           "image": "shyambaba/Shyam_Baba_24_4D_5D_6D.webp",
           "ring": "shyambaba/hum-to-teri-yaad-mein---chotu-singh-rawna.mp3",
           "selected_utc": "2026-10-13T19:30:27.127838+00:00"
+        },
+        {
+          "image": "shyambaba/Shyam_Baba_01_4D_5D_6D.webp",
+          "ring": "shyambaba/hai-jiske-saath-sawra.mp3",
+          "selected_utc": "2026-10-14T05:19:17.328443+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Shyam_Baba_24_4D_5D_6D.webp",
-        "ring": "rings/shyambaba/hum-to-teri-yaad-mein---chotu-singh-rawna.mp3",
-        "selected_utc": "2026-10-13T19:30:27.127838+00:00",
+        "image": "images/shyambaba/Shyam_Baba_01_4D_5D_6D.webp",
+        "ring": "rings/shyambaba/hai-jiske-saath-sawra.mp3",
+        "selected_utc": "2026-10-14T05:19:17.328443+00:00",
         "cycle": 0
       },
       "cycle": 0,
       "used_pairs": [
         "shyambaba/Shyam_Baba_50_4D_5D_6D.webp|||shyambaba/hare-ka-sahara-khatu-shyam-hamara.mp3",
         "shyambaba/Krishna Lifts Govardhan Hill (1).png|||shyambaba/mere-khatu-wale-shyam-mere-sanware.mp3",
-        "shyambaba/Shyam_Baba_24_4D_5D_6D.webp|||shyambaba/hum-to-teri-yaad-mein---chotu-singh-rawna.mp3"
+        "shyambaba/Shyam_Baba_24_4D_5D_6D.webp|||shyambaba/hum-to-teri-yaad-mein---chotu-singh-rawna.mp3",
+        "shyambaba/Shyam_Baba_01_4D_5D_6D.webp|||shyambaba/hai-jiske-saath-sawra.mp3"
       ],
       "history_migrated": true
     }
