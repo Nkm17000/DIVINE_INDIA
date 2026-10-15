@@ -297,13 +297,23 @@
           "image": "hanumanji/Hanuman_08.jpg",
           "ring": "hanumanji/Hey-Mahaveer-Karo-Kalyan-Female-Version.mp3",
           "selected_utc": "2026-10-15T05:05:11.540367+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_04.webp",
+          "ring": "hanumanji/Main-To-Ho-Gaya-Tha-Bada-Majboor-Balaji.mp3",
+          "selected_utc": "2026-10-15T17:17:23.672928+00:00"
+        },
+        {
+          "image": "hanumanji/7381146.jpg",
+          "ring": "hanumanji/Sankat-Mochan-Mahabali-Hanuman-Serial.mp3",
+          "selected_utc": "2026-10-15T17:17:40.103521+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/Hanuman_08.jpg",
-        "ring": "rings/hanumanji/Hey-Mahaveer-Karo-Kalyan-Female-Version.mp3",
-        "selected_utc": "2026-10-15T05:05:11.540367+00:00",
+        "image": "images/hanumanji/7381146.jpg",
+        "ring": "rings/hanumanji/Sankat-Mochan-Mahabali-Hanuman-Serial.mp3",
+        "selected_utc": "2026-10-15T17:17:40.103521+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -321,7 +331,9 @@
         "hanumanji/Hanuman_09.jpg|||hanumanji/Aaj-Hanuman-Jayanti-Hai-Lakhbir-Singh-Lakha.mp3",
         "hanumanji/wp9893296.jpg|||hanumanji/Jeemo-Jeemo-Salasar-Hanuman-Lakhbir-Singh-Lakkha-Bhajan.mp3",
         "hanumanji/hanuman-ji-wallpaper-hd-1080p-download-for-pc-01-scaled.jpg|||hanumanji/Hriday-Main-Jinke-Sitaram-Hanuman-Ansh.mp3",
-        "hanumanji/Hanuman_08.jpg|||hanumanji/Hey-Mahaveer-Karo-Kalyan-Female-Version.mp3"
+        "hanumanji/Hanuman_08.jpg|||hanumanji/Hey-Mahaveer-Karo-Kalyan-Female-Version.mp3",
+        "hanumanji/Hanumanji_04.webp|||hanumanji/Main-To-Ho-Gaya-Tha-Bada-Majboor-Balaji.mp3",
+        "hanumanji/7381146.jpg|||hanumanji/Sankat-Mochan-Mahabali-Hanuman-Serial.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -10578,13 +10590,18 @@
           "image": "maadurga/image_20261013_165337.webp",
           "ring": "maadurga/leke-pooja-ki-thali-manan-bhardwaj-sneha-shankar-bhakti-96833.mp3",
           "selected_utc": "2026-10-15T05:05:29.949216+00:00"
+        },
+        {
+          "image": "maadurga/Maa_Durga_0017.jpg",
+          "ring": "maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3",
+          "selected_utc": "2026-10-15T17:18:08.559887+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/image_20261013_165337.webp",
-        "ring": "rings/maadurga/leke-pooja-ki-thali-manan-bhardwaj-sneha-shankar-bhakti-96833.mp3",
-        "selected_utc": "2026-10-15T05:05:29.949216+00:00",
+        "image": "images/maadurga/Maa_Durga_0017.jpg",
+        "ring": "rings/maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3",
+        "selected_utc": "2026-10-15T17:18:08.559887+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10595,7 +10612,8 @@
         "maadurga/wp4716157.jpg|||maadurga/thumak-thumak-chotu-singh-rawna-rajasthani-96819.mp3",
         "maadurga/Durga_Story_53_3D_4D_5D.webp|||maadurga/tere-haan-gulam-daatiye-96820.mp3",
         "maadurga/image_20261013_165511.webp|||maadurga/leke-pooja-ki-thali-suresh-wadekar-bhakti-96834.mp3",
-        "maadurga/image_20261013_165337.webp|||maadurga/leke-pooja-ki-thali-manan-bhardwaj-sneha-shankar-bhakti-96833.mp3"
+        "maadurga/image_20261013_165337.webp|||maadurga/leke-pooja-ki-thali-manan-bhardwaj-sneha-shankar-bhakti-96833.mp3",
+        "maadurga/Maa_Durga_0017.jpg|||maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -10777,13 +10795,18 @@
           "image": "shreekrishna/Shree_Krishna_41_4D5D6D.webp",
           "ring": "shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
           "selected_utc": "2026-10-15T05:06:01.162450+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_39_4D5D6D_image_20261013_183659.webp",
+          "ring": "shreekrishna/Madhava-Mamava-Deva-Krishna.mp3",
+          "selected_utc": "2026-10-15T17:18:24.577911+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_41_4D5D6D.webp",
-        "ring": "rings/shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
-        "selected_utc": "2026-10-15T05:06:01.162450+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_39_4D5D6D_image_20261013_183659.webp",
+        "ring": "rings/shreekrishna/Madhava-Mamava-Deva-Krishna.mp3",
+        "selected_utc": "2026-10-15T17:18:24.577911+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -10816,7 +10839,8 @@
         "shreekrishna/Shree_Krishna_51_4D5D6D.webp|||shreekrishna/Us-Bansuri-wale-ki-neele-ghode-wale-ki.mp3",
         "shreekrishna/Shree_Krishna_01.jpg|||shreekrishna/sanwariya-thari-kripa-re-bade.mp3",
         "shreekrishna/Shree_Krishna_35_4D5D6D.webp|||shreekrishna/us-basuri-Wale-ki-bhajanus-basuri-wale-ki-us-basuri-wale-ki.mp3",
-        "shreekrishna/Shree_Krishna_41_4D5D6D.webp|||shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3"
+        "shreekrishna/Shree_Krishna_41_4D5D6D.webp|||shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
+        "shreekrishna/Shree_Krishna_39_4D5D6D_image_20261013_183659.webp|||shreekrishna/Madhava-Mamava-Deva-Krishna.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -18525,13 +18549,18 @@
           "image": "shyambaba/11109651.jpg",
           "ring": "shyambaba/khatu-wale-shyam-ji-kamal-ho-gya.mp3",
           "selected_utc": "2026-10-15T05:06:43.188147+00:00"
+        },
+        {
+          "image": "shyambaba/Ornate Khatu Shyam Temple Shrine-10.png",
+          "ring": "shyambaba/door-se-aaya-baba-dham-tere-khatu.mp3",
+          "selected_utc": "2026-10-15T17:18:50.286996+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/11109651.jpg",
-        "ring": "rings/shyambaba/khatu-wale-shyam-ji-kamal-ho-gya.mp3",
-        "selected_utc": "2026-10-15T05:06:43.188147+00:00",
+        "image": "images/shyambaba/Ornate Khatu Shyam Temple Shrine-10.png",
+        "ring": "rings/shyambaba/door-se-aaya-baba-dham-tere-khatu.mp3",
+        "selected_utc": "2026-10-15T17:18:50.286996+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -18542,7 +18571,8 @@
         "shyambaba/Shyam_Baba_01_4D_5D_6D.webp|||shyambaba/hai-jiske-saath-sawra.mp3",
         "shyambaba/Shyam_Baba_25_4D_5D_6D.webp|||shyambaba/ucho-rakh-nishan-shyam-ko.mp3",
         "shyambaba/Khatu_Shyam_0073.png|||shyambaba/jis-ghar-me-khatu-wale-ki.mp3",
-        "shyambaba/11109651.jpg|||shyambaba/khatu-wale-shyam-ji-kamal-ho-gya.mp3"
+        "shyambaba/11109651.jpg|||shyambaba/khatu-wale-shyam-ji-kamal-ho-gya.mp3",
+        "shyambaba/Ornate Khatu Shyam Temple Shrine-10.png|||shyambaba/door-se-aaya-baba-dham-tere-khatu.mp3"
       ],
       "history_migrated": true
     }
