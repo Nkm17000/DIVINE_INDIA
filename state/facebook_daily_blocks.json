@@ -4,8 +4,8 @@
       "blocked_date_ist": "2026-10-15",
       "page_id": "1252116237996398",
       "reason": "Meta Graph API error 368 (rate/spam prevention)",
-      "message": "Facebook publish failed for hanumanji/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"Aes_8pe_zrEEKy1aajinFBeQ0cvv6Mn22JBpOjuN1ooG2cvKtFq5rvnYKeHwpdzFiGgIFPlpiXJruSutwpazQcHi0WTLMzOKOyNFaKhY04sZDlimC3w4pgin6Gt3RxoOjNd120-KlC9iWzGOK2XrRg6esqqdeIpquDrmnhzVnwqNuqvaDVjEpoLHmCC84X649jeiNx9rDgIcesscugcyonDUmVT65FLOYz2QV-1RDQs2NEgHRFSHhKeGwDUEPK1l7sN4j9Ol21Ww6mWcacnsDF40fOl10aiMRe5bFFMZWiFf-LiEh9JBat7JP4CLbsD5N6Mx\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"ANmLjw26GugaMX0JHiQ0_KM\"}}",
-      "blocked_at_utc": "2026-10-15T02:27:49.211465+00:00"
+      "message": "Facebook publish failed for shreekrishna/Page 1252116237996398: HTTP 400: {\"error\":{\"message\":\"We limit how often you can post, comment or do other things in a given amount of time in order to help protect the community from spam. You can try again later. Learn More\",\"type\":\"OAuthException\",\"code\":368,\"error_data\":{\"sentry_block_data\":\"AetR6Jzhi-zhyJssMJZ8-XtsTQYLChbxQ4HhfJ4NO6mvcK6_A29C3uieD5wl9MJ9ec14Fk4FnKbHQeJToALbXoHVvZc9WTWo9an_79R13KwBKed784FcafYTd17lRGYi_cX0C5_XecdJn8ZUYF9mF6AjSruKETgfQ7xh1HI3glKa9PcqzSgFgUQwcmLmVqdA0kJDf4p8JlPypVPuo2yuyoIJMdKJCfY9lKOB6Rk6aAQUCru0k55MwxdWKrNZ7MRbh52iK8hrVdjEK2dMEhHMj2huxBSYkzpU-r0XqFwWNmOmMbkBrMusLV0NQ9-FPiGjyIsD\",\"help_center_id\":0,\"is_silent\":false},\"error_subcode\":1390008,\"error_user_msg\":\"\",\"fbtrace_id\":\"AoJqBaqSiM9p0VMvvGFQKlF\"}}",
+      "blocked_at_utc": "2026-10-15T02:27:50.837885+00:00"
     }
   }
 }
