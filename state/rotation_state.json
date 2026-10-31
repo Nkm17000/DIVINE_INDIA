@@ -607,13 +607,23 @@
           "image": "hanumanji/Hanumanji_15.webp",
           "ring": "hanumanji/Rama-Rama-Ratte-Ratte-Chodunga-Ye-Duniya.mp3",
           "selected_utc": "2026-10-30T18:09:34.255775+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_32.webp",
+          "ring": "hanumanji/Guruji-Ko-Aadesh-Guruji-Ko-Pradam-Hanuman.mp3",
+          "selected_utc": "2026-10-31T06:11:04.025394+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_08.webp",
+          "ring": "hanumanji/Sankat-Mochan-Mahabali-Hanuman-Serial.mp3",
+          "selected_utc": "2026-10-31T06:11:24.047678+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/Hanumanji_15.webp",
-        "ring": "rings/hanumanji/Rama-Rama-Ratte-Ratte-Chodunga-Ye-Duniya.mp3",
-        "selected_utc": "2026-10-30T18:09:34.255775+00:00",
+        "image": "images/hanumanji/Hanumanji_08.webp",
+        "ring": "rings/hanumanji/Sankat-Mochan-Mahabali-Hanuman-Serial.mp3",
+        "selected_utc": "2026-10-31T06:11:24.047678+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -693,7 +703,9 @@
         "hanumanji/Hanumanji_13.webp|||hanumanji/Mangal-Murati-Maruti-Nandan-Bhajan.mp3",
         "hanumanji/Hanuman_20.jpg|||hanumanji/Jai-Hanuman.mp3",
         "hanumanji/Hanumanji_31.webp|||hanumanji/Kejo-Kesari-Ke-Lal-Lakhbir-Singh-Lakha-Bhakti.mp3",
-        "hanumanji/Hanumanji_15.webp|||hanumanji/Rama-Rama-Ratte-Ratte-Chodunga-Ye-Duniya.mp3"
+        "hanumanji/Hanumanji_15.webp|||hanumanji/Rama-Rama-Ratte-Ratte-Chodunga-Ye-Duniya.mp3",
+        "hanumanji/Hanumanji_32.webp|||hanumanji/Guruji-Ko-Aadesh-Guruji-Ko-Pradam-Hanuman.mp3",
+        "hanumanji/Hanumanji_08.webp|||hanumanji/Sankat-Mochan-Mahabali-Hanuman-Serial.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -11105,13 +11117,18 @@
           "image": "maadurga/Durga_Story_44_3D_4D_5D.webp",
           "ring": "maadurga/Paap-Kat-Jaye-Maa-Ke-Charan-Chune-Se.mp3",
           "selected_utc": "2026-10-30T18:10:01.050303+00:00"
+        },
+        {
+          "image": "maadurga/Durga_Story_25_3D_4D_5D.webp",
+          "ring": "maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3",
+          "selected_utc": "2026-10-31T06:11:46.678040+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/Durga_Story_44_3D_4D_5D.webp",
-        "ring": "rings/maadurga/Paap-Kat-Jaye-Maa-Ke-Charan-Chune-Se.mp3",
-        "selected_utc": "2026-10-30T18:10:01.050303+00:00",
+        "image": "images/maadurga/Durga_Story_25_3D_4D_5D.webp",
+        "ring": "rings/maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3",
+        "selected_utc": "2026-10-31T06:11:46.678040+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -11153,7 +11170,8 @@
         "maadurga/Durga_Story_45_3D_4D_5D.webp|||maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3",
         "maadurga/Durga_Story_51_3D_4D_5D.webp|||maadurga/tu-hi-bharti-sabhi-ke-maa-bhandare-navratri-2025-96411.mp3",
         "maadurga/Durga_Story_10_3D_4D_5D.webp|||maadurga/maa_durga_mantra.mp3",
-        "maadurga/Durga_Story_44_3D_4D_5D.webp|||maadurga/Paap-Kat-Jaye-Maa-Ke-Charan-Chune-Se.mp3"
+        "maadurga/Durga_Story_44_3D_4D_5D.webp|||maadurga/Paap-Kat-Jaye-Maa-Ke-Charan-Chune-Se.mp3",
+        "maadurga/Durga_Story_25_3D_4D_5D.webp|||maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-029.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -11490,13 +11508,18 @@
           "image": "shreekrishna/Shree_Krishna_12.jpg",
           "ring": "shreekrishna/karm-kare-kismat-ke-bina-Yada-Yada-Hi-Dharmasya.mp3",
           "selected_utc": "2026-10-30T18:10:34.015921+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_59_4D5D6D_image_20261013_184346.webp",
+          "ring": "shreekrishna/Meri-aankhon-mein-Hai-Krishna-Krishna.mp3",
+          "selected_utc": "2026-10-31T06:12:09.603786+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_12.jpg",
-        "ring": "rings/shreekrishna/karm-kare-kismat-ke-bina-Yada-Yada-Hi-Dharmasya.mp3",
-        "selected_utc": "2026-10-30T18:10:34.015921+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_59_4D5D6D_image_20261013_184346.webp",
+        "ring": "rings/shreekrishna/Meri-aankhon-mein-Hai-Krishna-Krishna.mp3",
+        "selected_utc": "2026-10-31T06:12:09.603786+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -11560,7 +11583,8 @@
         "shreekrishna/Krishna╬ô├ç├ûs Enchanted Vrindavan Sunset (1).png|||shreekrishna/Vajvito-Pava-Krushna-Murari.mp3",
         "shreekrishna/Shree_Krishna_37_4D5D6D_image_20261013_183657.webp|||shreekrishna/are-dwarpalo-kanhaiya-se-keh-do.mp3",
         "shreekrishna/Shree_Krishna_07.jpg|||shreekrishna/hey_surnaik.mp3",
-        "shreekrishna/Shree_Krishna_12.jpg|||shreekrishna/karm-kare-kismat-ke-bina-Yada-Yada-Hi-Dharmasya.mp3"
+        "shreekrishna/Shree_Krishna_12.jpg|||shreekrishna/karm-kare-kismat-ke-bina-Yada-Yada-Hi-Dharmasya.mp3",
+        "shreekrishna/Shree_Krishna_59_4D5D6D_image_20261013_184346.webp|||shreekrishna/Meri-aankhon-mein-Hai-Krishna-Krishna.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -19424,13 +19448,18 @@
           "image": "shyambaba/Krishna’s Tender Meadow Embrace (1).png",
           "ring": "shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
           "selected_utc": "2026-10-30T18:10:56.192534+00:00"
+        },
+        {
+          "image": "shyambaba/Khatu_Shyam_0127.png",
+          "ring": "shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3",
+          "selected_utc": "2026-10-31T06:12:31.755934+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Krishna’s Tender Meadow Embrace (1).png",
-        "ring": "rings/shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
-        "selected_utc": "2026-10-30T18:10:56.192534+00:00",
+        "image": "images/shyambaba/Khatu_Shyam_0127.png",
+        "ring": "rings/shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3",
+        "selected_utc": "2026-10-31T06:12:31.755934+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -19472,7 +19501,8 @@
         "shyambaba/shree_shyam_image_4.jpg|||shyambaba/tere-hote-hue-sarkar-nahin-ho-sakti-meri-har.mp3",
         "shyambaba/Shyam_Baba_34_4D_5D_6D.webp|||shyambaba/khatu-wale-shyam-ji-kamal-ho-gya.mp3",
         "shyambaba/Khatu_Shyam_0182.png|||shyambaba/mere-khatu-wale-shyam.mp3",
-        "shyambaba/Krishna’s Tender Meadow Embrace (1).png|||shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3"
+        "shyambaba/Krishna’s Tender Meadow Embrace (1).png|||shyambaba/sanwariyo-hai-seth-mari-radha-ji.mp3",
+        "shyambaba/Khatu_Shyam_0127.png|||shyambaba/kabhi-ruthana-na-mujhse-shyam.mp3"
       ],
       "history_migrated": true
     }
