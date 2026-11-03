@@ -677,13 +677,23 @@
           "image": "hanumanji/Hanumanji_03.webp",
           "ring": "hanumanji/Aasman-Ko-Chukar-Dekha-Daler-Mehndi-Hindi.mp3",
           "selected_utc": "2026-11-03T01:42:34.200227+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_19.webp",
+          "ring": "hanumanji/dheere-dheere-Ram-Ji-ka-Sath-chahie.mp3",
+          "selected_utc": "2026-11-03T07:10:14.967930+00:00"
+        },
+        {
+          "image": "hanumanji/7381146.jpg",
+          "ring": "hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3",
+          "selected_utc": "2026-11-03T07:10:36.198146+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/Hanumanji_03.webp",
-        "ring": "rings/hanumanji/Aasman-Ko-Chukar-Dekha-Daler-Mehndi-Hindi.mp3",
-        "selected_utc": "2026-11-03T01:42:34.200227+00:00",
+        "image": "images/hanumanji/7381146.jpg",
+        "ring": "rings/hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3",
+        "selected_utc": "2026-11-03T07:10:36.198146+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -777,7 +787,9 @@
         "hanumanji/Hanumanji_46.webp|||hanumanji/Cham-Cham-Nache-Dekho-Veer-Hanumana.mp3",
         "hanumanji/Hanumanji_34.webp|||hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version (1).mp3",
         "hanumanji/Hanuman_20.jpg|||hanumanji/Babo-Cham-Chama-Cham-Nache-Bhakta-Ko-Ladlo.mp3",
-        "hanumanji/Hanumanji_03.webp|||hanumanji/Aasman-Ko-Chukar-Dekha-Daler-Mehndi-Hindi.mp3"
+        "hanumanji/Hanumanji_03.webp|||hanumanji/Aasman-Ko-Chukar-Dekha-Daler-Mehndi-Hindi.mp3",
+        "hanumanji/Hanumanji_19.webp|||hanumanji/dheere-dheere-Ram-Ji-ka-Sath-chahie.mp3",
+        "hanumanji/7381146.jpg|||hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -11224,13 +11236,18 @@
           "image": "maadurga/Durga_Story_32_3D_4D_5D.webp",
           "ring": "maadurga/kamariya-gujarati-dandiya-song-96688.mp3",
           "selected_utc": "2026-11-03T01:43:00.161531+00:00"
+        },
+        {
+          "image": "maadurga/image_20261013_165503.webp",
+          "ring": "maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3",
+          "selected_utc": "2026-11-03T07:10:55.242944+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/Durga_Story_32_3D_4D_5D.webp",
-        "ring": "rings/maadurga/kamariya-gujarati-dandiya-song-96688.mp3",
-        "selected_utc": "2026-11-03T01:43:00.161531+00:00",
+        "image": "images/maadurga/image_20261013_165503.webp",
+        "ring": "rings/maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3",
+        "selected_utc": "2026-11-03T07:10:55.242944+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -11279,7 +11296,8 @@
         "maadurga/Maa_Durga_0030.jpg|||maadurga/aigiri_albela.mp3",
         "maadurga/Durga_Story_12_3D_4D_5D.webp|||maadurga/tere-haan-gulam-daatiye-96820.mp3",
         "maadurga/image_20261013_165357.webp|||maadurga/Sada-Hoti-Hai-Jai-Jai-Kar-Maaki-Mandir-Me.mp3",
-        "maadurga/Durga_Story_32_3D_4D_5D.webp|||maadurga/kamariya-gujarati-dandiya-song-96688.mp3"
+        "maadurga/Durga_Story_32_3D_4D_5D.webp|||maadurga/kamariya-gujarati-dandiya-song-96688.mp3",
+        "maadurga/image_20261013_165503.webp|||maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -11651,13 +11669,18 @@
           "image": "shreekrishna/Shree_Krishna_37.jpg",
           "ring": "shreekrishna/Mujhe-Rass-Aa-Gaya-Tere-Dar-Pe-Sar-Jhukana.mp3",
           "selected_utc": "2026-11-03T01:43:22.473228+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_19_4D5D6D.webp",
+          "ring": "shreekrishna/Krishna-Flute-Music.mp3",
+          "selected_utc": "2026-11-03T07:11:11.772853+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_37.jpg",
-        "ring": "rings/shreekrishna/Mujhe-Rass-Aa-Gaya-Tere-Dar-Pe-Sar-Jhukana.mp3",
-        "selected_utc": "2026-11-03T01:43:22.473228+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_19_4D5D6D.webp",
+        "ring": "rings/shreekrishna/Krishna-Flute-Music.mp3",
+        "selected_utc": "2026-11-03T07:11:11.772853+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -11728,7 +11751,8 @@
         "shreekrishna/Shree_Krishna_13.jpg|||shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
         "shreekrishna/Shree_Krishna_29_4D5D6D_image_20261013_183419.webp|||shreekrishna/Saanware-ko-Dil-mein-basa-kar-to-dekho.mp3",
         "shreekrishna/Shree_Krishna_14_4D5D6D.webp|||shreekrishna/Radhe-Radhe-bol-Shyam-aaenge.mp3",
-        "shreekrishna/Shree_Krishna_37.jpg|||shreekrishna/Mujhe-Rass-Aa-Gaya-Tere-Dar-Pe-Sar-Jhukana.mp3"
+        "shreekrishna/Shree_Krishna_37.jpg|||shreekrishna/Mujhe-Rass-Aa-Gaya-Tere-Dar-Pe-Sar-Jhukana.mp3",
+        "shreekrishna/Shree_Krishna_19_4D5D6D.webp|||shreekrishna/Krishna-Flute-Music.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -19627,13 +19651,18 @@
           "image": "shyambaba/Khatu_Shyam_0043.png",
           "ring": "shyambaba/hai-jiske-saath-sawra.mp3",
           "selected_utc": "2026-11-03T01:43:37.106877+00:00"
+        },
+        {
+          "image": "shyambaba/Devotional Khatu Shyam Shrine in Gold-5.png",
+          "ring": "shyambaba/teen-baan-ke-dhari-download.mp3",
+          "selected_utc": "2026-11-03T07:11:18.708499+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Khatu_Shyam_0043.png",
-        "ring": "rings/shyambaba/hai-jiske-saath-sawra.mp3",
-        "selected_utc": "2026-11-03T01:43:37.106877+00:00",
+        "image": "images/shyambaba/Devotional Khatu Shyam Shrine in Gold-5.png",
+        "ring": "rings/shyambaba/teen-baan-ke-dhari-download.mp3",
+        "selected_utc": "2026-11-03T07:11:18.708499+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -19682,7 +19711,8 @@
         "shyambaba/Shyam_Baba_17_4D_5D_6D.webp|||shyambaba/mera-shyam-aa-jata-mere-samne.mp3",
         "shyambaba/Khatu_Shyam_0052.png|||shyambaba/hare-ka-sahara-khatu-shyam-hamara.mp3",
         "shyambaba/Khatu_Shyam_0032.png|||shyambaba/mere-khatu-wale-shyam-mere-sanware.mp3",
-        "shyambaba/Khatu_Shyam_0043.png|||shyambaba/hai-jiske-saath-sawra.mp3"
+        "shyambaba/Khatu_Shyam_0043.png|||shyambaba/hai-jiske-saath-sawra.mp3",
+        "shyambaba/Devotional Khatu Shyam Shrine in Gold-5.png|||shyambaba/teen-baan-ke-dhari-download.mp3"
       ],
       "history_migrated": true
     }
