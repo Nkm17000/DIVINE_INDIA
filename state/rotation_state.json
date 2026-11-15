@@ -917,13 +917,23 @@
           "image": "hanumanji/Hanuman_15.jpg",
           "ring": "hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3",
           "selected_utc": "2026-11-14T18:26:29.606317+00:00"
+        },
+        {
+          "image": "hanumanji/Hanuman_24.jpg",
+          "ring": "hanumanji/Chinta-Harenge-Hanuman-Lovenish-Khatri-Bhajan.mp3",
+          "selected_utc": "2026-11-15T07:03:14.466866+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_55.webp",
+          "ring": "hanumanji/Vishwas-Mera-Ye-Tute-Na-Pyare.mp3",
+          "selected_utc": "2026-11-15T07:03:44.183141+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/Hanuman_15.jpg",
-        "ring": "rings/hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3",
-        "selected_utc": "2026-11-14T18:26:29.606317+00:00",
+        "image": "images/hanumanji/Hanumanji_55.webp",
+        "ring": "rings/hanumanji/Vishwas-Mera-Ye-Tute-Na-Pyare.mp3",
+        "selected_utc": "2026-11-15T07:03:44.183141+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -1065,7 +1075,9 @@
         "hanumanji/Hanumanji_28.webp|||hanumanji/Keejo-Kesari-Ke-Laal-Dj-Remix.mp3",
         "hanumanji/Hanuman_21.jpg|||hanumanji/dheere-dheere-Ram-Ji-ka-Sath-chahie.mp3",
         "hanumanji/Hanumanji_36.webp|||hanumanji/Sitaram-Hanuman-Sitaram-Hanuman.mp3",
-        "hanumanji/Hanuman_15.jpg|||hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3"
+        "hanumanji/Hanuman_15.jpg|||hanumanji/Hey-Dukh-Bhanjan-Lofi.mp3",
+        "hanumanji/Hanuman_24.jpg|||hanumanji/Chinta-Harenge-Hanuman-Lovenish-Khatri-Bhajan.mp3",
+        "hanumanji/Hanumanji_55.webp|||hanumanji/Vishwas-Mera-Ye-Tute-Na-Pyare.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -11632,13 +11644,18 @@
           "image": "maadurga/Maa_Durga_0017.jpg",
           "ring": "maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3",
           "selected_utc": "2026-11-14T18:26:49.161015+00:00"
+        },
+        {
+          "image": "maadurga/Maa_Durga_0011.jpg",
+          "ring": "maadurga/tere-haan-gulam-daatiye-96820.mp3",
+          "selected_utc": "2026-11-15T07:04:20.729192+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/Maa_Durga_0017.jpg",
-        "ring": "rings/maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3",
-        "selected_utc": "2026-11-14T18:26:49.161015+00:00",
+        "image": "images/maadurga/Maa_Durga_0011.jpg",
+        "ring": "rings/maadurga/tere-haan-gulam-daatiye-96820.mp3",
+        "selected_utc": "2026-11-15T07:04:20.729192+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -11711,7 +11728,8 @@
         "maadurga/Durga_Story_37_3D_4D_5D.webp|||maadurga/Meri-Maa-Ke-Barabar-Koi-Nahi-Maa.mp3",
         "maadurga/Maa_Durga_0007.jpg|||maadurga/maa-shok-dukh-nivarani.mp3",
         "maadurga/Durga_Story_23_3D_4D_5D.webp|||maadurga/tu-hi-bharti-sabhi-ke-maa-bhandare-navratri-2025-96411.mp3",
-        "maadurga/Maa_Durga_0017.jpg|||maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3"
+        "maadurga/Maa_Durga_0017.jpg|||maadurga/Ab-Meri-Bhi-Suno-Hey-Maat-Bhawani.mp3",
+        "maadurga/Maa_Durga_0011.jpg|||maadurga/tere-haan-gulam-daatiye-96820.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -12203,13 +12221,18 @@
           "image": "shreekrishna/Shree_Krishna_27.jpg",
           "ring": "shreekrishna/us-basuri-Wale-ki-bhajanus-basuri-wale-ki-us-basuri-wale-ki.mp3",
           "selected_utc": "2026-11-14T18:27:04.393512+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_59_4D5D6D_image_20261013_184346.webp",
+          "ring": "shreekrishna/Saanware-ko-Dil-mein-basa-kar-to-dekho.mp3",
+          "selected_utc": "2026-11-15T07:04:44.071348+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_27.jpg",
-        "ring": "rings/shreekrishna/us-basuri-Wale-ki-bhajanus-basuri-wale-ki-us-basuri-wale-ki.mp3",
-        "selected_utc": "2026-11-14T18:27:04.393512+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_59_4D5D6D_image_20261013_184346.webp",
+        "ring": "rings/shreekrishna/Saanware-ko-Dil-mein-basa-kar-to-dekho.mp3",
+        "selected_utc": "2026-11-15T07:04:44.071348+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -12304,7 +12327,8 @@
         "shreekrishna/Shree_Krishna_26_4D5D6D_image_20261013_183412.webp|||shreekrishna/shri_krishna (2).mp3",
         "shreekrishna/Shree_Krishna_51_4D5D6D.webp|||shreekrishna/Shyam-Shyam-Karke-Duniya-Bawri-Si-Hori-020.mp3",
         "shreekrishna/Shree_Krishna_39_4D5D6D_image_20261013_183659.webp|||shreekrishna/Woh-krishna-hai.mp3",
-        "shreekrishna/Shree_Krishna_27.jpg|||shreekrishna/us-basuri-Wale-ki-bhajanus-basuri-wale-ki-us-basuri-wale-ki.mp3"
+        "shreekrishna/Shree_Krishna_27.jpg|||shreekrishna/us-basuri-Wale-ki-bhajanus-basuri-wale-ki-us-basuri-wale-ki.mp3",
+        "shreekrishna/Shree_Krishna_59_4D5D6D_image_20261013_184346.webp|||shreekrishna/Saanware-ko-Dil-mein-basa-kar-to-dekho.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -20323,13 +20347,18 @@
           "image": "shyambaba/Khatu_Shyam_0193.png",
           "ring": "shyambaba/hare-ka-sahara-khatu-shyam-hamara.mp3",
           "selected_utc": "2026-11-14T18:27:22.350393+00:00"
+        },
+        {
+          "image": "shyambaba/Shyam_Baba_45_4D_5D_6D.webp",
+          "ring": "shyambaba/hai-jiske-saath-sawra.mp3",
+          "selected_utc": "2026-11-15T07:05:27.723598+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Khatu_Shyam_0193.png",
-        "ring": "rings/shyambaba/hare-ka-sahara-khatu-shyam-hamara.mp3",
-        "selected_utc": "2026-11-14T18:27:22.350393+00:00",
+        "image": "images/shyambaba/Shyam_Baba_45_4D_5D_6D.webp",
+        "ring": "rings/shyambaba/hai-jiske-saath-sawra.mp3",
+        "selected_utc": "2026-11-15T07:05:27.723598+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -20402,7 +20431,8 @@
         "shyambaba/shree_shyam_image_3.jpg|||shyambaba/mere-khatu-wale-shyam.mp3",
         "shyambaba/Shyam_Baba_41_4D_5D_6D.webp|||shyambaba/teen-baan-ke-dhari-download.mp3",
         "shyambaba/Shyam_Baba_22_4D_5D_6D.webp|||shyambaba/waha-shyam-ka-pehra-rehta-hai.mp3",
-        "shyambaba/Khatu_Shyam_0193.png|||shyambaba/hare-ka-sahara-khatu-shyam-hamara.mp3"
+        "shyambaba/Khatu_Shyam_0193.png|||shyambaba/hare-ka-sahara-khatu-shyam-hamara.mp3",
+        "shyambaba/Shyam_Baba_45_4D_5D_6D.webp|||shyambaba/hai-jiske-saath-sawra.mp3"
       ],
       "history_migrated": true
     }
