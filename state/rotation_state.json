@@ -1017,13 +1017,23 @@
           "image": "hanumanji/Hanumanji_11.webp",
           "ring": "hanumanji/Kejo-Kesari-Ke-Lal-Lakhbir-Singh-Lakha-Bhakti.mp3",
           "selected_utc": "2026-11-19T20:55:43.266152+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_24.webp",
+          "ring": "hanumanji/Cham-Cham-Nache-Dekho-Veer-Hanumana.mp3",
+          "selected_utc": "2026-11-20T07:40:34.251086+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_09.webp",
+          "ring": "hanumanji/Keejo-Kesari-Ke-Laal-Dj-Remix.mp3",
+          "selected_utc": "2026-11-20T07:41:11.456251+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/Hanumanji_11.webp",
-        "ring": "rings/hanumanji/Kejo-Kesari-Ke-Lal-Lakhbir-Singh-Lakha-Bhakti.mp3",
-        "selected_utc": "2026-11-19T20:55:43.266152+00:00",
+        "image": "images/hanumanji/Hanumanji_09.webp",
+        "ring": "rings/hanumanji/Keejo-Kesari-Ke-Laal-Dj-Remix.mp3",
+        "selected_utc": "2026-11-20T07:41:11.456251+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -1185,7 +1195,9 @@
         "hanumanji/Hanumanji_51.webp|||hanumanji/Chinta-Harenge-Hanuman-Lovenish-Khatri-Bhajan.mp3",
         "hanumanji/Hanumanji_07.webp|||hanumanji/Ab-Daya-Karo-Bajrangbali-Dj-Remix.mp3",
         "hanumanji/Hanumanji_14.webp|||hanumanji/Bala-Ji-Acha-Lage-Se-Remix.mp3",
-        "hanumanji/Hanumanji_11.webp|||hanumanji/Kejo-Kesari-Ke-Lal-Lakhbir-Singh-Lakha-Bhakti.mp3"
+        "hanumanji/Hanumanji_11.webp|||hanumanji/Kejo-Kesari-Ke-Lal-Lakhbir-Singh-Lakha-Bhakti.mp3",
+        "hanumanji/Hanumanji_24.webp|||hanumanji/Cham-Cham-Nache-Dekho-Veer-Hanumana.mp3",
+        "hanumanji/Hanumanji_09.webp|||hanumanji/Keejo-Kesari-Ke-Laal-Dj-Remix.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -11802,13 +11814,18 @@
           "image": "maadurga/Durga_Story_33_3D_4D_5D.webp",
           "ring": "maadurga/ringtone.mp3",
           "selected_utc": "2026-11-19T20:56:23.300046+00:00"
+        },
+        {
+          "image": "maadurga/Durga_Story_54_3D_4D_5D.webp",
+          "ring": "maadurga/ajab_hai_teri_maya.mp3",
+          "selected_utc": "2026-11-20T07:41:37.925257+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/Durga_Story_33_3D_4D_5D.webp",
-        "ring": "rings/maadurga/ringtone.mp3",
-        "selected_utc": "2026-11-19T20:56:23.300046+00:00",
+        "image": "images/maadurga/Durga_Story_54_3D_4D_5D.webp",
+        "ring": "rings/maadurga/ajab_hai_teri_maya.mp3",
+        "selected_utc": "2026-11-20T07:41:37.925257+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -11891,7 +11908,8 @@
         "maadurga/Maa_Durga_0010.jpg|||maadurga/nian-tere-maa-hansraj-raghuwanshi-navratri-2025-96403.mp3",
         "maadurga/Durga_Story_48_3D_4D_5D.webp|||maadurga/hey_naam_re_sab_se_b.mp3",
         "maadurga/Durga_Story_47_3D_4D_5D.webp|||maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3",
-        "maadurga/Durga_Story_33_3D_4D_5D.webp|||maadurga/ringtone.mp3"
+        "maadurga/Durga_Story_33_3D_4D_5D.webp|||maadurga/ringtone.mp3",
+        "maadurga/Durga_Story_54_3D_4D_5D.webp|||maadurga/ajab_hai_teri_maya.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -12433,13 +12451,18 @@
           "image": "shreekrishna/Shree_Krishna_13.jpg",
           "ring": "shreekrishna/krishna_flute.mp3",
           "selected_utc": "2026-11-19T20:56:55.126954+00:00"
+        },
+        {
+          "image": "shreekrishna/Krishna’s Tender Meadow Embrace.png",
+          "ring": "shreekrishna/shyama-aan-baso-vrindavan-mein.mp3",
+          "selected_utc": "2026-11-20T07:42:03.864366+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_13.jpg",
-        "ring": "rings/shreekrishna/krishna_flute.mp3",
-        "selected_utc": "2026-11-19T20:56:55.126954+00:00",
+        "image": "images/shreekrishna/Krishna’s Tender Meadow Embrace.png",
+        "ring": "rings/shreekrishna/shyama-aan-baso-vrindavan-mein.mp3",
+        "selected_utc": "2026-11-20T07:42:03.864366+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -12544,7 +12567,8 @@
         "shreekrishna/Shree_Krishna_02_4D5D6D_image_20261013_182709.webp|||shreekrishna/Naam-Hai-Tera-Taranhara.mp3",
         "shreekrishna/Shree_Krishna_38_4D5D6D.webp|||shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
         "shreekrishna/Shree_Krishna_15.jpg|||shreekrishna/shri_krishna (2).mp3",
-        "shreekrishna/Shree_Krishna_13.jpg|||shreekrishna/krishna_flute.mp3"
+        "shreekrishna/Shree_Krishna_13.jpg|||shreekrishna/krishna_flute.mp3",
+        "shreekrishna/Krishna’s Tender Meadow Embrace.png|||shreekrishna/shyama-aan-baso-vrindavan-mein.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -20613,13 +20637,18 @@
           "image": "shyambaba/Khatu_Shyam_0132.png",
           "ring": "shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
           "selected_utc": "2026-11-19T20:57:22.510998+00:00"
+        },
+        {
+          "image": "shyambaba/Ornate Shyam Devotional Temple Garden.png",
+          "ring": "shyambaba/shyama-preet-main-tose-laga-baitha-hoon.mp3",
+          "selected_utc": "2026-11-20T07:42:28.221337+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Khatu_Shyam_0132.png",
-        "ring": "rings/shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
-        "selected_utc": "2026-11-19T20:57:22.510998+00:00",
+        "image": "images/shyambaba/Ornate Shyam Devotional Temple Garden.png",
+        "ring": "rings/shyambaba/shyama-preet-main-tose-laga-baitha-hoon.mp3",
+        "selected_utc": "2026-11-20T07:42:28.221337+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -20702,7 +20731,8 @@
         "shyambaba/Khatu_Shyam_0043.png|||shyambaba/yahi-thehra-hu-mere-shyam-ye-charcha-hai.mp3",
         "shyambaba/Khatu_Shyam_0088.png|||shyambaba/hum-to-teri-yaad-mein---chotu-singh-rawna.mp3",
         "shyambaba/11109682.jpg|||shyambaba/mere-khatu-wale-shyam.mp3",
-        "shyambaba/Khatu_Shyam_0132.png|||shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3"
+        "shyambaba/Khatu_Shyam_0132.png|||shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
+        "shyambaba/Ornate Shyam Devotional Temple Garden.png|||shyambaba/shyama-preet-main-tose-laga-baitha-hoon.mp3"
       ],
       "history_migrated": true
     }
