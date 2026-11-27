@@ -1157,13 +1157,23 @@
           "image": "hanumanji/Hanumanji_52.webp",
           "ring": "hanumanji/Mangal-Ko-Janme-Mangal-Hi-Karte.mp3",
           "selected_utc": "2026-11-26T21:50:55.613889+00:00"
+        },
+        {
+          "image": "hanumanji/1000_F_1537012566_0A8z3vscwQjWMCSpbQUWCFP8duP89Leq (1).jpg",
+          "ring": "hanumanji/Lal-Langote-Wale-Veer-Hanuman-Hai.mp3",
+          "selected_utc": "2026-11-27T08:59:26.575989+00:00"
+        },
+        {
+          "image": "hanumanji/Hanumanji_21.webp",
+          "ring": "hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3",
+          "selected_utc": "2026-11-27T08:59:41.355153+00:00"
         }
       ],
       "last_selection": {
         "folder": "hanumanji",
-        "image": "images/hanumanji/Hanumanji_52.webp",
-        "ring": "rings/hanumanji/Mangal-Ko-Janme-Mangal-Hi-Karte.mp3",
-        "selected_utc": "2026-11-26T21:50:55.613889+00:00",
+        "image": "images/hanumanji/Hanumanji_21.webp",
+        "ring": "rings/hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3",
+        "selected_utc": "2026-11-27T08:59:41.355153+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -1353,7 +1363,9 @@
         "hanumanji/wp8207248.jpg|||hanumanji/Cham-Cham-Nache-Dekho-Veer-Hanumana.mp3",
         "hanumanji/2822855.jpg|||hanumanji/Jai-Hanuman-Gyan-Gun-Sagar-Hanuman-Chalisa-Manoj-Mishra.mp3",
         "hanumanji/Hanumanji_17.webp|||hanumanji/Hey-Bajrang-Bali-Hanuman.mp3",
-        "hanumanji/Hanumanji_52.webp|||hanumanji/Mangal-Ko-Janme-Mangal-Hi-Karte.mp3"
+        "hanumanji/Hanumanji_52.webp|||hanumanji/Mangal-Ko-Janme-Mangal-Hi-Karte.mp3",
+        "hanumanji/1000_F_1537012566_0A8z3vscwQjWMCSpbQUWCFP8duP89Leq (1).jpg|||hanumanji/Lal-Langote-Wale-Veer-Hanuman-Hai.mp3",
+        "hanumanji/Hanumanji_21.webp|||hanumanji/Veer-Hanumana-Ati-Balwana-Rasraj-Ji-Maharaj-Lofi-Version.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -12040,13 +12052,18 @@
           "image": "maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg",
           "ring": "maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-031.mp3",
           "selected_utc": "2026-11-26T21:51:14.223064+00:00"
+        },
+        {
+          "image": "maadurga/Durga_Story_54_3D_4D_5D.webp",
+          "ring": "maadurga/Main-Balak-Tu-Mata-Jubin-Nautiyal.mp3",
+          "selected_utc": "2026-11-27T09:00:07.748785+00:00"
         }
       ],
       "last_selection": {
         "folder": "maadurga",
-        "image": "images/maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg",
-        "ring": "rings/maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-031.mp3",
-        "selected_utc": "2026-11-26T21:51:14.223064+00:00",
+        "image": "images/maadurga/Durga_Story_54_3D_4D_5D.webp",
+        "ring": "rings/maadurga/Main-Balak-Tu-Mata-Jubin-Nautiyal.mp3",
+        "selected_utc": "2026-11-27T09:00:07.748785+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -12143,7 +12160,8 @@
         "maadurga/Durga_Story_50_3D_4D_5D.webp|||maadurga/Aigiri-nandini-maa-durga.mp3",
         "maadurga/wp5214755.jpg|||maadurga/Prem-Se-Bolo-Jai-Mata-Di.mp3",
         "maadurga/wp5235332.jpg|||maadurga/Tere-Darbar-Me-Maiya-Khushi-Milti-Hai.mp3",
-        "maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg|||maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-031.mp3"
+        "maadurga/desktop-wallpaper-laxmi-narayan-for-android-lakshmi-narayan.jpg|||maadurga/sada-hoti-hai-jay-jaikar-man-ki-mandir-me-031.mp3",
+        "maadurga/Durga_Story_54_3D_4D_5D.webp|||maadurga/Main-Balak-Tu-Mata-Jubin-Nautiyal.mp3"
       ],
       "history_migrated": true,
       "pair_order": [],
@@ -12755,13 +12773,18 @@
           "image": "shreekrishna/Shree_Krishna_17.jpg",
           "ring": "shreekrishna/Meri-aankhon-mein-Hai-Krishna-Krishna.mp3",
           "selected_utc": "2026-11-26T21:51:26.487058+00:00"
+        },
+        {
+          "image": "shreekrishna/Shree_Krishna_52_4D5D6D.webp",
+          "ring": "shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
+          "selected_utc": "2026-11-27T09:00:30.924709+00:00"
         }
       ],
       "last_selection": {
         "folder": "shreekrishna",
-        "image": "images/shreekrishna/Shree_Krishna_17.jpg",
-        "ring": "rings/shreekrishna/Meri-aankhon-mein-Hai-Krishna-Krishna.mp3",
-        "selected_utc": "2026-11-26T21:51:26.487058+00:00",
+        "image": "images/shreekrishna/Shree_Krishna_52_4D5D6D.webp",
+        "ring": "rings/shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3",
+        "selected_utc": "2026-11-27T09:00:30.924709+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -12880,7 +12903,8 @@
         "shreekrishna/Shree_Krishna_48_4D5D6D_image_20261013_184116_1.webp|||shreekrishna/o-paalanhaare-hamari-uljhan-suljhao-Bhagwan-Jay-Shri-Krishna.mp3",
         "shreekrishna/Shree_Krishna_49_4D5D6D_image_20261013_184132.webp|||shreekrishna/ik_arj_meri.mp3",
         "shreekrishna/Shree_Krishna_19.jpg|||shreekrishna/hey_surnaik.mp3",
-        "shreekrishna/Shree_Krishna_17.jpg|||shreekrishna/Meri-aankhon-mein-Hai-Krishna-Krishna.mp3"
+        "shreekrishna/Shree_Krishna_17.jpg|||shreekrishna/Meri-aankhon-mein-Hai-Krishna-Krishna.mp3",
+        "shreekrishna/Shree_Krishna_52_4D5D6D.webp|||shreekrishna/KRISHNA-MALAYALAM-DEVOTIONAL.mp3"
       ],
       "history_migrated": true,
       "pair_order": [
@@ -21019,13 +21043,18 @@
           "image": "shyambaba/Khatu_Shyam_0017.png",
           "ring": "shyambaba/kitna-pyara-hai-singar.mp3",
           "selected_utc": "2026-11-26T21:51:38.293517+00:00"
+        },
+        {
+          "image": "shyambaba/Shyam_Baba_03_4D_5D_6D.webp",
+          "ring": "shyambaba/waha-shyam-ka-pehra-rehta-hai.mp3",
+          "selected_utc": "2026-11-27T09:00:50.666792+00:00"
         }
       ],
       "last_selection": {
         "folder": "shyambaba",
-        "image": "images/shyambaba/Khatu_Shyam_0017.png",
-        "ring": "rings/shyambaba/kitna-pyara-hai-singar.mp3",
-        "selected_utc": "2026-11-26T21:51:38.293517+00:00",
+        "image": "images/shyambaba/Shyam_Baba_03_4D_5D_6D.webp",
+        "ring": "rings/shyambaba/waha-shyam-ka-pehra-rehta-hai.mp3",
+        "selected_utc": "2026-11-27T09:00:50.666792+00:00",
         "cycle": 0
       },
       "cycle": 0,
@@ -21122,7 +21151,8 @@
         "shyambaba/Khatu_Shyam_0122.png|||shyambaba/hum-tumhare-tum-hamare-baba-darash-dikhao.mp3",
         "shyambaba/Shyam_Baba_21_4D_5D_6D.webp|||shyambaba/mere-khatu-wale-shyam.mp3",
         "shyambaba/Khatu_Shyam_0038.png|||shyambaba/teen-baan-ke-dhari-download.mp3",
-        "shyambaba/Khatu_Shyam_0017.png|||shyambaba/kitna-pyara-hai-singar.mp3"
+        "shyambaba/Khatu_Shyam_0017.png|||shyambaba/kitna-pyara-hai-singar.mp3",
+        "shyambaba/Shyam_Baba_03_4D_5D_6D.webp|||shyambaba/waha-shyam-ka-pehra-rehta-hai.mp3"
       ],
       "history_migrated": true
     }
